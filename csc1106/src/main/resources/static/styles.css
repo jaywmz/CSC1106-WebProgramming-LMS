@@ -50,7 +50,24 @@ body {
     margin-right: auto;
 }
 
+.home-icon:hover {
+    border-bottom: 2px solid black;
+}
+
+.home-icon:hover .home-image {
+    filter: brightness(0) saturate(100%) invert(17%) sepia(93%) saturate(5898%) hue-rotate(359deg) brightness(102%) contrast(104%);
+}
+
 .home-image {
     width: 50px; /* Set the width of the image */
     height: 50px; /* Set the height of the image */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
