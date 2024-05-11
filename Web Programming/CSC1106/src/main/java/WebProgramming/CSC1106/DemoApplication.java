@@ -1,4 +1,4 @@
-package demo.demo;
+package WebProgramming.CSC1106;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
