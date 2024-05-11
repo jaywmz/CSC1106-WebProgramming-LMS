@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Market Place</title>
+    <link rel="stylesheet" th:href="@{/styles.css}"> <!-- Link to the external CSS file -->
+</head>
+<body>
+    <div class="header">
+        <h1 th:text="${title}">Market Place</h1> <!-- Use Thymeleaf to render the title -->
+        <div class="header-right">
+            <a th:href="@{/home}" class="home-icon">
+                <img th:src="@{/house-door-fill.svg}" alt="Home" class="home-image">
+            </a>
+            <input type="text" class="search-bar" placeholder="Search for courses" th:value="${searchQuery}"> <!-- Use Thymeleaf to bind the search query -->
+            <a th:href="@{/cart}" class="cart-icon"> <!-- Add a class to the shopping cart icon -->
+                <img th:src="@{/cart.svg}" alt="Shopping Cart" class="cart-image"> <!-- Add the shopping cart icon -->
+            </a>
+            
+        </div>
+    </div>
+    <div class="main">
+        <!-- Use Thymeleaf to render course categories -->
+        <div th:each="category : ${categories}">
+            <p th:text="${category}"></p>
+        </div>
+    </div>
+    <div class="footer">
+        <p>Copyright &copy; 2024 CSC1106</p>
+    </div>
+</body>
+</html>

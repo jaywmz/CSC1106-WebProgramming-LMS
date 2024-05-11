@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: #007791;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.header-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.main {
+    padding: 20px;
+}
+
+.footer {
+    background-color: #007791;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.search-bar {
+    width: 700px; /* Set the width of the search bar */
+    height: 40px; /* Set the height of the search bar */
+    padding: 10px;
+    margin-right: 500px;
+    border-radius: 20px;
+}
+
+.cart-icon {
+    margin-left: 10px;
+}
+
+.cart-image {
+    width: 50px; /* Set the width of the image */
+    height: 50px; /* Set the height of the image */
+}
+
+.home-icon {
+    margin-right: auto;
+}
+
+.home-image {
+    width: 50px; /* Set the width of the image */
+    height: 50px; /* Set the height of the image */
+}
