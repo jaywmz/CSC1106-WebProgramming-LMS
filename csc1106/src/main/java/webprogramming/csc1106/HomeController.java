@@ -1,14 +1,14 @@
 package webprogramming.csc1106;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "Hello, World!";
+        return "index";  // This should be the name of your Thymeleaf template without the .html extension
     }
 
 }
