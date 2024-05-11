@@ -1,7 +1,4 @@
 # webprogramming-project-csc1106
 
-Spring Boot Environment setup in VS-Code: https://code.visualstudio.com/docs/java/java-spring-boot
-
-hello this is me 
-but hi
-g
+**Spring Boot Environment setup in VS-Code: https://code.visualstudio.com/docs/java/java-spring-boot
+**
