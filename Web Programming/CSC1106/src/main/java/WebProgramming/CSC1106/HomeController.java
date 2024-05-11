@@ -1,4 +1,4 @@
-package demo.demo;
+package WebProgramming.CSC1106;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
