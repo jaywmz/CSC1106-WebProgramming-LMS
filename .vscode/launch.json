@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Csc1106Application<csc1106>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "webprogramming.csc1106.Csc1106Application",
+            "projectName": "csc1106",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
