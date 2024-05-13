@@ -3,6 +3,8 @@ package webprogramming.csc1106;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class HomeController {
@@ -11,5 +13,21 @@ public class HomeController {
     public String index() {
         return "index";
     }
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "pages-login";
+    }
+
+    @GetMapping("/index.html")
+    public String indexPage() {
+        return "index";
+    }
+    
 
 }
