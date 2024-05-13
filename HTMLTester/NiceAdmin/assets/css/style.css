@@ -825,6 +825,21 @@ h6 {
   background: #f6f6fe;
 }
 
+.dashboard .enrolled-card .card-icon {
+  color: #4154f1;
+  background: #e8eaff;
+}
+
+.dashboard .ongoing-card .card-icon {
+  color: #2eca6a;
+  background: #e0f8e9;
+}
+
+.dashboard .completed-card .card-icon {
+  color: #fbbc05;
+  background: #fff3cd;
+}
+
 .dashboard .revenue-card .card-icon {
   color: #2eca6a;
   background: #e0f8e9;
