@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Controller
 public class LoginController {
 
-    @GetMapping("/")
+    @GetMapping("/loginRedirect")
     public String redirectRoot() {
         return "redirect:/login";
     }
 
-    @GetMapping("/login")
+    @GetMapping("/login2")
     public String showLoginPage(Model model) {
         model.addAttribute("user", new User());
         return "login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login2")
     public String login(@ModelAttribute User user) {
         // Handle login
         // For now, just print the username and password
