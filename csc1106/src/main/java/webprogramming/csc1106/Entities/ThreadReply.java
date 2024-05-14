@@ -3,7 +3,7 @@ package webprogramming.csc1106.Entities;
 import java.sql.Date;
 import java.sql.Time;
 
-public class Reply {
+public class ThreadReply {
     
     private int replyID; // primary key
     private int commentID; // replyID of comment that is being replied to
@@ -13,7 +13,7 @@ public class Reply {
     private Time replyTime;
     private String replyContent;
 
-    public Reply(int replyID, int commentID, int threadID, String responderName, Date replyDate, Time replyTime,
+    public ThreadReply(int replyID, int commentID, int threadID, String responderName, Date replyDate, Time replyTime,
             String replyContent) {
         this.replyID = replyID;
         this.commentID = commentID;
