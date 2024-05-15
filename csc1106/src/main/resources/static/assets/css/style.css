@@ -1460,3 +1460,7 @@ section {
     margin: -20px 0 30px 0;
   }
 }
+.carousel-item img {
+  max-height: 300px; /* Adjust the max-height as needed */
+  object-fit: cover;
+}
