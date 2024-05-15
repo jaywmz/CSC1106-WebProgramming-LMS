@@ -9,6 +9,16 @@
             "projectName": "csc1106",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LearnZenithWebAppApplication<Learn-Zenith-Web-App>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.csc1106.learnzenith.LearnZenithWebAppApplication",
+            "projectName": "Learn-Zenith-Web-App",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

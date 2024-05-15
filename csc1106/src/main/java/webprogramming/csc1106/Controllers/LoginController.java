@@ -1,9 +1,11 @@
-package webprogramming.csc1106.Controllers;
+package webprogramming.csc1106.controllers;
 
-import webprogramming.csc1106.Entities.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import webprogramming.csc1106.entities.User;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller

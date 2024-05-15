@@ -1,4 +1,4 @@
-package webprogramming.csc1106.Entities;
+package webprogramming.csc1106.entities;
 
 import java.sql.Date;
 import java.sql.Time;
