@@ -2,20 +2,24 @@ package webprogramming.csc1106.Entities;
 import java.sql.Date;
 import java.sql.Time;
 
+
 public class User {
-    private int userID; //primary key
-    private int roleID; //foreign key
+    
+    private Integer userID; //primary key
+    private Integer roleID; //foreign key
     private String userName; //this can be used to store varchar data from sql (varchar)
     private String userPassword; //this can be used to store varchar data from sql (varchar)
+    private String userEmail; //this can be used to store varchar data from sql (varchar)
     private Date joineddDate;
     private Time joinedTime;
 
 
-    public User(int userID, int roleID, String userName, String userPassword, Date joineddDate, Time joinedTime) {
+    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joineddDate, Time joinedTime) {
         this.userID = userID;
         this.roleID = roleID;
         this.userName = userName;
         this.userPassword = userPassword;
+        this.userEmail = userEmail;
         this.joineddDate = joineddDate;
         this.joinedTime = joinedTime;
     }
@@ -42,6 +46,12 @@ public class User {
     }
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+    public String getUserEmail() {
+        return userEmail;
+    }
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
     public Date getJoineddDate() {
         return joineddDate;
