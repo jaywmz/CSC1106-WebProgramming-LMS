@@ -58,11 +58,10 @@ public class RegisterController {
     }
 
     private void saveUser(User user) {
-        String sql = "INSERT INTO Users (userID, userName, userPassword,userEmail) VALUES (?,?, ?,?)";
-        jdbcTemplate.update(sql, user.getUserID(), user.getUserName(), user.getUserPassword(), user.getUserEmail());
+        String sql = "INSERT INTO Users (userID, userName, userPassword,userEmail, roleID) VALUES (?,?, ?,?,?)";
+        jdbcTemplate.update(sql, user.getUserID(), user.getUserName(), user.getUserPassword(), user.getUserEmail(),user.getRoleID());
         logger.debug("User data saved to the database");
     }
 
 
 }
-
