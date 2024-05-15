@@ -1,11 +1,11 @@
-package webprogramming.csc1106.controllers;
+package webprogramming.csc1106.Controllers;
 import java.sql.Date;
 import java.sql.Time;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import webprogramming.csc1106.entities.*;
+import webprogramming.csc1106.Entities.*;
 
 import org.springframework.ui.Model;;
 

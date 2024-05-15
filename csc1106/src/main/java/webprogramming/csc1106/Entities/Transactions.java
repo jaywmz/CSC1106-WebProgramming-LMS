@@ -1,4 +1,4 @@
-package webprogramming.csc1106.entities;
+package webprogramming.csc1106.Entities;
 
 import java.math.BigDecimal;
 import java.sql.Date;

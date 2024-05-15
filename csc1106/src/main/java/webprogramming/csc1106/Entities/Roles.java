@@ -1,4 +1,4 @@
-package webprogramming.csc1106.entities;
+package webprogramming.csc1106.Entities;
 
 public class Roles {
     private int roleID;
