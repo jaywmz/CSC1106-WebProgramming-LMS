@@ -1,7 +1,7 @@
 package webprogramming.csc1106.Entities;
 import java.sql.Date;
 import java.sql.Time;
-
+import java.math.BigDecimal;
 
 public class User {
     
@@ -12,9 +12,9 @@ public class User {
     private String userEmail; //this can be used to store varchar data from sql (varchar)
     private Date joineddDate;
     private Time joinedTime;
+    private BigDecimal userBalance;
 
-
-    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joineddDate, Time joinedTime) {
+    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joineddDate, Time joinedTime, BigDecimal userBalance) {
         this.userID = userID;
         this.roleID = roleID;
         this.userName = userName;
@@ -64,5 +64,11 @@ public class User {
     }
     public void setJoinedTime(Time joinedTime) {
         this.joinedTime = joinedTime;
+    }
+    public BigDecimal getUserBalance() {
+        return userBalance;
+    }
+    public void setUserBalance(BigDecimal userBalance) {
+        this.userBalance = userBalance;
     }
 }
