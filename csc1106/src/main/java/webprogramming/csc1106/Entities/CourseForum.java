@@ -1,33 +1,52 @@
 package webprogramming.csc1106.Entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class CourseForum {
     
-    private int courseID;
-    private int numOfThreads;
-    private ForumThread[] threads;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int forumID; // primary key
 
-    public CourseForum(int courseID, int numOfThreads, ForumThread[] threads) {
+    // need to map to courses(courseID), tbc)
+    private int courseID; // foreign key to Courses table
+    private String description; // for forum description to set rules and stuff
+
+    public CourseForum() {
+    }
+
+    public CourseForum(int forumID, int courseID, String description) {
+        this.forumID = forumID;
         this.courseID = courseID;
-        this.numOfThreads = numOfThreads;
-        this.threads = threads;
+        this.description = description;
     }
     
     public int getCourseID() {
         return courseID;
     }
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
+
+    // public void setCourseID(int courseID) {
+    //     this.courseID = courseID;
+    // }
+
+    public int getForumID() {
+        return forumID;
     }
-    public int getNumOfThreads() {
-        return numOfThreads;
+
+    // public void setForumID(int numOfThreads) {
+    //     this.forumID = numOfThreads;
+    // }
+
+    public String getDescription() {
+        return description;
     }
-    public void setNumOfThreads(int numOfThreads) {
-        this.numOfThreads = numOfThreads;
+
+    public void setDescription(String description) {
+        this.description = description;
     }
-    public ForumThread[] getThreads() {
-        return threads;
-    }
-    public void setThreads(ForumThread[] threads) {
-        this.threads = threads;
-    }
+    
 }

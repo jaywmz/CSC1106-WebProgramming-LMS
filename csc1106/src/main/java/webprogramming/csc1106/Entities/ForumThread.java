@@ -3,20 +3,34 @@ package webprogramming.csc1106.Entities;
 import java.sql.Date;
 import java.sql.Time;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class ForumThread {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int threadID; // primary key
-    private int courseID; // foreign key to course table
+
+    // need to map to CourseForum(forumID)
+    private int forumID; // foreign key to CourseForum table
+
     private String posterName; // name of user that posted the thread
     private Date postDate; 
     private Time postTime;
     private String title;
     private String content;
 
-    public ForumThread(int threadID, int courseID, String posterName, Date postDate, Time postTime, int replies,
+    public ForumThread() {
+    }
+
+    public ForumThread(int threadID, int forumID, String posterName, Date postDate, Time postTime, int replies,
             String title, String subject) {
         this.threadID = threadID;
-        this.courseID = courseID;
+        this.forumID = forumID;
         this.posterName = posterName;
         this.postDate = postDate;
         this.postTime = postTime;
@@ -28,17 +42,17 @@ public class ForumThread {
         return threadID;
     }
 
-    public void setThreadID(int threadID) {
-        this.threadID = threadID;
+    // public void setThreadID(int threadID) {
+    //     this.threadID = threadID;
+    // }
+
+    public int getForumID() {
+        return forumID;
     }
 
-    public int getCourseID() {
-        return courseID;
-    }
-
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
-    }
+    // public void setForumID(int courseID) {
+    //     this.forumID = courseID;
+    // }
 
     public String getPosterName() {
         return posterName;

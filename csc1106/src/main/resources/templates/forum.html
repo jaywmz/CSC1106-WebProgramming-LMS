@@ -311,21 +311,16 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title" th:text="${thread1.title}"></h5>
-              <p th:text="${thread1.content}"></p>
-            </div>
-          </div>
 
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-15">
-
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title" th:text="${thread2.title}"></h5>
-              <p th:text="${thread2.content}"></p>
+              <table th:each="thread: ${threads}">
+                <tr class="card-title">
+                  <td th:text="${thread.title}" />
+                </tr>
+                <tr>
+                  <td th:text="${thread.content}" />
+                </tr>
+              <table>
+                
             </div>
           </div>
 
