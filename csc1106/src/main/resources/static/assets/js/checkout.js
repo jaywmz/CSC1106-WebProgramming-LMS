@@ -1,8 +1,3 @@
-
-// Bootstrap core JavaScript
-// Remove HTML comments
-// Add missing closing braces and semicolons
-
 // Add product to cart
 function addProductToCart(productName, price, imageUrl) {
     var cartList = document.getElementById('cartList');
@@ -10,7 +5,7 @@ function addProductToCart(productName, price, imageUrl) {
     listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
     listItem.innerHTML = `
         <div class="media">
-            <img src="${imageUrl}" class="mr-3" alt="${productName}">
+            <img src="${imageUrl}" class="mr-3" alt="${productName}" width="50">
             <div class="media-body">
                 <h6 class="my-0">${productName}</h6>
                 <small class="text-muted">Brief description</small>
@@ -23,7 +18,19 @@ function addProductToCart(productName, price, imageUrl) {
     updateCartItemCount();
 }
 
-// Sample usage: addProductToCart('Product 1', 10.00, 'https://via.placeholder.com/100');
+// Update cart item count
+function updateCartItemCount() {
+    var cartList = document.getElementById('cartList');
+    var itemCount = cartList.getElementsByTagName('li').length;
+    document.getElementById('cartItemCount').textContent = itemCount;
+}
+
+// Remove item from cart
+function removeItem(button) {
+    var listItem = button.parentElement;
+    listItem.remove();
+    updateCartItemCount();
+}
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function() {
@@ -46,5 +53,9 @@ function addProductToCart(productName, price, imageUrl) {
     }, false);
 })();
 
-
-
+// Sample usage to test adding products to the cart
+window.addEventListener('DOMContentLoaded', (event) => {
+    addProductToCart('Product 1', 10.00, 'https://via.placeholder.com/100');
+    addProductToCart('Product 2', 20.00, 'https://via.placeholder.com/100');
+    addProductToCart('Product 3', 30.00, 'https://via.placeholder.com/100');
+});
