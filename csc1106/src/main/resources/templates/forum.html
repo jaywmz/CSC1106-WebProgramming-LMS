@@ -311,13 +311,23 @@
 
           <div class="card">
             <div class="card-body">
-
-              <table th:each="thread: ${threads}">
+              <h4 style="margin-top: 10px;">Threads</h4>
+              <table style="width: 100%;">
+                <tr>
+                  <td style="width: 50%;">Title</td>
+                  <td style="width: 25%;">Created By</td>
+                  <td style="width: 15%;">Date</td>
+                  <td style="width: 10%;">Time</td>
+                </tr>
+              </table>
+              <table th:each="thread: ${threads}" style="width: 100%;">
                 <tr class="card-title">
-                  <td th:text="${thread.title}" />
+                  <td th:text="${thread.title}" style="width: 50%;"/>
+                  <td th:text="${thread.posterName}" style="width: 25%;"/>
+                  <td th:text="${thread.postDate}" style="width: 15%;"/>
+                  <td th:text="${thread.postTime}" style="width: 10%;"/>
                 </tr>
                 <tr>
-                  <td th:text="${thread.content}" />
                 </tr>
               <table>
                 
