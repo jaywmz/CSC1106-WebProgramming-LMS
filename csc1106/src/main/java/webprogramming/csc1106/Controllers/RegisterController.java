@@ -1,30 +1,30 @@
 package webprogramming.csc1106.Controllers;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import webprogramming.csc1106.Entities.User;
-
+import webprogramming.csc1106.Repositories.UserRepository;
 
 @Controller
 public class RegisterController {
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
-    private final JdbcTemplate jdbcTemplate;
+    private final UserRepository userRepository;
 
-    public RegisterController(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Autowired
+    public RegisterController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/register")
@@ -48,6 +48,9 @@ public class RegisterController {
         // Set joinedDate and joinedTime
         user.setJoineddDate(new Date(System.currentTimeMillis()));
         user.setJoinedTime(new Time(System.currentTimeMillis()));
+        
+        // Set initial balance to 1000
+        user.setUserBalance(new BigDecimal(1000));
 
         // Save user data
         saveUser(user);
@@ -58,8 +61,7 @@ public class RegisterController {
     }
 
     private void saveUser(User user) {
-        String sql = "INSERT INTO Users (userID, userName, userPassword, userEmail, roleID, userBalance) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, user.getUserID(), user.getUserName(), user.getUserPassword(), user.getUserEmail(), user.getRoleID(), 1000);
+        userRepository.save(user);
         logger.debug("User data saved to the database");
     }
 }
