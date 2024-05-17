@@ -1,27 +1,24 @@
 package webprogramming.csc1106.Controllers;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
+import webprogramming.csc1106.Entities.User;
+import webprogramming.csc1106.Repositories.UserRepository;
 
 @Controller
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    private final JdbcTemplate jdbcTemplate;
+    private final UserRepository userRepository;
 
-    public LoginController(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public LoginController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/login")
@@ -39,21 +36,14 @@ public class LoginController {
         ModelAndView modelAndView = new ModelAndView();
 
         // Query the database for the user with the given username and password
-        String sql = "SELECT COUNT(*) FROM Users WHERE userName = ? AND userPassword = ?";
-        
-        try {
-            int count = jdbcTemplate.queryForObject(sql, Integer.class, username, password);
+        User user = userRepository.findByUserNameAndUserPassword(username, password);
 
-            if (count == 0) {
-                // No user found, redirect to login page with an error message
-                modelAndView.setViewName("redirect:/login?error=true");
-            } else {
-                // User found, redirect to dashboard or success page
-                modelAndView.setViewName("redirect:/dashboard");
-            }
-        } catch (EmptyResultDataAccessException e) {
+        if (user == null) {
             // No user found, redirect to login page with an error message
             modelAndView.setViewName("redirect:/login?error=true");
+        } else {
+            // User found, redirect to dashboard or success page
+            modelAndView.setViewName("redirect:/dashboard");
         }
 
         return modelAndView;
