@@ -320,9 +320,19 @@
               <span th:text="'Posted on ' + ${thread.postDate} + ' at ' + ${thread.postTime} + ' by ' + ${thread.posterName}"></span>
             </div>
           </div><!-- End Card with header and footer -->
+
+          <h4>Replies</h4>
+          
+          <div class="card" th:each="reply: ${replies}" style="width: 100%;">
+            <div class="card-body" style="padding-top: 15px;">
+              <span th:text="${reply.replyContent}"></span>
+            </div>
+            <div class="card-footer">
+              <span th:text="'Posted on ' + ${reply.replyDate} + ' at ' + ${reply.replyTime} + ' by ' + ${reply.responderName}"></span>
+            </div>
           </div>
 
-          <button type="button" class="btn btn-primary" style="margin: 0px 12px; max-width: 15%;">Add a Reply</button>
+          <button type="button" class="btn btn-primary" style="max-width: 15%;">Add a Reply</button>
 
         </div>
       </div>
