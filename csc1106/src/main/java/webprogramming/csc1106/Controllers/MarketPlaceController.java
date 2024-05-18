@@ -4,12 +4,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+
+
 @Controller
 public class MarketPlaceController {
 
-    @GetMapping("/Market")
+    @GetMapping("/market")
     public String showMarketPlacePage(Model model) {
-        return "Market"; 
+        return "market"; 
     }
     
     @GetMapping("/checkout")
@@ -25,5 +27,6 @@ public class MarketPlaceController {
     public String redirectToBusiness() {
         return "business"; // This will return the software template
     }
+    
     
 }
