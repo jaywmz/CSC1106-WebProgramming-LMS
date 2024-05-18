@@ -16,7 +16,16 @@ function addProductToCart(productName, price, imageUrl) {
     `;
     cartList.appendChild(listItem);
     updateCartItemCount();
+    updateCartTotal();
 }
+
+// Load cart items from localStorage when the page loads
+window.addEventListener('DOMContentLoaded', (event) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.forEach(item => addProductToCart(item.productName, item.price, item.imageUrl));
+    updateCartItemCount();
+    updateCartTotal();
+});
 
 // Update cart item count
 function updateCartItemCount() {
@@ -25,11 +34,39 @@ function updateCartItemCount() {
     document.getElementById('cartItemCount').textContent = itemCount;
 }
 
+// Update cart total amount
+function updateCartTotal() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+}
+
 // Remove item from cart
 function removeItem(button) {
     var listItem = button.parentElement;
+    const productName = listItem.querySelector('h6').innerText;
     listItem.remove();
     updateCartItemCount();
+
+    // Update localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.filter(item => item.productName !== productName);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartTotal();
+}
+
+// Complete checkout and clear the cart
+function completeCheckout() {
+    // Perform checkout logic here
+
+    // Clear the cart
+    localStorage.removeItem('cart');
+    alert('Thank you for your purchase! Your cart has been cleared.');
+
+    // Clear the cart in the DOM
+    document.getElementById('cartList').innerHTML = '';
+    updateCartItemCount();
+    updateCartTotal();
 }
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -43,19 +80,14 @@ function removeItem(button) {
         // Loop over them and prevent submission
         var validation = Array.prototype.filter.call(forms, function(form) {
             form.addEventListener('submit', function(event) {
+                event.preventDefault();
                 if (form.checkValidity() === false) {
-                    event.preventDefault();
                     event.stopPropagation();
+                } else {
+                    completeCheckout();
                 }
                 form.classList.add('was-validated');
             }, false);
         });
     }, false);
 })();
-
-// Sample usage to test adding products to the cart
-window.addEventListener('DOMContentLoaded', (event) => {
-    addProductToCart('Product 1', 10.00, 'https://via.placeholder.com/100');
-    addProductToCart('Product 2', 20.00, 'https://via.placeholder.com/100');
-    addProductToCart('Product 3', 30.00, 'https://via.placeholder.com/100');
-});
