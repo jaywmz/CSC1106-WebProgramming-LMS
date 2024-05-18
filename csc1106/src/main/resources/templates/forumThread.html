@@ -320,11 +320,9 @@
                   <td style="width: 10%;">Time</td>
                 </tr>
               </table>
-              <table th:each="thread: ${threads}" style="width: 100%;">
+              <table th:each="thread: ${threadSelected}" style="width: 100%;">
                 <tr class="card-title">
-                  <td style="width: 50%;">
-                    <a th:text="${thread.title}" th:href="@{'/forum/' + ${thread.threadID}}"></a>
-                  </td>
+                  <td th:text="${thread.title}" style="width: 50%;"/>
                   <td th:text="${thread.posterName}" style="width: 25%;"/>
                   <td th:text="${thread.postDate}" style="width: 15%;"/>
                   <td th:text="${thread.postTime}" style="width: 10%;"/>
