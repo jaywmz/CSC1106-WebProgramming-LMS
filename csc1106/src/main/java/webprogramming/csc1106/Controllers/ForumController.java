@@ -72,13 +72,5 @@ public class ForumController {
 
         return "forumthread";
     }
-    
-    @PostMapping("/forum")
-    public String postMethodName(@RequestBody String entity) {
-        //TODO: process POST request
-        
-        return "forum";
-    }
-    
 
 }
