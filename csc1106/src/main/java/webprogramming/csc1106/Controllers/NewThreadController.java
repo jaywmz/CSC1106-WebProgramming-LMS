@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import webprogramming.csc1106.Entities.ForumThread;
-import webprogramming.csc1106.Entities.ForumThreadRepo;
+import webprogramming.csc1106.Repositories.ForumThreadRepo;
+
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
