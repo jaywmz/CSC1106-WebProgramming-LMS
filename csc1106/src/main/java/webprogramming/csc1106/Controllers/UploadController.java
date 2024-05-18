@@ -30,6 +30,6 @@ public class UploadController {
     public String uploadCourse(@ModelAttribute UploadCourse course, Model model) {
         courseService.addCourse(course);
         model.addAttribute("courses", courseService.getAllCourses());
-        return "redirect:/courses";
+        return "redirect:/coursesupload";
     }
 }
