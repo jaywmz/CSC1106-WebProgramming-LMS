@@ -13,6 +13,9 @@ import webprogramming.csc1106.Entities.*;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -59,5 +62,12 @@ public class ForumController {
         return "forumthread";
     }
     
+    @PostMapping("/forum")
+    public String postMethodName(@RequestBody String entity) {
+        //TODO: process POST request
+        
+        return "forum";
+    }
     
+
 }
