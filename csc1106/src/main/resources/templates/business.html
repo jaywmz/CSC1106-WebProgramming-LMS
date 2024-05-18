@@ -30,43 +30,33 @@
   <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
 
   <style>
-    /* Additional CSS to limit the height of the carousel images */
     .carousel-item img {
-      max-height: 300px; /* Adjust the max-height as needed */
+      max-height: 300px; 
       object-fit: cover;
     }
-
-    /* CSS for hover-over dropdown menus */
     .header-nav .nav-item.dropdown:hover .dropdown-menu {
       display: block;
-      margin-top: 0; /* Removes the gap so it looks seamless */
+      margin-top: 0;
     }
-
-    /* General dropdown alignment for profile, alerts, and notifications */
     .header-nav .dropdown-menu {
       right: 0;
       left: auto;
-      top: 100%; /* Position the dropdown below the toggle button */
-      transform: translateY(0px); /* Fine-tuning the vertical position */
+      top: 100%; 
+      transform: translateY(0px);
     }
-
-    /* Ensure the dropdown trigger has proper CSS to position the menu correctly */
     .nav-profile .nav-link, 
     .nav-item .nav-link {
-      position: relative; /* Ensure the relative positioning of the trigger */
+      position: relative; 
     }
     .carousel-indicators li {
-      /* Hide the numbering indicator */
       list-style: none;
-  }
-  
+    }
   </style>
 </head>
 
 <body>
 
   <header id="header" class="header fixed-top d-flex align-items-center">
-
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
         <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
@@ -84,214 +74,119 @@
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
+        <!-- Other nav items here -->
+      </ul>
+    </nav>
+  </header>
 
-        <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="#">
-            <i class="bi bi-search"></i>
-          </a>
-        </li>
+  <main id="main">
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="developmentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Development
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="developmentDropdown">
-            <li><a class="dropdown-item" href="#">Web Development</a></li>
-            <li><a class="dropdown-item" href="#">Mobile Development</a></li>
-            <li><a class="dropdown-item" href="#">Game Development</a></li>
-          </ul>
-        </li>
+    <!-- Display total number of courses -->
+    <section id="course-summary" class="section">
+      <div class="container">
+        <h2>Total Courses Available</h2>
+        <p>Total Courses: <span th:text="${totalCourses}"></span></p>
+      </div>
+    </section>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="itSoftwareDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            IT & Software
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="itSoftwareDropdown">
-            <li><a class="dropdown-item" href="#">Programming</a></li>
-            <li><a class="dropdown-item" href="#">Cybersecurity</a></li>
-            <li><a class="dropdown-item" href="#">Network & Security</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle active" href="#" id="businessDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Business
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="businessDropdown">
-            <li><a class="dropdown-item" href="#">Finance</a></li>
-            <li><a class="dropdown-item" href="#">Entrepreneurship</a></li>
-            <li><a class="dropdown-item" href="#">Business Strategy</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Finance & Accounting
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="financeDropdown">
-            <li><a class="dropdown-item" href="#">Accounting</a></li>
-            <li><a class="dropdown-item" href="#">Investing & Trading</a></li>
-            <li><a class="dropdown
-              -item" href="#">Financial Modeling</a></li>
-            </ul>
-          </li>
-  
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="designDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Design
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="designDropdown">
-              <li><a class="dropdown-item" href="#">Graphic Design</a></li>
-              <li><a class="dropdown-item" href="#">Web Design</a></li>
-              <li><a class="dropdown-item" href="#">UI/UX Design</a></li>
-            </ul>
-          </li>
-  
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="marketingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Marketing
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="marketingDropdown">
-              <li><a class="dropdown-item" href="#">Digital Marketing</a></li>
-              <li><a class="dropdown-item" href="#">Social Media Marketing</a></li>
-              <li><a class="dropdown-item" href="#">SEO</a></li>
-            </ul>
-          </li>
-  
-          <li class="nav-item">
-            <a class="nav-link" href="about.html">About Us</a>
-          </li>
-  
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              My Account
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Billing</a></li>
-              <li><a class="dropdown-item" href="#">Help</a></li>
-            </ul>
-          </li>
-  
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contact</a>
-          </li>
-        </ul>
-      </nav>
-    </header>
-  
-    <!-- Main Content -->
-    <main id="main">
-  
-      <!-- Course Carousel -->
-      <section id="course-carousel" class="course-carousel">
-  
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="assets/img/course-carousel-1.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="assets/img/course-carousel-2.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="assets/img/course-carousel-3.jpg" class="d-block w-100" alt="...">
-            </div>
+    <!-- Course Carousel -->
+    <section id="course-carousel" class="course-carousel">
+      <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="assets/img/course-carousel-1.jpg" class="d-block w-100" alt="...">
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+          <div class="carousel-item">
+            <img src="assets/img/course-carousel-2.jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="assets/img/course-carousel-3.jpg" class="d-block w-100" alt="...">
+          </div>
         </div>
-  
-      </section>
-      <!-- End Course Carousel -->
-  
-      <!-- Course Categories -->
-      <section id="course-categories" class="course-categories">
-        <div class="container" data-aos="fade-up">
-  
-          <div class="section-title">
-            <h2>Popular Categories</h2>
-            <p>Explore the most popular categories in Business</p>
-          </div>
-  
-          <div class="row">
-  
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-              <div class="course-category">
-                <img src="assets/img/course-category-4.jpg" class="img-fluid" alt="">
-                <h3><a href="#">Finance</a></h3>
-                <p>Learn about finance, accounting, and financial analysis.</p>
-                <div class="trainer">
-                  <div class="trainer-profile d-flex align-items-center">
-                    <img src="assets/img/trainers/trainer-4.jpg" class="img-fluid" alt="">
-                    <span>John Doe</span>
-                  </div>
-                  <div class="trainer-rank d-flex align-items-center">
-                    <i class="bi bi-star-fill"></i><span>4.5</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-  
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
-              <div class="course-category">
-                <img src="assets/img/course-category-5.jpg" class="img-fluid" alt="">
-                <h3><a href="#">Entrepreneurship</a></h3>
-                <p>Learn how to start and grow your own business.</p>
-                <div class="trainer">
-                  <div class="trainer-profile d-flex align-items-center">
-                    <img src="assets/img/trainers/trainer-5.jpg" class="img-fluid" alt="">
-                    <span>Jane Smith</span>
-                  </div>
-                  <div class="trainer-rank d-flex align-items-center">
-                    <i class="bi bi-star-fill"></i><span>4.6</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-  
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
-              <div class="course-category">
-                <img src="assets/img/course-category-6.jpg" class="img-fluid" alt="">
-                <h3><a href="#">Business Strategy</a></h3>
-                <p>Master the art of strategic planning and decision-making.</p>
-                <div class="trainer">
-                  <div class="trainer-profile d-flex align-items-center">
-                    <img src="assets/img/trainers/trainer-6.jpg" class="img-fluid" alt="">
-                    <span>Michael Johnson</span>
-                  </div>
-                  <div class="trainer-rank d-flex align-items-center">
-                    <i class="bi bi-star-fill"></i><span>4.7</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-  
-          </div>
-  
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </section>
+    <!-- End Course Carousel -->
+
+    <!-- Course Categories -->
+    <section id="course-categories" class="course-categories">
+      <div class="container" data-aos="fade-up">
+        <div class="section-title">
+          <h2>Popular Categories</h2>
+          <p>Explore the most popular categories in Business</p>
         </div>
-      </section>
-      <!-- End Course Categories -->
-  
-      <!-- Featured Courses -->
-      <section id="featured-courses" class="featured-courses">
-        <div class="container" data-aos="fade-up">
-  
-          <div class="section
-          -title">
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+            <div class="course-category">
+              <img src="assets/img/course-category-4.jpg" class="img-fluid" alt="">
+              <h3><a href="#">Finance</a></h3>
+              <p>Learn about finance, accounting, and financial analysis.</p>
+              <div class="trainer">
+                <div class="trainer-profile d-flex align-items-center">
+                  <img src="assets/img/trainers/trainer-4.jpg" class="img-fluid" alt="">
+                  <span>John Doe</span>
+                </div>
+                <div class="trainer-rank d-flex align-items-center">
+                  <i class="bi bi-star-fill"></i><span>4.5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
+            <div class="course-category">
+              <img src="assets/img/course-category-5.jpg" class="img-fluid" alt="">
+              <h3><a href="#">Entrepreneurship</a></h3>
+              <p>Learn how to start and grow your own business.</p>
+              <div class="trainer">
+                <div class="trainer-profile d-flex align-items-center">
+                  <img src="assets/img/trainers/trainer-5.jpg" class="img-fluid" alt="">
+                  <span>Jane Smith</span>
+                </div>
+                <div class="trainer-rank d-flex align-items-center">
+                  <i class="bi bi-star-fill"></i><span>4.6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
+            <div class="course-category">
+              <img src="assets/img/course-category-6.jpg" class="img-fluid" alt="">
+              <h3><a href="#">Business Strategy</a></h3>
+              <p>Master the art of strategic planning and decision-making.</p>
+              <div class="trainer">
+                <div class="trainer-profile d-flex align-items-center">
+                  <img src="assets/img/trainers/trainer-6.jpg" class="img-fluid" alt="">
+                  <span>Michael Johnson</span>
+                </div>
+                <div class="trainer-rank d-flex align-items-center">
+                  <i class="bi bi-star-fill"></i><span>4.7</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- End Course Categories -->
+
+    <!-- Featured Courses -->
+    <section id="featured-courses" class="featured-courses">
+      <div class="container" data-aos="fade-up">
+        <div class="section-title">
           <h2>Featured Courses</h2>
           <p>Check out these top-rated courses in Business</p>
         </div>
-
         <div class="row" data-aos="zoom-in" data-aos-delay="100">
-
           <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
             <div class="course-item">
               <img src="assets/img/course-4.jpg" class="img-fluid" alt="...">
@@ -309,13 +204,13 @@
                 </div>
                 <div class="course-info">
                   <div class="course-price">$59.99</div>
-                  <a href="#" class="btn-buy">Buy Course</a>
+                  <button class="btn-buy" onclick="addToCart('Financial Analysis', 59.99, 'assets/img/course-4.jpg')">Add to Cart</button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
+          <div class="col-lg_4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
             <div class="course-item">
               <img src="assets/img/course-5.jpg" class="img-fluid" alt="...">
               <div class="course-content">
@@ -332,7 +227,7 @@
                 </div>
                 <div class="course-info">
                   <div class="course-price">$79.99</div>
-                  <a href="#" class="btn-buy">Buy Course</a>
+                  <button class="btn-buy" onclick="addToCart('Startup Fundamentals', 79.99, 'assets/img/course-5.jpg')">Add to Cart</button>
                 </div>
               </div>
             </div>
@@ -355,14 +250,13 @@
                 </div>
                 <div class="course-info">
                   <div class="course-price">$89.99</div>
-                  <a href="#" class="btn-buy">Buy Course</a>
+                  <button class="btn-buy" onclick="addToCart('Strategic Management', 89.99, 'assets/img/course-6.jpg')">Add to Cart</button>
                 </div>
               </div>
             </div>
           </div>
 
         </div>
-
       </div>
     </section>
     <!-- End Featured Courses -->
@@ -370,16 +264,37 @@
   </main>
   <!-- End Main Content -->
 
-  <!-- Vendor JS Files -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
   <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
   <script src="assets/vendor/quill/quill.min.js" th:src="@{/assets/vendor/quill/quill.min.js}"></script>
   <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
-
-  <!-- Template Main JS File -->
   <script src="assets/js/main.js" th:src="@{/assets/js/main.js}"></script>
+
+  <script>
+    function addToCart(productName, price, imageUrl) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const productExists = cart.some(item => item.productName === productName);
+      if (!productExists) {
+        cart.push({ productName, price, imageUrl });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert(`${productName} has been added to your cart!`);
+      } else {
+        alert(`${productName} is already in your cart!`);
+      }
+    }
+  </script>
 
 </body>
 
 </html>
-  

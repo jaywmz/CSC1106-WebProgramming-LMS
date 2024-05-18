@@ -128,8 +128,7 @@
           <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Finance & Accounting
           </a>
-          <ul class="dropdown-menu"
-          aria-labelledby="financeDropdown">
+          <ul class="dropdown-menu" aria-labelledby="financeDropdown">
           <li><a class="dropdown-item" href="#">Accounting</a></li>
           <li><a class="dropdown-item" href="#">Investing & Trading</a></li>
           <li><a class="dropdown-item" href="#">Financial Modeling</a></li>
@@ -274,8 +273,7 @@
           </div>
         </div>
 
-      </
-      div>
+      </div>
 
     </div>
   </section>
@@ -309,7 +307,7 @@
               </div>
               <div class="course-info">
                 <div class="course-price">$49.99</div>
-                <a href="#" class="btn-buy">Buy Course</a>
+                <button class="btn-buy" onclick="addToCart('Python Programming', 49.99, 'assets/img/course-1.jpg')">Add to Cart</button>
               </div>
             </div>
           </div>
@@ -332,7 +330,7 @@
               </div>
               <div class="course-info">
                 <div class="course-price">$69.99</div>
-                <a href="#" class="btn-buy">Buy Course</a>
+                <button class="btn-buy" onclick="addToCart('Ethical Hacking', 69.99, 'assets/img/course-2.jpg')">Add to Cart</button>
               </div>
             </div>
           </div>
@@ -355,7 +353,7 @@
               </div>
               <div class="course-info">
                 <div class="course-price">$99.99</div>
-                <a href="#" class="btn-buy">Buy Course</a>
+                <button class="btn-buy" onclick="addToCart('CCNA Certification', 99.99, 'assets/img/course-3.jpg')">Add to Cart</button>
               </div>
             </div>
           </div>
@@ -378,6 +376,24 @@
 
 <!-- Template Main JS File -->
 <script src="assets/js/main.js" th:src="@{/assets/js/main.js}"></script>
+
+<!-- Custom JavaScript for Add to Cart functionality -->
+<script>
+  function addToCart(productName, price, imageUrl) {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Check if the product is already in the cart
+    const productExists = cart.some(item => item.productName === productName);
+    
+    if (!productExists) {
+        cart.push({ productName, price, imageUrl });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert(`${productName} has been added to your cart!`);
+    } else {
+        alert(`${productName} is already in your cart!`);
+    }
+  }
+</script>
 
 </body>
 

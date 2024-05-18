@@ -25,8 +25,8 @@ public class ForumController {
     // private CourseForumRepo courseForumRepo;
     @Autowired
     private ForumThreadRepo forumThreadRepo;
-    // @Autowired
-    // private ThreadReplyRepo threadReplyRepo;
+    @Autowired
+    private ThreadReplyRepo threadReplyRepo;
 
     @GetMapping("/forum")
     public String getAllThreads(Model model) {
@@ -59,6 +59,15 @@ public class ForumController {
         thread.ifPresent(t -> threadSelected.add(t));
 
         model.addAttribute("threadSelected", threadSelected.toArray());
+
+        Iterable<ThreadReply> threadReply = threadReplyRepo.findByThreadID(threadId); // Find replies by id
+        ArrayList<ThreadReply> replies = new ArrayList<>();
+        for (ThreadReply r : threadReply) {
+            replies.add(r);
+        }
+
+        model.addAttribute("replies", replies.toArray());
+
         return "forumthread";
     }
     

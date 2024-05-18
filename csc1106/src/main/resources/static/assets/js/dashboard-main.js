@@ -317,3 +317,53 @@
   }
 
 })();
+
+document.addEventListener('DOMContentLoaded', async (event) => {
+
+  courseSearchData = {
+    courseId: '0',
+    courseInstructor: null,
+    courseLevel: null
+  };
+
+  // Test Completed
+  // let re = await getCourse(courseSearchData);
+  // console.log(re);
+});
+
+async function getCourse(data){
+
+  if(!data){
+    return console.error('Please provide search parameters');
+  }
+
+  if(!data.courseId && !data.courseInstructor && !data.courseLevel){
+    return console.error('Please provide at least one search parameter');
+  }
+
+  var fetchString = '/course' 
+    + (data.courseId ? `?courseId=${data.courseId}` : '') 
+    + (data.courseInstructor ? `?courseInstructor=${data.courseInstructor}` : '') 
+    + (data.courseLevel ? `?courseLevel=${data.courseLevel}` : '');
+
+  var parts = fetchString.split('?');
+  if (parts.length > 1) {
+    fetchString = [parts[0], parts.slice(1).join('&')].join('?');
+  }
+
+  const response = await fetch(fetchString);
+  if (response.ok) {
+    return await response.json();
+  } else {
+    return [];
+  }
+}
+
+async function getAllCourses(){
+  const response = await fetch('/course');
+  if (response.ok) {
+    return await response.json();
+  } else {
+    return [];
+  }
+}

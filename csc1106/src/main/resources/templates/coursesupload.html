@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - LearnZenith</title>
+    <link rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>All Courses</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Lecturer</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="course : ${courses}">
+                    <td th:text="${course.title}">Course Title</td>
+                    <td th:text="${course.description}">Course Description</td>
+                    <td th:text="${course.lecturer}">Lecturer</td>
+                    <td th:text="${course.price}">Price</td>
+                    <td th:text="${course.status}">Status</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
