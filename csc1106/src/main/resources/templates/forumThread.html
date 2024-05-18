@@ -282,7 +282,7 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/forum">
+        <a class="nav-link active" href="/forum">
           <i class="bi bi-chat-left-text"></i>
           <span>Forum</span>
         </a>
@@ -298,8 +298,9 @@
       <h1>Forum</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
-          <li class="breadcrumb-item active">Forum</li>
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/forum">Forum</a></li>
+          <li class="breadcrumb-item active">Thread</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -309,30 +310,19 @@
       <div class="row">
         <div class="col-lg-15">
 
-          <div class="card">
+          <!-- Card with header and footer -->
+          <div class="card" th:each="thread: ${threadSelected}" style="width: 100%;">
             <div class="card-body">
-              <h4 style="margin-top: 10px;">Threads</h4>
-              <table style="width: 100%;">
-                <tr>
-                  <td style="width: 50%;">Title</td>
-                  <td style="width: 25%;">Created By</td>
-                  <td style="width: 15%;">Date</td>
-                  <td style="width: 10%;">Time</td>
-                </tr>
-              </table>
-              <table th:each="thread: ${threadSelected}" style="width: 100%;">
-                <tr class="card-title">
-                  <td th:text="${thread.title}" style="width: 50%;"/>
-                  <td th:text="${thread.posterName}" style="width: 25%;"/>
-                  <td th:text="${thread.postDate}" style="width: 15%;"/>
-                  <td th:text="${thread.postTime}" style="width: 10%;"/>
-                </tr>
-                <tr>
-                </tr>
-              <table>
-                
+              <h5 class="card-title" th:text="${thread.title}"></h5>
+              <span th:text="${thread.content}"></span>
             </div>
+            <div class="card-footer">
+              <span th:text="'Posted on ' + ${thread.postDate} + ' at ' + ${thread.postTime} + ' by ' + ${thread.posterName}"></span>
+            </div>
+          </div><!-- End Card with header and footer -->
           </div>
+
+          <button type="button" class="btn btn-primary" style="margin: 0px 12px; max-width: 15%;">Add a Reply</button>
 
         </div>
       </div>
