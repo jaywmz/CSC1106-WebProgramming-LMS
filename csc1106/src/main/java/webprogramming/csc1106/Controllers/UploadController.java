@@ -14,10 +14,10 @@ public class UploadController {
     @Autowired
     private UploadCourseService courseService;
 
-    @GetMapping("/coursesupload")
+    @GetMapping("/courses")
     public String showCoursesPage(Model model) {
         model.addAttribute("courses", courseService.getAllCourses());
-        return "coursesupload";
+        return "courses";
     }
 
     @GetMapping("/upload")
