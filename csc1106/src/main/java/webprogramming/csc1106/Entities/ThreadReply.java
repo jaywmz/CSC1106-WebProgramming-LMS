@@ -52,17 +52,17 @@ public class ThreadReply {
         return commentID;
     }
 
-    // public void setCommentID(int commentID) {
-    //     this.commentID = commentID;
-    // }
+    public void setCommentID(int commentID) {
+        this.commentID = commentID;
+    }
 
     public int getThreadID() {
         return threadID;
     }
 
-    // public void setThreadID(int threadID) {
-    //     this.threadID = threadID;
-    // }
+    public void setThreadID(int threadID) {
+        this.threadID = threadID;
+    }
 
     public String getResponderName() {
         return responderName;
