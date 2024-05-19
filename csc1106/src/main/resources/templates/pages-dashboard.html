@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile Dropdown</title>
+<style>
+  /* CSS Styles */
+  .dropbtn {
+    background-color: #3498db;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- HTML Content -->
+<div class="dropdown">
+  <button onclick="toggleDropdown()" class="dropbtn">
+    <strong>Username:</strong> <span th:text="${user.UserName}"></span><br>
+    <strong>Role:</strong> 
+    <span th:if="${user.roleID == 1}">Staff</span>
+    <span th:if="${user.roleID == 2}">Professor</span>
+    <span th:if="${user.roleID == 3}">Student</span><br>
+    <strong>Email:</strong> <span th:text="${user.UserEmail}"></span>
+    <span class="caret"></span>
+  </button>
+  <div id="dropdown-content" class="dropdown-content">
+    <a th:href="@{'/settings/' + ${encoded}}" class="btn">Settings</a> 
+    <a href="http://localhost:8080">Logout</a>
+  </div>
+</div>
+
+<script>
+  // JavaScript Functionality
+  function toggleDropdown() {
+    document.getElementById("dropdown-content").classList.toggle("show");
+  }
+
+  // Close the dropdown menu if the user clicks outside of it
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
