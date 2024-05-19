@@ -57,7 +57,7 @@ public class RegisterController {
 
         // Redirect to a success page or dashboard after successful registration
         logger.debug("Redirecting to /dashboard after successful registration");
-        return "redirect:/dashboard";
+        return "redirect:/login";
     }
 
     private void saveUser(User user) {
