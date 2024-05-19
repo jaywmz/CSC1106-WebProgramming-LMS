@@ -69,6 +69,7 @@ public class ForumController {
         }
 
         model.addAttribute("replies", replies.toArray());
+        // System.out.println(replies.toArray());
         model.addAttribute("newReply", new ThreadReply());
 
         return "forumthread";

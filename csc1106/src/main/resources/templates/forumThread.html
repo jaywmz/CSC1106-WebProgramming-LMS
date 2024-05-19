@@ -324,18 +324,49 @@
           <h4 th:if="${replies.length != 0}" th:text="Replies"></h4>
           
           <div class="card" th:each="reply: ${replies}" style="width: 100%;">
-            <div class="card-body" style="padding-top: 15px;">
-              <span th:utext="${reply.replyContent}"></span>
-            </div>
-            <div class="card-footer">
-              <span th:text="'Posted on ' + ${reply.replyDate} + ' at ' + ${reply.replyTime} + ' by ' + ${reply.responderName}"></span>
-            </div>
+            <!-- <div th:if="${reply.commentID == 0}"> -->
+              <div class="card-body" style="padding-top: 15px;">
+                <span th:utext="${reply.replyContent}"></span>
+              </div>
+              <div class="card-footer">
+                <span th:text="'Posted on ' + ${reply.replyDate} + ' at ' + ${reply.replyTime} + ' by ' + ${reply.responderName}"></span>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered'+${reply.replyID}" style="float: right;">
+                  Reply
+                </button>
+                <div class="modal fade" th:id="'verticalycentered' + ${reply.replyID}" tabindex="-1">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" style="color: black;" th:text="'Reply to comment by ' + ${reply.responderName}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body" style="color: black;">
+                        <span th:utext="${reply.replyContent}"></span>
+                      </div>
+                      <form action="#" method="post" class="needs-validation" novalidate>
+                        <div class="modal-body" style="color: black;">
+                          <div class="form-floating">
+                            <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;"></textarea>
+                            <label for="floatingReplyArea">Add a reply</label>
+                            <div class="invalid-feedback">Please enter your reply</div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <!-- </div> -->
           </div>
-          
-          <div th:with="thread=${threadSelected[0]}">
+
+          <div th:with="thread=${threadSelected[0]}" style="border-top: 1px solid #cddfff; padding-top: 20px;">
             <form action="#" th:action="@{/add-reply/0/{threadID}(threadID=${thread.threadID})}" th:object="${newReply}" method="post" class="needs-validation" novalidate> 
               <div class="form-floating">
-                <textarea required class="form-control" placeholder="Address" id="floatingTextarea" style="height: 100px;" th:field="*{replyContent}"></textarea>
+                <textarea required class="form-control" placeholder="" id="floatingTextarea" style="height: 100px;" th:field="*{replyContent}"></textarea>
                 <label for="floatingTextarea">Add a reply</label>
                 <div class="invalid-feedback">Please enter your reply</div>
               </div>
@@ -343,7 +374,7 @@
                 <button type="submit" class="btn btn-primary" style="max-width: 15%;">Submit</button>
               </div>
             </form>
-            </div>
+          </div>
 
 
         </div>
