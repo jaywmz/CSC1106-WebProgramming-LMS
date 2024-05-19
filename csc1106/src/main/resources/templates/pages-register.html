@@ -66,24 +66,25 @@
 
                   <form class="row g-3 needs-validation" action="/register" method="post" novalidate>
 
+                    <!-- Remove User ID Field -->
+                    <!--
                     <div class="col-12">
                       <label for="userId" class="form-label">User ID</label>
                       <input type="number" name="userID" class="form-control" id="userId" required>
                       <div class="invalid-feedback">Please enter the User ID.</div>
-                  </div>
+                    </div>
+                    -->
 
-                  <div class="col-12">
-                    <label for="roleId" class="form-label">Role</label>
-                    <select name="roleID" class="form-select" id="roleId" required>
-                      <option value="1">1 (Staff)</option>
-                      <option value="2">2 (Professor)</option>
-                      <option value="3">3 (Student)</option>
-                    </select>
-                    <div class="invalid-feedback">Please select a Role.</div>
-                  </div>
-                  
+                    <div class="col-12">
+                      <label for="roleId" class="form-label">Role</label>
+                      <select name="roleID" class="form-select" id="roleId" required>
+                        <option value="1">1 (Staff)</option>
+                        <option value="2">2 (Professor)</option>
+                        <option value="3">3 (Student)</option>
+                      </select>
+                      <div class="invalid-feedback">Please select a Role.</div>
+                    </div>
 
-                    
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Username</label>
                       <div class="input-group has-validation">
@@ -96,7 +97,7 @@
                     <div class="col-12">
                       <label for="yourEmail" class="form-label">Your Email</label>
                       <input type="email" name="userEmail" class="form-control" id="yourEmail" required>
-                      <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                      <div class="invalid-feedback">Please enter a valid Email address!</div>
                     </div>
 
                     <div class="col-12">
