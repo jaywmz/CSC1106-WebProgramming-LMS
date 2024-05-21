@@ -363,7 +363,9 @@
           <div class="card">
             <div class="card-body">
               <a href="post-thread">
-                <button type="button" class="btn btn-primary" style="float: right; margin-top: 12px;"><i class="bi bi-plus me-1"></i> Post new thread</button>
+                <button type="button" class="btn btn-primary" style="float: right; margin-top: 12px; font-family: Poppins;">
+                  <i class="bi bi-plus me-1"></i> Post new thread
+                </button>
               </a>
               <h5 class="card-title">Threads
               </h5>
@@ -372,7 +374,7 @@
               <table class="table table-hover" style="table-layout: fixed;">
                 <thead>
                   <tr>
-                    <th style="width: 5%;" scope="col">#</th>
+                    <!-- <th style="width: 5%;" scope="col">#</th> -->
                     <th style="width: 50%;" scope="col">Title</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Date</th>
@@ -381,7 +383,7 @@
                 </thead>
                 <tbody th:each="thread: ${threads}" style="width: 100%;">
                   <tr>
-                    <th scope="row" th:text="${thread.threadID}"></th>
+                    <!-- <th scope="row" th:text="${thread.threadID}"></th> -->
                     <td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
                       <a th:text="${thread.title}" th:href="@{'/forum/' + ${thread.threadID}}"/>
                     </td>

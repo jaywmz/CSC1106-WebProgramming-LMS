@@ -34,7 +34,7 @@ public class ForumController {
 
     @GetMapping("/forum")
     public String getAllThreads(@RequestParam(defaultValue = "1") int page, Model model) {
-        Page<ForumThread> queriedThreads = forumThreadRepo.findAllByForumID(1, PageRequest.of(page - 1, 10));
+        Page<ForumThread> queriedThreads = forumThreadRepo.findAllByForumIDOrderByPostDateDesc(1, PageRequest.of(page - 1, 10));
 
         model.addAttribute("threads", queriedThreads.getContent());
         model.addAttribute("currentPage", page);
