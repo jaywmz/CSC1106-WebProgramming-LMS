@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,24 +33,15 @@ public class ForumController {
     private ThreadReplyRepo threadReplyRepo;
 
     @GetMapping("/forum")
-    public String getAllThreads(Model model) {
-        // Date date = new Date(100);
-        // Time time = new Time(1000);
-        // ForumThread thread1 = new ForumThread(1, 1, "Poster Name", date, time, 0, "Example title", "Example content");
-        // ForumThread thread2 = new ForumThread(2, 1, "Poster Name2", date, time, 0, "Example title again", "Example content again");
-        // forumThreadRepo.save(thread1);
-        // forumThreadRepo.save(thread2);
-        // model.addAttribute("thread1", thread1);
-        // model.addAttribute("thread2", thread2);
+    public String getAllThreads(@RequestParam(defaultValue = "1") int page, Model model) {
+        // TODO: change the forumID parameter to the user selected parameter
+        Page<ForumThread> queriedThreads = forumThreadRepo.findAllByForumID(1, PageRequest.of(page - 1, 10));
 
-        Iterable<ForumThread> queriedThreads = forumThreadRepo.findAll();
-        ArrayList<ForumThread> threads = new ArrayList<>();
-        for (ForumThread t : queriedThreads) {
-            threads.add(t);
-        }
+        model.addAttribute("threads", queriedThreads.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPage", queriedThreads.getTotalPages());
         
-        model.addAttribute("threads", threads.toArray());
-        return "forum"; 
+        return "forum";
     }
 
     @GetMapping("/forum/{id}")
