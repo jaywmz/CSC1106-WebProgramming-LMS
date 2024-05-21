@@ -18,12 +18,12 @@ import webprogramming.csc1106.Repositories.ThreadReplyRepo;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class NewThreadController {
+public class PostNewThreadController {
 
     @Autowired
     private ForumThreadRepo forumThreadRepo;
-    @Autowired
-    private ThreadReplyRepo threadReplyRepo;
+    // @Autowired
+    // private ThreadReplyRepo threadReplyRepo;
 
     @GetMapping("/post-thread")
     public String getNewThreadForm(Model model) {
@@ -46,21 +46,21 @@ public class NewThreadController {
         return "redirect:forum"; 
     }
 
-    @PostMapping("/add-reply/{commentID}/{threadID}")
-    public String addReply(@ModelAttribute ThreadReply newReply, Model model, @PathVariable String commentID, @PathVariable String threadID){
-        java.util.Date date = new java.util.Date();
-        Date sqlDate = new Date(date.getTime());
-        Time sqlTime = new Time(date.getTime());
-        newReply.setReplyDate(sqlDate);
-        newReply.setReplyTime(sqlTime);
-        newReply.setResponderName("Example name"); // placeholder
-        newReply.setCommentID(Integer.parseInt(commentID));
-        newReply.setThreadID(Integer.parseInt(threadID));
+    // @PostMapping("/add-reply/{commentID}/{threadID}")
+    // public String addReply(@ModelAttribute ThreadReply newReply, Model model, @PathVariable String commentID, @PathVariable String threadID){
+    //     java.util.Date date = new java.util.Date();
+    //     Date sqlDate = new Date(date.getTime());
+    //     Time sqlTime = new Time(date.getTime());
+    //     newReply.setReplyDate(sqlDate);
+    //     newReply.setReplyTime(sqlTime);
+    //     newReply.setResponderName("Example name"); // placeholder
+    //     newReply.setCommentID(Integer.parseInt(commentID));
+    //     newReply.setThreadID(Integer.parseInt(threadID));
 
-        threadReplyRepo.save(newReply);
+    //     threadReplyRepo.save(newReply);
 
-        // need to change so it actually redirects to the newly created thread's dedicated page
-        return "redirect:/forum/{threadID}"; 
-    }
+    //     // need to change so it actually redirects to the newly created thread's dedicated page
+    //     return "redirect:/forum/{threadID}"; 
+    // }
     
 }

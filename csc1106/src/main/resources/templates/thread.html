@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>LearnZenith</title>
+  <title>Thread - LearnZenith</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -292,10 +292,11 @@
 
   </aside><!-- End Sidebar-->
 
+  <!-- ======= Main ======= -->
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Forum</h1>
+      <h1>Thread</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -323,6 +324,7 @@
 
           <h4 th:if="${replies.length != 0}" th:text="Replies"></h4>
           
+          <!-- Replies section -->
           <div class="card" th:each="reply: ${replies}" style="width: 100%;">
             <!-- <div th:if="${reply.commentID == 0}"> -->
               <div class="card-body" style="padding-top: 15px;">
