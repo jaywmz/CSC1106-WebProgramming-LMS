@@ -30,370 +30,537 @@
   <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
 
   <style>
-    /* Additional CSS to limit the height of the carousel images */
     .carousel-item img {
-      max-height: 300px; /* Adjust the max-height as needed */
-      object-fit: cover;
+        max-height: 300px;
+        object-fit: cover;
     }
 
-    /* CSS for hover-over dropdown menus */
     .header-nav .nav-item.dropdown:hover .dropdown-menu {
-      display: block;
-      margin-top: 0; /* Removes the gap so it looks seamless */
+        display: block;
+        margin-top: 0;
     }
 
-    /* General dropdown alignment for profile, alerts, and notifications */
     .header-nav .dropdown-menu {
-      right: 0;
-      left: auto;
-      top: 100%; /* Position the dropdown below the toggle button */
-      transform: translateY(0px); /* Fine-tuning the vertical position */
+        right: 0;
+        left: auto;
+        top: 100%;
+        transform: translateY(0px);
     }
 
-    /* Ensure the dropdown trigger has proper CSS to position the menu correctly */
     .nav-profile .nav-link, 
     .nav-item .nav-link {
-      position: relative; /* Ensure the relative positioning of the trigger */
+        position: relative;
     }
     .carousel-indicators li {
-      /* Hide the numbering indicator */
-      list-style: none;
+        list-style: none;
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
   }
-  
-  </style>
+
+  .pagination button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    width: 100px;
+    height: 40px;
+    display: flex; /* Add this line */
+    justify-content: center; /* Add this line */
+    align-items: center; /* Add this line */
+  }
+
+  .pagination span {
+      margin: 0 10px;
+  }
+</style>
 </head>
 
 <body>
 
-  <header id="header" class="header fixed-top d-flex align-items-center">
-
-    <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
-        <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
-        <span class="d-none d-lg-block">LearnZenith</span>
-      </a>
-      <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div>
-
-    <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#" th:action="@{/search}">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-      </form>
-    </div>
-
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
-
-        <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="#">
-            <i class="bi bi-search"></i>
-          </a>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="developmentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Development
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="developmentDropdown">
-            <li><a class="dropdown-item" href="#">Web Development</a></li>
-            <li><a class="dropdown-item" href="#">Mobile Development</a></li>
-            <li><a class="dropdown-item" href="#">Game Development</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle active" href="#" id="itSoftwareDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            IT & Software
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="itSoftwareDropdown">
-            <li><a class="dropdown-item" href="#">Programming</a></li>
-            <li><a class="dropdown-item" href="#">Cybersecurity</a></li>
-            <li><a class="dropdown-item" href="#">Network & Security</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="businessDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Business
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="businessDropdown">
-            <li><a class="dropdown-item" href="#">Finance</a></li>
-            <li><a class="dropdown-item" href="#">Entrepreneurship</a></li>
-            <li><a class="dropdown-item" href="#">Business Strategy</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Finance & Accounting
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="financeDropdown">
-          <li><a class="dropdown-item" href="#">Accounting</a></li>
-          <li><a class="dropdown-item" href="#">Investing & Trading</a></li>
-          <li><a class="dropdown-item" href="#">Financial Modeling</a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="designDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Design
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="designDropdown">
-          <li><a class="dropdown-item" href="#">Graphic Design</a></li>
-          <li><a class="dropdown-item" href="#">Web Design</a></li>
-          <li><a class="dropdown-item" href="#">UI/UX Design</a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="marketingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Marketing
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="marketingDropdown">
-          <li><a class="dropdown-item" href="#">Digital Marketing</a></li>
-          <li><a class="dropdown-item" href="#">Social Media Marketing</a></li>
-          <li><a class="dropdown-item" href="#">SEO</a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="about.html">About Us</a>
-      </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          My Account
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="#">Profile</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="#">Billing</a></li>
-          <li><a class="dropdown-item" href="#">Help</a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="contact.html">Contact</a>
-      </li>
-    </ul>
-  </nav>
-</header>
-
-<!-- Main Content -->
-<main id="main">
-
-  <!-- Course Carousel -->
-  <section id="course-carousel" class="course-carousel">
-
-    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="assets/img/course-carousel-1.jpg" class="d-block w-100" alt="...">
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
+                <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
+                <span class="d-none d-lg-block">LearnZenith</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
         </div>
-        <div class="carousel-item">
-          <img src="assets/img/course-carousel-2.jpg" class="d-block w-100" alt="...">
+
+        <div class="search-bar">
+            <form class="search-form d-flex align-items-center" method="POST" action="#" th:action="@{/search}">
+                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+            </form>
         </div>
-        <div class="carousel-item">
-          <img src="assets/img/course-carousel-3.jpg" class="d-block w-100" alt="...">
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link nav-icon search-bar-toggle " href="#">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="developmentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Development
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="developmentDropdown">
+                        <li><a class="dropdown-item" href="#">Web Development</a></li>
+                        <li><a class="dropdown-item" href="#">Mobile Development</a></li>
+                        <li><a class="dropdown-item" href="#">Game Development</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="businessDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Business
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="businessDropdown">
+                        <li><a class="dropdown-item" href="#">Finance</a></li>
+                        <li><a class="dropdown-item" href="#">Entrepreneurship</a></li>
+                        <li><a class="dropdown-item" href="#">Business Strategy</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Finance & Accounting
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="financeDropdown">
+                        <li><a class="dropdown-item" href="#">Accounting</a></li>
+                        <li><a class="dropdown-item" href="#">Investing</a></li>
+                        <li><a class="dropdown-item" href="#">Economics</a></li>
+                    </ul>
+                </li>
+
+                <!-- New navigation links -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/upload}">Upload Course</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/coursesupload}">View Courses</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number">4</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                        <li class="dropdown-header">
+                            You have 4 new notifications
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="notification-item">
+                            <i class="bi bi-exclamation-circle text-warning"></i>
+                            <div>
+                                <h4>Lorem Ipsum</h4>
+                                <p>Quae dolorem earum veritatis oditseno</p>
+                                <p>30 min. ago</p>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="notification-item">
+                            <i class="bi bi-x-circle text-danger"></i>
+                            <div>
+                                <h4>Atque rerum nesciunt</h4>
+                                <p>Quae dolorem earum veritatis oditseno</p>
+                                <p>1 hr. ago</p>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="notification-item">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <div>
+                                <h4>Sit rerum fuga</h4>
+                                <p>Quae dolorem earum veritatis oditseno</p>
+                                <p>2 hrs. ago</p>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="notification-item">
+                            <i class="bi bi-info-circle text-primary"></i>
+                            <div>
+                                <h4>Dicta reprehenderit</h4>
+                                <p>Quae dolorem earum veritatis oditseno</p>
+                                <p>4 hrs. ago</p>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-footer">
+                            <a href="#">Show all notifications</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-chat-left-text"></i>
+                        <span class="badge bg-success badge-number">3</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+                        <li class="dropdown-header">
+                            You have 3 new messages
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle" th:src="@{/assets/img/messages-1.jpg}">
+                                <div>
+                                    <h4>Maria Hudson</h4>
+                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                    <p>4 hrs. ago</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle" th:src="@{/assets/img/messages-2.jpg}">
+                                <div>
+                                    <h4>Anna Nelson</h4>
+                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                    <p>6 hrs. ago</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle" th:src="@{/assets/img/messages-3.jpg}">
+                                <div>
+                                    <h4>David Muldon</h4>
+                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                                    <p>8 hrs. ago</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-footer">
+                            <a href="#">Show all messages</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown pe-3 nav-profile">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>Kevin Anderson</h6>
+                            <span>Web Designer</span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html" th:href="@{/users-profile.html}">
+                                <i class="bi bi-person"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html" th:href="@{/users-profile.html}">
+                                <i class="bi bi-gear"></i>
+                                <span>Account Settings</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html" th:href="@{/pages-faq.html}">
+                                <i class="bi bi-question-circle"></i>
+                                <span>Need Help?</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="#" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
+          <li class="nav-item">
+              <a class="nav-link" th:href="@{/dashboard}">
+                  <i class="bi bi-grid"></i>
+                  <span>Dashboard</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+                  <i class="bi bi-menu-button-wide"></i><span>Courses</span><i class="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                  <li>
+                      <a class="nav-link collapsed" th:href="@{/IT_Software}">
+                          <i class="bi bi-circle"></i><span>IT & Software</span>
+                      </a>
+                  </li>
+                  <li>
+                      <a class="nav-link collapsed" th:href="@{/business}">
+                          <i class="bi bi-circle"></i><span>Business</span>
+                      </a>
+                  </li>
+                  <li>
+                      <a class="nav-link collapsed" th:href="@{/Finance_Accounting}">
+                          <i class="bi bi-circle"></i><span>Finance & Accounting</span>
+                      </a>
+                  </li>
+              </ul>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="users-profile.html" th:href="@{/users-profile.html}">
+                  <i class="bi bi-book"></i>
+                  <span>My-Learning</span>
+              </a>
+          </li>
+          <li class="nav-heading">Pages</li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" th:href="@{/checkout}">
+                  <i class="bi bi-cart"></i>
+                  <span>Cart</span>
+              </a>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="users-profile.html" th:href="@{/users-profile.html}">
+                  <i class="bi bi-person"></i>
+                  <span>Profile</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="pages-faq.html" th:href="@{/pages-faq.html}">
+                  <i class="bi bi-question-circle"></i>
+                  <span>F.A.Q</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="pages-contact.html" th:href="@{/pages-contact.html}">
+                  <i class="bi bi-envelope"></i>
+                  <span>Contact</span>
+              </a>
+          </li>
+      </ul>
+  </aside>
+
+    <main id="main">
+
+    <!-- Display total number of courses -->
+    <section id="course-summary" class="section">
+      <div class="container">
+        <h2>Total Courses Available</h2>
+        <p>Total Courses: <span th:text="${totalCourses}"></span></p>
+      </div>
+    </section>
+
+
+    <!-- Featured Courses -->
+    <section id="featured-courses" class="featured-courses">
+      <div class="container" data-aos="fade-up">
+        <div class="section-title">
+          <h2>Featured Courses</h2>
+          <p>Check out these top-rated courses in Business</p>
+        </div>
+        <div class="row" id="featuredCourses" data-aos="zoom-in" data-aos-delay="100">
+          <!-- Courses will be dynamically inserted here -->
+        </div>
+        <div class="pagination">
+          <button id="prevPage" onclick="changePage(-1)">Previous</button>
+          <span id="pageNumber">1</span>
+          <button id="nextPage" onclick="changePage(1)">Next</button>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+    </section>
+    <!-- End Featured Courses -->
+
+  </main>
+  <!-- End Main Content -->
+
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
     </div>
-
-  </section>
-  <!-- End Course Carousel -->
-
-  <!-- Course Categories -->
-  <section id="course-categories" class="course-categories">
-    <div class="container" data-aos="fade-up">
-
-      <div class="section-title">
-        <h2>Popular Categories</h2>
-        <p>Explore the most popular categories in IT & Software</p>
-      </div>
-
-      <div class="row">
-
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-          <div class="course-category">
-            <img src="assets/img/course-category-1.jpg" class="img-fluid" alt="">
-            <h3><a href="#">Programming</a></h3>
-            <p>Learn the fundamentals of programming and coding.</p>
-            <div class="trainer">
-              <div class="trainer-profile d-flex align-items-center">
-                <img src="assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                <span>David Smith</span>
-              </div>
-              <div class="trainer-rank d-flex align-items-center">
-                <i class="bi bi-star-fill"></i><span>4.8</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
-          <div class="course-category">
-            <img src="assets/img/course-category-2.jpg" class="img-fluid" alt="">
-            <h3><a href="#">Cybersecurity</a></h3>
-            <p>Protect networks, systems, and data from cyber threats.</p>
-            <div class="trainer">
-              <div class="trainer-profile d-flex align-items-center">
-                <img src="assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                <span>Emily Johnson</span>
-              </div>
-              <div class="trainer-rank d-flex align-items-center">
-                <i class="bi bi-star-fill"></i><span>4.7</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
-          <div class="course-category">
-            <img src="assets/img/course-category-3.jpg" class="img-fluid" alt="">
-            <h3><a href="#">Network & Security</a></h3>
-            <p>Learn about network infrastructure and security protocols.</p>
-            <div class="trainer">
-              <div class="trainer-profile d-flex align-items-center">
-                <img src="assets/img/trainers/trainer-3.jpg" class="img-fluid" alt="">
-                <span>Michael Brown</span>
-              </div>
-              <div class="trainer-rank d-flex align-items-center">
-                <i class="bi bi-star-fill"></i><span>4.9</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
+    <div class="credits">
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
     </div>
-  </section>
-  <!-- End Course Categories -->
+  </footer>
 
-  <!-- Featured Courses -->
-  <section id="featured-courses" class="featured-courses">
-    <div class="container" data-aos="fade-up">
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-      <div class="section-title">
-        <h2>Featured Courses</h2>
-        <p>Check out these top-rated courses in IT & Software</p>
-      </div>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
+  <script src="assets/vendor/quill/quill.min.js" th:src="@{/assets/vendor/quill/quill.min.js}"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+  <script src="assets/js/main.js" th:src="@{/assets/js/main.js}"></script>
 
-      <div class="row" data-aos="zoom-in" data-aos-delay="100">
+  <script>
+    const courses = [
+      {
+        name: "Financial Analysis",
+        description: "Master the skills of financial analysis and reporting.",
+        trainer: "John Doe",
+        rating: 4.5,
+        price: 59.99,
+        imageUrl: "assets/img/course-4.jpg"
+      },
+      {
+        name: "Startup Fundamentals",
+        description: "Learn the fundamentals of starting and managing a startup.",
+        trainer: "Jane Smith",
+        rating: 4.6,
+        price: 79.99,
+        imageUrl: "assets/img/course-5.jpg"
+      },
+      {
+        name: "Strategic Management",
+        description: "Develop strategic thinking and leadership skills.",
+        trainer: "Michael Johnson",
+        rating: 4.7,
+        price: 89.99,
+        imageUrl: "assets/img/course-6.jpg"
+      },
+      {
+        name: "Business Analytics",
+        description: "Learn to analyze and interpret business data.",
+        trainer: "Anna Taylor",
+        rating: 4.8,
+        price: 99.99,
+        imageUrl: "assets/img/course-7.jpg"
+      },
+      {
+        name: "Marketing Essentials",
+        description: "Discover the fundamentals of marketing.",
+        trainer: "Mark Wilson",
+        rating: 4.4,
+        price: 49.99,
+        imageUrl: "assets/img/course-8.jpg"
+      },
+      {
+        name: "Project Management",
+        description: "Gain skills to effectively manage projects.",
+        trainer: "Sarah Connor",
+        rating: 4.9,
+        price: 69.99,
+        imageUrl: "assets/img/course-9.jpg"
+      },
+      {
+        name: "Leadership Skills",
+        description: "Develop your leadership skills to lead teams effectively.",
+        trainer: "Tom Clark",
+        rating: 4.3,
+        price: 89.99,
+        imageUrl: "assets/img/course-10.jpg"
+      },
+      {
+        name: "Sales Techniques",
+        description: "Learn effective sales techniques and strategies.",
+        trainer: "Emily Davis",
+        rating: 4.6,
+        price: 79.99,
+        imageUrl: "assets/img/course-11.jpg"
+      },
+      {
+        name: "Business Communication",
+        description: "Improve your business communication skills.",
+        trainer: "Robert Brown",
+        rating: 4.5,
+        price: 59.99,
+        imageUrl: "assets/img/course-12.jpg"
+      }
+    ];
 
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+    const itemsPerPage = 6;
+    let currentPage = 1;
+
+    function renderCourses(page) {
+      const start = (page - 1) * itemsPerPage;
+      const end = page * itemsPerPage;
+      const paginatedCourses = courses.slice(start, end);
+
+      const coursesContainer = document.getElementById('featuredCourses');
+      coursesContainer.innerHTML = '';
+
+      paginatedCourses.forEach(course => {
+        const courseItem = document.createElement('div');
+        courseItem.className = 'col-lg-4 col-md-6 d-flex align-items-stretch';
+
+        courseItem.innerHTML = `
           <div class="course-item">
-            <img src="assets/img/course-1.jpg" class="img-fluid" alt="...">
+            <img src="${course.imageUrl}" class="img-fluid" alt="...">
             <div class="course-content">
-              <h3><a href="#">Python Programming</a></h3>
-              <p>Learn Python from scratch and build your first program.</p>
+              <h3><a href="#">${course.name}</a></h3>
+              <p>${course.description}</p>
               <div class="trainer">
                 <div class="trainer-profile d-flex align-items-center">
-                  <img src="assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                  <span>David Smith</span>
+                  <img src="assets/img/trainers/trainer-4.jpg" class="img-fluid" alt="">
+                  <span>${course.trainer}</span>
                 </div>
                 <div class="trainer-rank d-flex align-items-center">
-                  <i class="bi bi-star-fill"></i><span>4.8</span>
+                  <i class="bi bi-star-fill"></i><span>${course.rating}</span>
                 </div>
               </div>
               <div class="course-info">
-                <div class="course-price">$49.99</div>
-                <button class="btn-buy" onclick="addToCart('Python Programming', 49.99, 'assets/img/course-1.jpg')">Add to Cart</button>
+                <div class="course-price">$${course.price}</div>
+                <button class="btn-buy" onclick="addToCart('${course.name}', ${course.price}, '${course.imageUrl}')">Add to Cart</button>
               </div>
             </div>
           </div>
-        </div>
+        `;
+        coursesContainer.appendChild(courseItem);
+      });
 
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-          <div class="course-item">
-            <img src="assets/img/course-2.jpg" class="img-fluid" alt="...">
-            <div class="course-content">
-              <h3><a href="#">Ethical Hacking</a></h3>
-              <p>Learn ethical hacking and penetration testing techniques.</p>
-              <div class="trainer">
-                <div class="trainer-profile d-flex align-items-center">
-                  <img src="assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                  <span>Emily Johnson</span>
-                </div>
-                <div class="trainer-rank d-flex align-items-center">
-                  <i class="bi bi-star-fill"></i><span>4.7</span>
-                </div>
-              </div>
-              <div class="course-info">
-                <div class="course-price">$69.99</div>
-                <button class="btn-buy" onclick="addToCart('Ethical Hacking', 69.99, 'assets/img/course-2.jpg')">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      document.getElementById('pageNumber').innerText = page;
+    }
 
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
-          <div class="course-item">
-            <img src="assets/img/course-3.jpg" class="img-fluid" alt="...">
-            <div class="course-content">
-              <h3><a href="#">CCNA Certification</a></h3>
-              <p>Prepare for the CCNA exam and become a certified network engineer.</p>
-              <div class="trainer">
-                <div class="trainer-profile d-flex align-items-center">
-                  <img src="assets/img/trainers/trainer-3.jpg" class="img-fluid" alt="">
-                  <span>Michael Brown</span>
-                </div>
-                <div class="trainer-rank d-flex align-items-center">
-                  <i class="bi bi-star-fill"></i><span>4.9</span>
-                </div>
-              </div>
-              <div class="course-info">
-                <div class="course-price">$99.99</div>
-                <button class="btn-buy" onclick="addToCart('CCNA Certification', 99.99, 'assets/img/course-3.jpg')">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-        </div>
+    function changePage(direction) {
+      const totalPages = Math.ceil(courses.length / itemsPerPage);
+      currentPage += direction;
 
-      </div>
+      if (currentPage < 1) {
+        currentPage = 1;
+      } else if (currentPage > totalPages) {
+        currentPage = totalPages;
+      }
 
-    </div>
-  </section>
-  <!-- End Featured Courses -->
+      renderCourses(currentPage);
+    }
 
-</main>
-<!-- End Main Content -->
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCourses(currentPage);
+    });
 
-<!-- Vendor JS Files -->
-<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
-<script src="assets/vendor/quill/quill.min.js" th:src="@{/assets/vendor/quill/quill.min.js}"></script>
-<script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
-
-<!-- Template Main JS File -->
-<script src="assets/js/main.js" th:src="@{/assets/js/main.js}"></script>
-
-<!-- Custom JavaScript for Add to Cart functionality -->
-<script>
-  function addToCart(productName, price, imageUrl) {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // Check if the product is already in the cart
-    const productExists = cart.some(item => item.productName === productName);
-    
-    if (!productExists) {
+    function addToCart(productName, price, imageUrl) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const productExists = cart.some(item => item.productName === productName);
+      if (!productExists) {
         cart.push({ productName, price, imageUrl });
+       
+
         localStorage.setItem('cart', JSON.stringify(cart));
         alert(`${productName} has been added to your cart!`);
-    } else {
+      } else {
         alert(`${productName} is already in your cart!`);
+      }
     }
-  }
-</script>
+  </script>
 
 </body>
 
