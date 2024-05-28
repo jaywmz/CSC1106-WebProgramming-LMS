@@ -325,8 +325,9 @@
           <h4 th:if="${replies.length != 0}" th:text="Replies"></h4>
           
           <!-- Replies section -->
-          <div class="card" th:each="reply: ${replies}" style="width: 100%;">
-            <!-- <div th:if="${reply.commentID == 0}"> -->
+        <div th:each="reply: ${replies}">
+          <div class="card" style="width: 100%;">
+            <div th:if="${reply.commentID == 0}">
               <div class="card-body" style="padding-top: 15px;">
                 <span th:utext="${reply.replyContent}"></span>
               </div>
@@ -335,6 +336,7 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered'+${reply.replyID}" style="float: right;">
                   Reply
                 </button>
+
                 <div class="modal fade" th:id="'verticalycentered' + ${reply.replyID}" tabindex="-1">
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -345,10 +347,10 @@
                       <div class="modal-body" style="color: black;">
                         <span th:utext="${reply.replyContent}"></span>
                       </div>
-                      <form action="#" method="post" class="needs-validation" novalidate>
+                      <form action="#" method="post" class="needs-validation" novalidate th:action="@{/add-reply/{replyID}/{threadID}(threadID=${reply.threadID}, replyID=${reply.replyID})}" th:object="${newReply}">
                         <div class="modal-body" style="color: black;">
                           <div class="form-floating">
-                            <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;"></textarea>
+                            <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;" th:field="*{replyContent}"></textarea>
                             <label for="floatingReplyArea">Add a reply</label>
                             <div class="invalid-feedback">Please enter your reply</div>
                           </div>
@@ -361,9 +363,19 @@
                     </div>
                   </div>
                 </div>
+
               </div>
-            <!-- </div> -->
+            </div>
           </div>
+          <div class="card" th:each="replyReply: ${replyReplies}" th:if="${replyReply.commentID == reply.replyID}" style="width: 90%; margin-left: 10%">
+              <div class="card-body" style="padding-top: 15px;">
+                <span th:utext="${replyReply.replyContent}"></span>
+              </div>
+              <div class="card-footer">
+                <span th:text="'Posted on ' + ${replyReply.replyDate} + ' at ' + ${replyReply.replyTime} + ' by ' + ${replyReply.responderName}"></span>
+              </div>
+          </div>
+        </div>
 
           <div th:with="thread=${threadSelected[0]}" style="border-top: 1px solid #cddfff; padding-top: 20px;">
             <form action="#" th:action="@{/add-reply/0/{threadID}(threadID=${thread.threadID})}" th:object="${newReply}" method="post" class="needs-validation" novalidate> 

@@ -40,11 +40,17 @@ public class ThreadController {
 
         Iterable<ThreadReply> threadReply = threadReplyRepo.findByThreadID(threadId); // Find replies by id
         ArrayList<ThreadReply> replies = new ArrayList<>();
+        ArrayList<ThreadReply> replyReplies = new ArrayList<>();
         for (ThreadReply r : threadReply) {
-            replies.add(r);
+            if (r.getCommentID() == 0){
+                replies.add(r);
+            }else{
+                replyReplies.add(r);
+            }
         }
 
         model.addAttribute("replies", replies.toArray());
+        model.addAttribute("replyReplies", replyReplies.toArray());
         // System.out.println(replies.toArray());
         model.addAttribute("newReply", new ThreadReply());
 

@@ -1,24 +1,16 @@
 package webprogramming.csc1106.Controllers;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.ForumThreadRepo;
-import webprogramming.csc1106.Repositories.ThreadReplyRepo;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -42,29 +34,5 @@ public class ForumController {
         
         return "forum";
     }
-
-    // @GetMapping("/forum/{id}")
-    // public String openThread(@PathVariable String id, Model model) {
-    //     int threadId = Integer.parseInt(id); // Convert String to int
-
-    //     Optional<ForumThread> thread = forumThreadRepo.findById(threadId); // Find thread by id
-    //     ArrayList<ForumThread> threadSelected = new ArrayList<>();
-
-    //     thread.ifPresent(t -> threadSelected.add(t));
-
-    //     model.addAttribute("threadSelected", threadSelected.toArray());
-
-    //     Iterable<ThreadReply> threadReply = threadReplyRepo.findByThreadID(threadId); // Find replies by id
-    //     ArrayList<ThreadReply> replies = new ArrayList<>();
-    //     for (ThreadReply r : threadReply) {
-    //         replies.add(r);
-    //     }
-
-    //     model.addAttribute("replies", replies.toArray());
-    //     // System.out.println(replies.toArray());
-    //     model.addAttribute("newReply", new ThreadReply());
-
-    //     return "forumthread";
-    // }
 
 }
