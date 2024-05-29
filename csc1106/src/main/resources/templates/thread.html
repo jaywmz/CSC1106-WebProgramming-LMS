@@ -29,6 +29,38 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
+  <style>
+    .card {
+      margin-bottom: 20px;
+    }
+
+    .card-footer {
+      padding: 10px 20px 10px 20px;  
+    }
+
+    .card-body {
+      padding: 20px 20px 20px 20px;
+    }
+
+    .card-title {
+      padding: 0px 0px 0px 0px;
+    }
+
+    #submitReplyBtn {
+      margin-bottom: 20px;
+    }
+
+    #replySectHeader {
+      border-top: 1px solid #cddfff; 
+      padding-top: 20px; 
+      margin-bottom: 20px;
+    }
+
+    #replyBtn {
+      margin-left: 20px;
+    }
+  </style>
+
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -312,7 +344,7 @@
         <div class="col-lg-15">
 
           <!-- Card with header and footer -->
-          <div class="card" th:each="thread: ${threadSelected}" style="width: 100%;">
+          <div class="card" th:each="thread: ${threadSelected}">
             <div class="card-body">
               <h5 class="card-title" th:text="${thread.title}"></h5>
               <span th:utext="${thread.content}"></span>
@@ -322,21 +354,40 @@
             </div>
           </div><!-- End Card with header and footer -->
 
-          <h4 th:if="${replies.length != 0}" th:text="Replies"></h4>
+          <!-- Reply to thread textbox section -->
+          <div th:with="thread=${threadSelected[0]}">
+            <form action="#" th:action="@{/add-reply/0/{threadID}(threadID=${thread.threadID})}" th:object="${newReply}" method="post" class="needs-validation" novalidate> 
+              <div class="form-floating">
+                <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{replyContent}"></textarea>
+                <label for="floatingTextarea">Add a reply</label>
+                <div class="invalid-feedback">Please enter your reply</div>
+              </div>
+              <div class="d-grid gap-2 mt-3">  
+                <button type="submit" class="btn btn-primary" id="submitReplyBtn">Submit</button>
+              </div>
+            </form>
+          </div><!-- End of reply to thread textbox section -->
+
+          <!-- Replies section header -->
+          <h4 th:if="${replies.length != 0}" th:text="Replies" id="replySectHeader"></h4>
           
           <!-- Replies section -->
-        <div th:each="reply: ${replies}">
-          <div class="card" style="width: 100%;">
-            <div th:if="${reply.commentID == 0}">
-              <div class="card-body" style="padding-top: 15px;">
-                <span th:utext="${reply.replyContent}"></span>
-              </div>
-              <div class="card-footer">
-                <span th:text="'Posted on ' + ${reply.replyDate} + ' at ' + ${reply.replyTime} + ' by ' + ${reply.responderName}"></span>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered'+${reply.replyID}" style="float: right;">
-                  Reply
-                </button>
+          <div th:each="reply: ${replies}">
+            <div class="card">
+              <div th:if="${reply.commentID == 0}">
 
+                <!-- Reply template section-->
+                <div class="card-body">
+                  <span th:utext="${reply.replyContent}"></span>
+                </div>
+                <div class="card-footer">
+                  <span th:text="'Posted on ' + ${reply.replyDate} + ' at ' + ${reply.replyTime} + ' by ' + ${reply.responderName}"></span>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered'+${reply.replyID}" id="replyBtn">
+                    Reply
+                  </button>
+                </div><!-- End of reply template section -->
+                
+                <!-- Reply to reply modal popup template section -->
                 <div class="modal fade" th:id="'verticalycentered' + ${reply.replyID}" tabindex="-1">
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -362,35 +413,22 @@
                       </form>
                     </div>
                   </div>
-                </div>
+                </div><!-- End of reply to reply popup section -->
 
               </div>
             </div>
-          </div>
-          <div class="card" th:each="replyReply: ${replyReplies}" th:if="${replyReply.commentID == reply.replyID}" style="width: 90%; margin-left: 10%">
-              <div class="card-body" style="padding-top: 15px;">
-                <span th:utext="${replyReply.replyContent}"></span>
-              </div>
-              <div class="card-footer">
-                <span th:text="'Posted on ' + ${replyReply.replyDate} + ' at ' + ${replyReply.replyTime} + ' by ' + ${replyReply.responderName}"></span>
-              </div>
-          </div>
-        </div>
 
-          <div th:with="thread=${threadSelected[0]}" style="border-top: 1px solid #cddfff; padding-top: 20px;">
-            <form action="#" th:action="@{/add-reply/0/{threadID}(threadID=${thread.threadID})}" th:object="${newReply}" method="post" class="needs-validation" novalidate> 
-              <div class="form-floating">
-                <textarea required class="form-control" placeholder="" id="floatingTextarea" style="height: 100px;" th:field="*{replyContent}"></textarea>
-                <label for="floatingTextarea">Add a reply</label>
-                <div class="invalid-feedback">Please enter your reply</div>
-              </div>
-              <div class="d-grid gap-2 mt-3">  
-                <button type="submit" class="btn btn-primary" style="max-width: 15%;">Submit</button>
-              </div>
-            </form>
-          </div>
-
-
+            <!-- Reply to reply template section  -->
+            <div class="card" th:each="replyReply: ${replyReplies}" th:if="${replyReply.commentID == reply.replyID}" style="width: 90%; margin-left: 10%">
+                <div class="card-body">
+                  <span th:utext="${replyReply.replyContent}"></span>
+                </div>
+                <div class="card-footer">
+                  <span th:text="'Posted on ' + ${replyReply.replyDate} + ' at ' + ${replyReply.replyTime} + ' by ' + ${replyReply.responderName}"></span>
+                </div>
+            </div><!-- Reply to reply template section -->
+          </div><!-- End of Replies section -->
+          
         </div>
       </div>
 
