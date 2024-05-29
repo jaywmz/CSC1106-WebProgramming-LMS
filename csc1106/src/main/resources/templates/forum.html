@@ -29,6 +29,45 @@
   <!-- Template Main CSS File -->
   <link href="assets/css/dashboard-style.css" rel="stylesheet">
 
+  <style>
+    #newThreadBtn {
+      float: right; 
+      margin-top: 12px; 
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+    }
+
+    .table {
+      table-layout: fixed;
+      font-size: 1.1rem;
+    }
+
+    thead {
+      font-family: Poppins;
+    }
+
+    #threadTitle {
+      text-overflow: ellipsis; 
+      overflow: hidden; 
+      white-space: nowrap;
+    }
+
+    #timeCol {
+      width: 50px;
+    }
+
+    td a {
+      display: block;
+      padding: 12px 12px 12px 8px;
+    }
+
+    a:hover {
+      color: #4154f1;
+    }
+  </style>
+
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -362,34 +401,31 @@
 
           <div class="card">
             <div class="card-body">
+
               <a href="post-thread">
-                <button type="button" class="btn btn-primary" style="float: right; margin-top: 12px; font-family: Poppins;">
+                <button type="button" class="btn btn-primary" id="newThreadBtn">
                   <i class="bi bi-plus me-1"></i> Post new thread
                 </button>
               </a>
-              <h5 class="card-title">Threads
-              </h5>
+
+              <h5 class="card-title">Threads</h5>
               
               <!-- Table with hoverable rows -->
-              <table class="table table-hover" style="table-layout: fixed;">
+              <table class="table table-hover">
                 <thead>
                   <tr>
-                    <!-- <th style="width: 5%;" scope="col">#</th> -->
-                    <th style="width: 50%;" scope="col">Title</th>
+                    <th scope="col">Title</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
                   </tr>
                 </thead>
-                <tbody th:each="thread: ${threads}" style="width: 100%;">
+                <tbody th:each="thread: ${threads}">
                   <tr>
-                    <!-- <th scope="row" th:text="${thread.threadID}"></th> -->
-                    <td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                      <a th:text="${thread.title}" th:href="@{'/forum/' + ${thread.threadID}}"/>
-                    </td>
-                    <td th:text="${thread.posterName}"></td>
-                    <td th:text="${thread.postDate}"></td>
-                    <td th:text="${thread.postTime}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.title}" id="threadTitle"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.posterName}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.postDate}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.postTime}"></a></td>
                   </tr>
                 </tbody>
               </table>
