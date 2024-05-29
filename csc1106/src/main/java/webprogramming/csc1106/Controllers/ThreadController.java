@@ -38,7 +38,7 @@ public class ThreadController {
 
         model.addAttribute("threadSelected", threadSelected.toArray());
 
-        Iterable<ThreadReply> threadReply = threadReplyRepo.findByThreadID(threadId); // Find replies by id
+        Iterable<ThreadReply> threadReply = threadReplyRepo.findByThreadIDOrderByReplyDateDescReplyTimeDesc(threadId); // Find replies by id
         ArrayList<ThreadReply> replies = new ArrayList<>();
         ArrayList<ThreadReply> replyReplies = new ArrayList<>();
         for (ThreadReply r : threadReply) {
