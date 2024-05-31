@@ -16,18 +16,22 @@ public class UploadCourse {
     private String lecturer;
     private Double price;
     private String status;
+    private String blobUrl; // URL to the blob storage
+    private String blobName; // Name of the blob
 
     // Default constructor
     public UploadCourse() {
     }
 
     // Constructor with parameters
-    public UploadCourse(String title, String description, String lecturer, Double price, String status) {
+    public UploadCourse(String title, String description, String lecturer, Double price, String status, String blobUrl, String blobName) {
         this.title = title;
         this.description = description;
         this.lecturer = lecturer;
         this.price = price;
         this.status = status;
+        this.blobUrl = blobUrl;
+        this.blobName = blobName;
     }
 
     // Getters
@@ -54,6 +58,13 @@ public class UploadCourse {
     public String getStatus() {
         return status;
     }
+    public String getBlobUrl() {
+        return blobUrl;
+    }
+
+    public String getBlobName() {
+        return blobName;
+    }
 
     // Setters
     public void setId(Long id) {
@@ -79,4 +90,11 @@ public class UploadCourse {
     public void setStatus(String status) {
         this.status = status;
     }
+    public void setBlobUrl(String blobUrl) {
+        this.blobUrl = blobUrl;
+    }
+    public void setBlobName(String blobName) {
+        this.blobName = blobName;
+    }
 }
+

@@ -1,8 +1,10 @@
 spring:
+  application:
+    name: csc1106
   datasource:
-    url: jdbc:mysql://ninsql-ninguest.f.aivencloud.com:19776/defaultdb?ssl-mode=REQUIRED
-    username: avnadmin
-    password: AVNS_7Np6hccvBJR1lkp0SKK
+    url: jdbc:mysql://learnzenith.mysql.database.azure.com:3306/webprogDB?ssl-mode=REQUIRED
+    username: grp7
+    password: Naim6oo3!!!!!
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -14,5 +16,8 @@ spring:
     cache: false
     prefix: classpath:/templates/
     suffix: .html
-    
-   
+
+azure:
+  storage:
+    connection-string: DefaultEndpointsProtocol=https;AccountName=learnzenithblob;AccountKey=AImtsIhXXZHqqyeCr/uD/QuCy+JyvYUDwE1feJqoMtBYnsxu48QGVW6j7pAnKwfakT1qNkZqKoA9+ASt0lTZWQ==;EndpointSuffix=core.windows.net
+    container-name: courseuploads

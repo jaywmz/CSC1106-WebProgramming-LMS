@@ -18,6 +18,8 @@
                     <th>Lecturer</th>
                     <th>Price</th>
                     <th>Status</th>
+                    <th>Blob URL</th>
+                    <th>Blob Name</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +29,8 @@
                     <td th:text="${course.lecturer}">Lecturer</td>
                     <td th:text="${course.price}">Price</td>
                     <td th:text="${course.status}">Status</td>
+                    <td th:text="${course.blobUrl}">Blob URL</td>
+                    <td th:text="${course.blobName}">Blob Name</td>
                 </tr>
             </tbody>
         </table>
