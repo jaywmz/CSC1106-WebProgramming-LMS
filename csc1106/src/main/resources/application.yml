@@ -16,8 +16,12 @@ spring:
     cache: false
     prefix: classpath:/templates/
     suffix: .html
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
 
 azure:
   storage:
-    connection-string: DefaultEndpointsProtocol=https;AccountName=learnzenithblob;AccountKey=AImtsIhXXZHqqyeCr/uD/QuCy+JyvYUDwE1feJqoMtBYnsxu48QGVW6j7pAnKwfakT1qNkZqKoA9+ASt0lTZWQ==;EndpointSuffix=core.windows.net
+    connection-string: DefaultEndpointsProtocol=https;AccountName=learnzenithblob;AccountKey=AImtsIhXXZHqqyeCr/uD/QuCy+JyvYUDwE1feJqoMtBYnsxu48QGVW6j7pAnKwfakT1qNkZqKoA9+ASt0lTZWQ==
     container-name: courseuploads
