@@ -93,8 +93,8 @@ public class UploadCourse {
     public void setBlobUrl(String blobUrl) {
         this.blobUrl = blobUrl;
     }
+
     public void setBlobName(String blobName) {
         this.blobName = blobName;
     }
 }
-

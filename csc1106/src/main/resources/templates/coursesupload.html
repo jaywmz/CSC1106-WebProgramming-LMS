@@ -20,6 +20,7 @@
                     <th>Status</th>
                     <th>Blob URL</th>
                     <th>Blob Name</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,10 @@
                     <td th:text="${course.status}">Status</td>
                     <td th:text="${course.blobUrl}">Blob URL</td>
                     <td th:text="${course.blobName}">Blob Name</td>
+                    <td>
+                        <a th:href="@{/download(courseId=${course.id})}" class="btn btn-primary">Download</a>
+                        <a th:href="@{/view(courseId=${course.id})}" target="_blank" class="btn btn-secondary">View</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
