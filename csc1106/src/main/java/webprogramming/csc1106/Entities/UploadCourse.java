@@ -1,9 +1,7 @@
 package webprogramming.csc1106.Entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class UploadCourse {
@@ -16,85 +14,82 @@ public class UploadCourse {
     private String lecturer;
     private Double price;
     private String status;
-    private String blobUrl; // URL to the blob storage
-    private String blobName; // Name of the blob
+    private String blobUrl;
+    private String blobName;
 
-    // Default constructor
-    public UploadCourse() {
-    }
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Section> sections;
 
-    // Constructor with parameters
-    public UploadCourse(String title, String description, String lecturer, Double price, String status, String blobUrl, String blobName) {
-        this.title = title;
-        this.description = description;
-        this.lecturer = lecturer;
-        this.price = price;
-        this.status = status;
-        this.blobUrl = blobUrl;
-        this.blobName = blobName;
-    }
-
-    // Getters
+    // Getters and setters
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getLecturer() {
-        return lecturer;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-    public String getBlobUrl() {
-        return blobUrl;
-    }
-
-    public String getBlobName() {
-        return blobName;
-    }
-
-    // Setters
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public String getLecturer() {
+        return lecturer;
+    }
+
     public void setLecturer(String lecturer) {
         this.lecturer = lecturer;
+    }
+
+    public Double getPrice() {
+        return price;
     }
 
     public void setPrice(Double price) {
         this.price = price;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getBlobUrl() {
+        return blobUrl;
+    }
+
     public void setBlobUrl(String blobUrl) {
         this.blobUrl = blobUrl;
     }
 
+    public String getBlobName() {
+        return blobName;
+    }
+
     public void setBlobName(String blobName) {
         this.blobName = blobName;
+    }
+
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
     }
 }

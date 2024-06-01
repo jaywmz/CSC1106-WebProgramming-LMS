@@ -31,17 +31,17 @@ public class MarketPlaceController {
             logger.info("Course: " + course.getTitle());
         }
 
-        return "market"; 
+        return "market";
     }
 
     @GetMapping("/checkout")
     public String redirectToCheckout() {
-        return "checkout";  
+        return "checkout";
     }
 
     @GetMapping("/IT_Software")
     public String redirectToITandSoftware() {
-        return "IT_Software";    
+        return "IT_Software";
     }
 
     @GetMapping("/business")

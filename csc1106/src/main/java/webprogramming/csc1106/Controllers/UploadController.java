@@ -7,22 +7,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import webprogramming.csc1106.Entities.Lesson;
+import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Services.UploadCourseService;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Optional;
 
 @Controller
 public class UploadController {
@@ -45,28 +41,32 @@ public class UploadController {
     public String uploadCourse(@ModelAttribute UploadCourse course, @RequestParam("file") MultipartFile file, Model model, RedirectAttributes redirectAttributes) {
         try {
             if (file.isEmpty()) {
-                // Save course without file
                 courseService.addCourse(course);
             } else {
-                // Save course with file
                 courseService.addCourseWithFile(course, file.getInputStream(), file.getOriginalFilename());
+            }
+
+            for (Section section : course.getSections()) {
+                section.setCourse(course);
+                courseService.addSection(section);
+
+                for (Lesson lesson : section.getLessons()) {
+                    MultipartFile lessonFile = lesson.getFile();
+                    courseService.addLesson(lesson, lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
             return "upload";
         }
-        model.addAttribute("courses", courseService.getAllCourses());
         return "redirect:/coursesupload";
     }
 
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("courseId") Long courseId, @RequestParam("disposition") String disposition) throws IOException {
-        // Fetch course metadata from MySQL
-        UploadCourse course = courseService.getCourseById(courseId);
-        // Retrieve the file from Azure Blob Storage using the blob name with SAS
+        UploadCourse course = courseService.getCourseById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
         InputStream fileInputStream = courseService.downloadFileWithSas(course.getBlobName());
-        System.out.println((disposition.equals("inline") ? "Viewing" : "Downloading") + " file: " + course.getBlobName());
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + course.getBlobName() + "\"");
@@ -75,6 +75,14 @@ public class UploadController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(new InputStreamResource(fileInputStream));
+    }
+
+    private MediaType getMediaTypeForFileName(String fileName) {
+        String mimeType = URLConnection.guessContentTypeFromName(fileName);
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
+        }
+        return MediaType.parseMediaType(mimeType);
     }
 
     @GetMapping("/view")
@@ -87,6 +95,33 @@ public class UploadController {
         return "redirect:/serveFile?courseId=" + courseId + "&disposition=attachment";
     }
 
+    @GetMapping("/edit")
+    public String showEditPage(@RequestParam("courseId") Long courseId, Model model) {
+        Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
+        if (courseOptional.isPresent()) {
+            model.addAttribute("course", courseOptional.get());
+            return "edit";
+        } else {
+            return "redirect:/coursesupload";
+        }
+    }
+
+    @PostMapping("/update")
+    public String updateCourse(@ModelAttribute UploadCourse course, @RequestParam("file") MultipartFile file, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            if (!file.isEmpty()) {
+                courseService.addCourseWithFile(course, file.getInputStream(), file.getOriginalFilename());
+            } else {
+                courseService.updateCourse(course);
+            }
+            redirectAttributes.addFlashAttribute("successMessage", "Course updated successfully.");
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Failed to update the file. Please try again.");
+            return "edit";
+        }
+        return "redirect:/coursesupload";
+    }
+
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteCourse(@RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
         try {
@@ -94,22 +129,7 @@ public class UploadController {
             redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete the course. Please try again.");
-            e.printStackTrace();
         }
         return "redirect:/coursesupload";
-    }
-
-    private MediaType getMediaTypeForFileName(String fileName) {
-        String mimeType = URLConnection.guessContentTypeFromName(fileName);
-        if (mimeType == null) {
-            mimeType = "application/octet-stream";
-        }
-        return MediaType.parseMediaType(mimeType);
-    }
-
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public String handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("errorMessage", "File size exceeds limit! Please upload a smaller file.");
-        return "redirect:/upload";
     }
 }

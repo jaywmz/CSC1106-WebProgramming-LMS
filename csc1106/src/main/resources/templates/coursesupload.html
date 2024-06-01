@@ -10,6 +10,7 @@
 <body>
     <div class="container mt-5">
         <h2>All Courses</h2>
+        <a href="/upload" class="btn btn-success mb-3">Create New Course</a>
         <table class="table">
             <thead>
                 <tr>
@@ -33,6 +34,7 @@
                     <td>
                         <a th:href="@{/view(courseId=${course.id})}" class="btn btn-info">View</a>
                         <a th:href="@{/download(courseId=${course.id})}" class="btn btn-primary">Download</a>
+                        <a th:href="@{/edit(courseId=${course.id})}" class="btn btn-warning">Edit</a>
                         <form th:action="@{/delete}" method="post" style="display:inline;">
                             <input type="hidden" name="courseId" th:value="${course.id}" />
                             <button type="submit" class="btn btn-danger">Delete</button>
