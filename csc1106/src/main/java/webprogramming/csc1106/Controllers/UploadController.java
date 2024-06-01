@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webprogramming.csc1106.Entities.Lesson;
 import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Entities.FileResource;
 import webprogramming.csc1106.Services.UploadCourseService;
 
 import java.io.IOException;
@@ -38,21 +39,35 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public String uploadCourse(@ModelAttribute UploadCourse course, @RequestParam("file") MultipartFile file, Model model, RedirectAttributes redirectAttributes) {
+    public String uploadCourse(@ModelAttribute UploadCourse course, 
+                               @RequestParam("coverImage") MultipartFile coverImage, 
+                               Model model, 
+                               RedirectAttributes redirectAttributes) {
         try {
-            if (file.isEmpty()) {
-                courseService.addCourse(course);
-            } else {
-                courseService.addCourseWithFile(course, file.getInputStream(), file.getOriginalFilename());
+            if (coverImage != null && !coverImage.isEmpty()) {
+                String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+                coverImageUrl = courseService.generateSasUrl(coverImageUrl);
+                course.setCoverImageUrl(coverImageUrl);
             }
+            courseService.addCourse(course);
 
             for (Section section : course.getSections()) {
                 section.setCourse(course);
                 courseService.addSection(section);
 
                 for (Lesson lesson : section.getLessons()) {
+                    lesson.setSection(section);
+                    courseService.addLesson(lesson);
+
                     MultipartFile lessonFile = lesson.getFile();
-                    courseService.addLesson(lesson, lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                    if (lessonFile != null && !lessonFile.isEmpty()) {
+                        String fileUrl = courseService.uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                        fileUrl = courseService.generateSasUrl(fileUrl);
+                        FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                        fileResource.setLesson(lesson);
+                        courseService.addFileResource(fileResource);
+                        lesson.getFiles().add(fileResource);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -64,13 +79,13 @@ public class UploadController {
     }
 
     @GetMapping("/serveFile")
-    public ResponseEntity<InputStreamResource> serveFile(@RequestParam("courseId") Long courseId, @RequestParam("disposition") String disposition) throws IOException {
-        UploadCourse course = courseService.getCourseById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
-        InputStream fileInputStream = courseService.downloadFileWithSas(course.getBlobName());
+    public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {
+        FileResource fileResource = courseService.getFileResourceById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
+        InputStream fileInputStream = courseService.downloadFileWithSas(fileResource.getFileUrl());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + course.getBlobName() + "\"");
-        headers.setContentType(getMediaTypeForFileName(course.getBlobName()));
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + fileResource.getFileName() + "\"");
+        headers.setContentType(getMediaTypeForFileName(fileResource.getFileName()));
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -86,13 +101,13 @@ public class UploadController {
     }
 
     @GetMapping("/view")
-    public String viewFile(@RequestParam("courseId") Long courseId) {
-        return "redirect:/serveFile?courseId=" + courseId + "&disposition=inline";
+    public String viewFile(@RequestParam("fileId") Long fileId) {
+        return "redirect:/serveFile?fileId=" + fileId + "&disposition=inline";
     }
 
     @GetMapping("/download")
-    public String downloadFile(@RequestParam("courseId") Long courseId) {
-        return "redirect:/serveFile?courseId=" + courseId + "&disposition=attachment";
+    public String downloadFile(@RequestParam("fileId") Long fileId) {
+        return "redirect:/serveFile?fileId=" + fileId + "&disposition=attachment";
     }
 
     @GetMapping("/edit")
@@ -122,7 +137,7 @@ public class UploadController {
         return "redirect:/coursesupload";
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @PostMapping("/delete")
     public String deleteCourse(@RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
         try {
             courseService.deleteCourse(courseId);

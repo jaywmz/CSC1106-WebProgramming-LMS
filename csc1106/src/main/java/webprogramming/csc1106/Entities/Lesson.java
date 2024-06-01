@@ -2,6 +2,8 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Lesson {
@@ -10,15 +12,24 @@ public class Lesson {
     private Long id;
 
     private String title;
-    private String fileUrl;
-    private String fileName;
-
-    @Transient
-    private MultipartFile file;
 
     @ManyToOne
     @JoinColumn(name = "section_id")
     private Section section;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FileResource> files = new ArrayList<>();
+
+    @Transient
+    private MultipartFile file;
+
+    // Constructors
+    public Lesson() {}
+
+    public Lesson(String title, Section section) {
+        this.title = title;
+        this.section = section;
+    }
 
     // Getters and setters
     public Long getId() {
@@ -37,20 +48,20 @@ public class Lesson {
         this.title = title;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
+    public Section getSection() {
+        return section;
     }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public void setSection(Section section) {
+        this.section = section;
     }
 
-    public String getFileName() {
-        return fileName;
+    public List<FileResource> getFiles() {
+        return files;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFiles(List<FileResource> files) {
+        this.files = files;
     }
 
     public MultipartFile getFile() {
@@ -59,13 +70,5 @@ public class Lesson {
 
     public void setFile(MultipartFile file) {
         this.file = file;
-    }
-
-    public Section getSection() {
-        return section;
-    }
-
-    public void setSection(Section section) {
-        this.section = section;
     }
 }

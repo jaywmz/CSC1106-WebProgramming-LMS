@@ -2,6 +2,7 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class UploadCourse {
@@ -13,12 +14,21 @@ public class UploadCourse {
     private String description;
     private String lecturer;
     private Double price;
-    private String status;
-    private String blobUrl;
-    private String blobName;
+    private String coverImageUrl;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Section> sections;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Section> sections = new ArrayList<>();
+
+    // Constructors
+    public UploadCourse() {}
+
+    public UploadCourse(String title, String description, String lecturer, Double price, String coverImageUrl) {
+        this.title = title;
+        this.description = description;
+        this.lecturer = lecturer;
+        this.price = price;
+        this.coverImageUrl = coverImageUrl;
+    }
 
     // Getters and setters
     public Long getId() {
@@ -61,28 +71,12 @@ public class UploadCourse {
         this.price = price;
     }
 
-    public String getStatus() {
-        return status;
+    public String getCoverImageUrl() {
+        return coverImageUrl;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getBlobUrl() {
-        return blobUrl;
-    }
-
-    public void setBlobUrl(String blobUrl) {
-        this.blobUrl = blobUrl;
-    }
-
-    public String getBlobName() {
-        return blobName;
-    }
-
-    public void setBlobName(String blobName) {
-        this.blobName = blobName;
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
     }
 
     public List<Section> getSections() {

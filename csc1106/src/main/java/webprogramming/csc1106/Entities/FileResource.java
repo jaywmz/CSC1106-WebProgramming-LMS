@@ -11,17 +11,19 @@ public class FileResource {
     private String fileName;
     private String fileUrl;
 
-    // Default constructor
-    public FileResource() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 
-    // Constructor with parameters
+    // Constructors
+    public FileResource() {}
+
     public FileResource(String fileName, String fileUrl) {
         this.fileName = fileName;
         this.fileUrl = fileUrl;
     }
 
-    // Getters and Setters
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -44,5 +46,13 @@ public class FileResource {
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public Lesson getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(Lesson lesson) {
+        this.lesson = lesson;
     }
 }

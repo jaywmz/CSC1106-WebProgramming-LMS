@@ -2,6 +2,7 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Section {
@@ -16,8 +17,17 @@ public class Section {
     @JoinColumn(name = "course_id")
     private UploadCourse course;
 
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
-    private List<Lesson> lessons;
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Lesson> lessons = new ArrayList<>();
+
+    // Constructors
+    public Section() {}
+
+    public Section(String title, String description, UploadCourse course) {
+        this.title = title;
+        this.description = description;
+        this.course = course;
+    }
 
     // Getters and setters
     public Long getId() {

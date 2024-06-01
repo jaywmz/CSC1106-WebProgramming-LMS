@@ -1,49 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses - LearnZenith</title>
-    <link rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <title>All Courses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h2>All Courses</h2>
-        <a href="/upload" class="btn btn-success mb-3">Create New Course</a>
-        <table class="table">
+        <h1>All Courses</h1>
+        <a href="/upload" class="btn btn-primary mb-3">Create New Course</a>
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Lecturer</th>
                     <th>Price</th>
-                    <th>Status</th>
-                    <th>Blob URL</th>
+                    <th>Cover Image</th>
+                    <th>Files</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="course : ${courses}">
-                    <td th:text="${course.title}">Course Title</td>
-                    <td th:text="${course.description}">Course Description</td>
-                    <td th:text="${course.lecturer}">Lecturer</td>
-                    <td th:text="${course.price}">Price</td>
-                    <td th:text="${course.status}">Status</td>
-                    <td th:text="${course.blobUrl}">Blob URL</td>
+                    <td th:text="${course.title}"></td>
+                    <td th:text="${course.description}"></td>
+                    <td th:text="${course.lecturer}"></td>
+                    <td th:text="${course.price}"></td>
                     <td>
-                        <a th:href="@{/view(courseId=${course.id})}" class="btn btn-info">View</a>
-                        <a th:href="@{/download(courseId=${course.id})}" class="btn btn-primary">Download</a>
-                        <a th:href="@{/edit(courseId=${course.id})}" class="btn btn-warning">Edit</a>
-                        <form th:action="@{/delete}" method="post" style="display:inline;">
-                            <input type="hidden" name="courseId" th:value="${course.id}" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+                        <img th:src="${course.coverImageUrl}" alt="Cover Image" style="width: 100px; height: auto;">
+                    </td>
+                    <td>
+                        <ul>
+                            <li th:each="section : ${course.sections}">
+                                <span th:text="${section.title}"></span>
+                                <ul>
+                                    <li th:each="lesson : ${section.lessons}">
+                                        <span th:text="${lesson.title}"></span>
+                                        <ul>
+                                            <li th:each="file : ${lesson.files}">
+                                                <a th:href="@{/serveFile(fileId=${file.id}, disposition='inline')}" th:text="${file.fileName}"></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <a th:href="@{/courses/view/{id}(id=${course.id})}" class="btn btn-info btn-sm">View</a>
+                        <a th:href="@{/courses/download/{id}(id=${course.id})}" class="btn btn-secondary btn-sm">Download</a>
+                        <a th:href="@{/courses/edit/{id}(id=${course.id})}" class="btn btn-warning btn-sm">Edit</a>
+                        <a th:href="@{/courses/delete/{id}(id=${course.id})}" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
