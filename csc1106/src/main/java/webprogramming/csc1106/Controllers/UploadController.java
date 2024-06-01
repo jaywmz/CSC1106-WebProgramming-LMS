@@ -100,14 +100,9 @@ public class UploadController {
         return MediaType.parseMediaType(mimeType);
     }
 
-    @GetMapping("/view")
-    public String viewFile(@RequestParam("fileId") Long fileId) {
-        return "redirect:/serveFile?fileId=" + fileId + "&disposition=inline";
-    }
-
     @GetMapping("/download")
-    public String downloadFile(@RequestParam("fileId") Long fileId) {
-        return "redirect:/serveFile?fileId=" + fileId + "&disposition=attachment";
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam("fileId") Long fileId) throws IOException {
+        return serveFile(fileId, "attachment");
     }
 
     @GetMapping("/edit")
@@ -122,13 +117,16 @@ public class UploadController {
     }
 
     @PostMapping("/update")
-    public String updateCourse(@ModelAttribute UploadCourse course, @RequestParam("file") MultipartFile file, Model model, RedirectAttributes redirectAttributes) {
+    public String updateCourse(@ModelAttribute UploadCourse course, 
+                               @RequestParam("coverImage") MultipartFile coverImage, 
+                               Model model, RedirectAttributes redirectAttributes) {
         try {
-            if (!file.isEmpty()) {
-                courseService.addCourseWithFile(course, file.getInputStream(), file.getOriginalFilename());
-            } else {
-                courseService.updateCourse(course);
+            if (coverImage != null && !coverImage.isEmpty()) {
+                String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+                coverImageUrl = courseService.generateSasUrl(coverImageUrl);
+                course.setCoverImageUrl(coverImageUrl);
             }
+            courseService.updateCourse(course);
             redirectAttributes.addFlashAttribute("successMessage", "Course updated successfully.");
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Failed to update the file. Please try again.");
@@ -137,7 +135,7 @@ public class UploadController {
         return "redirect:/coursesupload";
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/courses/delete")
     public String deleteCourse(@RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
         try {
             courseService.deleteCourse(courseId);

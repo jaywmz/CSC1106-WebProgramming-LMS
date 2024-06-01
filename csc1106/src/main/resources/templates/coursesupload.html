@@ -50,10 +50,12 @@
                         </ul>
                     </td>
                     <td>
-                        <a th:href="@{/courses/view/{id}(id=${course.id})}" class="btn btn-info btn-sm">View</a>
-                        <a th:href="@{/courses/download/{id}(id=${course.id})}" class="btn btn-secondary btn-sm">Download</a>
-                        <a th:href="@{/courses/edit/{id}(id=${course.id})}" class="btn btn-warning btn-sm">Edit</a>
-                        <a th:href="@{/courses/delete/{id}(id=${course.id})}" class="btn btn-danger btn-sm">Delete</a>
+                        <a th:href="@{/courses/download(fileId=${course.id})}" class="btn btn-secondary btn-sm">Download</a>
+                        <a th:href="@{/courses/edit(courseId=${course.id})}" class="btn btn-warning btn-sm">Edit</a>
+                        <form th:action="@{/courses/delete}" method="post" style="display:inline;">
+                            <input type="hidden" name="courseId" th:value="${course.id}" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>

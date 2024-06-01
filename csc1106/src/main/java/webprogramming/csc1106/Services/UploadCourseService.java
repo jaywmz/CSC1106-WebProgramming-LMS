@@ -80,6 +80,10 @@ public class UploadCourseService {
                 }
             }
         }
+         // Delete cover image blob
+         if (course.getCoverImageUrl() != null) {
+            azureBlobService.deleteBlob(course.getCoverImageUrl());
+        }
         courseRepository.deleteById(courseId);
     }
 
