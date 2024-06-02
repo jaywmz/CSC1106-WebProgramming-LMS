@@ -11,7 +11,8 @@
 <body>
     <div class="container mt-5">
         <h2>Upload a New Course</h2>
-        <form action="#" th:action="@{/upload}" th:object="${course}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/upload}" th:object="${course}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
             <div class="form-group">
                 <label for="title">Course Title</label>
                 <input type="text" id="title" th:field="*{title}" class="form-control" required>
@@ -30,7 +31,7 @@
             </div>
             <div class="form-group">
                 <label for="coverImage">Cover Image</label>
-                <input type="file" id="coverImage" name="coverImage" accept="image/*" class="form-control">
+                <input type="file" id="coverImage" name="coverImage" accept="image/*" class="form-control" required>
             </div>
 
             <h3>Sections</h3>
@@ -77,6 +78,24 @@
                     <input type="file" id="sections[${sectionId - 1}].lessons[${lessonCount - 1}].file" name="sections[${sectionId - 1}].lessons[${lessonCount - 1}].file" class="form-control" required>
                 </div>`;
             $(`#lessons-container-${sectionId}`).append(lessonHtml);
+        }
+
+        function validateForm() {
+            const fileInput = document.getElementById('coverImage');
+            const file = fileInput.files[0];
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'];
+
+            if (!file) {
+                alert('Please upload a cover image.');
+                return false;
+            }
+
+            if (file && !validImageTypes.includes(file.type)) {
+                alert('Invalid file type for cover image. Only images are allowed.');
+                return false;
+            }
+
+            return true;
         }
     </script>
 </body>

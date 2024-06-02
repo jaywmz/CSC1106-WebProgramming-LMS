@@ -2,10 +2,8 @@ package webprogramming.csc1106.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
-
 import webprogramming.csc1106.Entities.FileResource;
 import webprogramming.csc1106.Entities.Lesson;
 import webprogramming.csc1106.Entities.Section;
@@ -14,7 +12,6 @@ import webprogramming.csc1106.Repositories.FileResourceRepository;
 import webprogramming.csc1106.Repositories.LessonRepository;
 import webprogramming.csc1106.Repositories.SectionRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -80,8 +77,8 @@ public class UploadCourseService {
                 }
             }
         }
-         // Delete cover image blob
-         if (course.getCoverImageUrl() != null) {
+        // Delete cover image blob
+        if (course.getCoverImageUrl() != null) {
             azureBlobService.deleteBlob(course.getCoverImageUrl());
         }
         courseRepository.deleteById(courseId);
@@ -117,9 +114,15 @@ public class UploadCourseService {
     }
 
     public UploadCourse updateCourse(UploadCourse course) {
+        // Here we keep the sections check to avoid null pointer exceptions
         if (course.getSections() == null) {
             course.setSections(new ArrayList<>());
         }
         return courseRepository.save(course);
+    }
+    
+
+    public void deleteBlob(String blobUrl) {
+        azureBlobService.deleteBlob(blobUrl);
     }
 }

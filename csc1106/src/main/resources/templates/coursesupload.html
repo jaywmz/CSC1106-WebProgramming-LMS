@@ -50,7 +50,6 @@
                         </ul>
                     </td>
                     <td>
-                        <a th:href="@{/courses/download(fileId=${course.id})}" class="btn btn-secondary btn-sm">Download</a>
                         <a th:href="@{/courses/edit(courseId=${course.id})}" class="btn btn-warning btn-sm">Edit</a>
                         <form th:action="@{/courses/delete}" method="post" style="display:inline;">
                             <input type="hidden" name="courseId" th:value="${course.id}" />

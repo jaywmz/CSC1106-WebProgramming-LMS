@@ -39,44 +39,51 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public String uploadCourse(@ModelAttribute UploadCourse course, 
-                               @RequestParam("coverImage") MultipartFile coverImage, 
-                               Model model, 
-                               RedirectAttributes redirectAttributes) {
-        try {
-            if (coverImage != null && !coverImage.isEmpty()) {
-                String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
-                coverImageUrl = courseService.generateSasUrl(coverImageUrl);
-                course.setCoverImageUrl(coverImageUrl);
+public String uploadCourse(@ModelAttribute UploadCourse course,
+                           @RequestParam("coverImage") MultipartFile coverImage,
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
+    try {
+        if (coverImage != null && !coverImage.isEmpty()) {
+            // Validate file type
+            String contentType = coverImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                model.addAttribute("errorMessage", "Invalid file type for cover image. Only images are allowed.");
+                return "upload";
             }
-            courseService.addCourse(course);
+            String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+            coverImageUrl = courseService.generateSasUrl(coverImageUrl);
+            course.setCoverImageUrl(coverImageUrl);
+        }
+        courseService.addCourse(course);
 
-            for (Section section : course.getSections()) {
-                section.setCourse(course);
-                courseService.addSection(section);
+        for (Section section : course.getSections()) {
+            section.setCourse(course);
+            courseService.addSection(section);
 
-                for (Lesson lesson : section.getLessons()) {
-                    lesson.setSection(section);
-                    courseService.addLesson(lesson);
+            for (Lesson lesson : section.getLessons()) {
+                lesson.setSection(section);
+                courseService.addLesson(lesson);
 
-                    MultipartFile lessonFile = lesson.getFile();
-                    if (lessonFile != null && !lessonFile.isEmpty()) {
-                        String fileUrl = courseService.uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
-                        fileUrl = courseService.generateSasUrl(fileUrl);
-                        FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
-                        fileResource.setLesson(lesson);
-                        courseService.addFileResource(fileResource);
-                        lesson.getFiles().add(fileResource);
-                    }
+                MultipartFile lessonFile = lesson.getFile();
+                if (lessonFile != null && !lessonFile.isEmpty()) {
+                    String fileUrl = courseService.uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                    fileUrl = courseService.generateSasUrl(fileUrl);
+                    FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                    fileResource.setLesson(lesson);
+                    courseService.addFileResource(fileResource);
+                    lesson.getFiles().add(fileResource);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
-            return "upload";
         }
-        return "redirect:/coursesupload";
+    } catch (IOException e) {
+        e.printStackTrace();
+        model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
+        return "upload";
     }
+    return "redirect:/coursesupload";
+}
+
 
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {
@@ -100,12 +107,7 @@ public class UploadController {
         return MediaType.parseMediaType(mimeType);
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam("fileId") Long fileId) throws IOException {
-        return serveFile(fileId, "attachment");
-    }
-
-    @GetMapping("/edit")
+    @GetMapping("/courses/edit")
     public String showEditPage(@RequestParam("courseId") Long courseId, Model model) {
         Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
         if (courseOptional.isPresent()) {
@@ -117,16 +119,73 @@ public class UploadController {
     }
 
     @PostMapping("/update")
-    public String updateCourse(@ModelAttribute UploadCourse course, 
-                               @RequestParam("coverImage") MultipartFile coverImage, 
+    public String updateCourse(@ModelAttribute UploadCourse course,
+                               @RequestParam("coverImage") MultipartFile coverImage,
                                Model model, RedirectAttributes redirectAttributes) {
         try {
+            Optional<UploadCourse> existingCourseOpt = courseService.getCourseById(course.getId());
+            if (!existingCourseOpt.isPresent()) {
+                model.addAttribute("errorMessage", "Course not found.");
+                return "edit";
+            }
+
+            UploadCourse existingCourse = existingCourseOpt.get();
+
+            // Update cover image if a new one is provided
             if (coverImage != null && !coverImage.isEmpty()) {
+                // Validate file type
+                String contentType = coverImage.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    model.addAttribute("errorMessage", "Invalid file type for cover image. Only images are allowed.");
+                    return "edit";
+                }
+                // Delete the existing cover image if it exists
+                if (existingCourse.getCoverImageUrl() != null) {
+                    courseService.deleteBlob(existingCourse.getCoverImageUrl());
+                }
+                // Upload the new cover image
                 String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
                 coverImageUrl = courseService.generateSasUrl(coverImageUrl);
-                course.setCoverImageUrl(coverImageUrl);
+                existingCourse.setCoverImageUrl(coverImageUrl);
             }
-            courseService.updateCourse(course);
+
+            // Update basic fields
+            existingCourse.setTitle(course.getTitle());
+            existingCourse.setDescription(course.getDescription());
+            existingCourse.setLecturer(course.getLecturer());
+            existingCourse.setPrice(course.getPrice());
+
+            // Clear and update sections and lessons
+            existingCourse.getSections().clear();
+            for (Section section : course.getSections()) {
+                section.setCourse(existingCourse);
+                Section savedSection = courseService.addSection(section); // Save section first
+
+                for (Lesson lesson : section.getLessons()) {
+                    lesson.setSection(savedSection);
+                    Lesson savedLesson = courseService.addLesson(lesson); // Save lesson first
+
+                    MultipartFile lessonFile = lesson.getFile();
+                    if (lessonFile != null && !lessonFile.isEmpty()) {
+                        // Delete existing files associated with the lesson
+                        for (FileResource existingFile : lesson.getFiles()) {
+                            courseService.deleteBlob(existingFile.getFileUrl());
+                        }
+                        lesson.getFiles().clear();
+
+                        // Upload the new lesson file
+                        String fileUrl = courseService.uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                        fileUrl = courseService.generateSasUrl(fileUrl);
+                        FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                        fileResource.setLesson(savedLesson); // Associate file with the saved lesson
+                        courseService.addFileResource(fileResource);
+                        savedLesson.getFiles().add(fileResource); // Add the file to the saved lesson
+                    }
+                }
+                existingCourse.getSections().add(savedSection);
+            }
+
+            courseService.updateCourse(existingCourse);
             redirectAttributes.addFlashAttribute("successMessage", "Course updated successfully.");
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Failed to update the file. Please try again.");
