@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
+@Table(name = "lesson")
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "title", nullable = false)
     private String title;
 
     @ManyToOne

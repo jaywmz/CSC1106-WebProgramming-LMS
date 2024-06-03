@@ -1,14 +1,28 @@
 package webprogramming.csc1106.Entities;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "roles")
 public class Roles {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
     private int roleID;
+
+    @Column(name = "role_name", nullable = false)
     private String roleName;
+
+    // Constructors
+    public Roles() {}
 
     public Roles(int roleID, String roleName) {
         this.roleID = roleID;
         this.roleName = roleName;
     }
 
+    // Getters and setters
     public int getRoleID() {
         return roleID;
     }
@@ -24,6 +38,4 @@ public class Roles {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
-
-    
 }

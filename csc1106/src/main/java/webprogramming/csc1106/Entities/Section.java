@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
+@Table(name = "section")
 public class Section {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne

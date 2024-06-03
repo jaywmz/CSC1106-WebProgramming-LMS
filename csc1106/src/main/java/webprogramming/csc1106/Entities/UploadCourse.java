@@ -5,15 +5,26 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
+@Table(name = "upload_course")
 public class UploadCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "lecturer", nullable = false)
     private String lecturer;
+
+    @Column(name = "price", nullable = false)
     private Double price;
+
+    @Column(name = "cover_image_url", nullable = false)
     private String coverImageUrl;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -3,17 +3,19 @@ package webprogramming.csc1106.Entities;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "course_category")
 public class CourseCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id", nullable = false)
     private UploadCourse course;
 
     @ManyToOne
-    @JoinColumn(name = "category_group_id")
+    @JoinColumn(name = "category_group_id", nullable = false)
     private CategoryGroup categoryGroup;
 
     // Constructors

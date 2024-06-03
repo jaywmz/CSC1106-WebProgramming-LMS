@@ -4,12 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -20,42 +15,43 @@ public class User {
     @Column(name = "user_id")
     private Integer userID;
 
-    @Column(name = "role_id")
+    @Column(name = "role_id", nullable = false)
     private Integer roleID;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
-    @Column(name = "user_password")
+    @Column(name = "user_password", nullable = false)
     private String userPassword;
 
-    @Column(name = "user_email")
+    @Column(name = "user_email", nullable = false)
     private String userEmail;
 
-    @Column(name = "joined_date")
-    private Date joineddDate;
+    @Column(name = "joined_date", nullable = false)
+    private Date joinedDate;
 
-    @Column(name = "joined_time")
+    @Column(name = "joined_time", nullable = false)
     private Time joinedTime;
 
-    @Column(name = "user_balance")
+    @Column(name = "user_balance", nullable = false, precision = 38, scale = 2)
     private BigDecimal userBalance;
 
-    // default constructor
-    public User() {
-    }
+    // Default constructor
+    public User() {}
 
-    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joineddDate, Time joinedTime, BigDecimal userBalance) {
+    // Parameterized constructor
+    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joinedDate, Time joinedTime, BigDecimal userBalance) {
         this.userID = userID;
         this.roleID = roleID;
         this.userName = userName;
         this.userPassword = userPassword;
         this.userEmail = userEmail;
-        this.joineddDate = joineddDate;
+        this.joinedDate = joinedDate;
         this.joinedTime = joinedTime;
         this.userBalance = userBalance;
     }
 
+    // Getters and setters
     public Integer getUserID() {
         return userID;
     }
@@ -96,12 +92,12 @@ public class User {
         this.userEmail = userEmail;
     }
 
-    public Date getJoineddDate() {
-        return joineddDate;
+    public Date getJoinedDate() {
+        return joinedDate;
     }
 
-    public void setJoineddDate(Date joineddDate) {
-        this.joineddDate = joineddDate;
+    public void setJoinedDate(Date joinedDate) {
+        this.joinedDate = joinedDate;
     }
 
     public Time getJoinedTime() {

@@ -4,18 +4,24 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "rating")
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "score", nullable = false)
     private Double score;
+
+    @Column(name = "comment", nullable = false)
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id", nullable = false)
     private UploadCourse course;
 
+    @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
     // Constructors

@@ -3,12 +3,17 @@ package webprogramming.csc1106.Entities;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "file_resource")
 public class FileResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "file_name", nullable = false)
     private String fileName;
+
+    @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
     @ManyToOne

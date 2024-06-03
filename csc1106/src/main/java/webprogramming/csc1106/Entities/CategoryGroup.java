@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
+@Table(name = "category_group")
 public class CategoryGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "description")
     private String description;
 
     @OneToMany(mappedBy = "categoryGroup", cascade = CascadeType.ALL, orphanRemoval = true)
