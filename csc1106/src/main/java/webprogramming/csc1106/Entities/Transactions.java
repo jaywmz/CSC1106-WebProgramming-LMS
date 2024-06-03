@@ -12,13 +12,15 @@ public class Transactions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transactions_id")
-    private int TransactionsID; // primary key 
+    private int transactionsID; // primary key 
 
-    @Column(name = "course_id", nullable = false)
-    private int courseID; // foreign key
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private UploadCourse course; // foreign key reference to UploadCourse
 
-    @Column(name = "user_id", nullable = false)
-    private int userID; // foreign key
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // foreign key reference to User
 
     @Column(name = "transaction_date", nullable = false)
     private Date transactionDate;
@@ -35,10 +37,10 @@ public class Transactions {
     // Constructors
     public Transactions() {}
 
-    public Transactions(int TransactionsID, int courseID, int userID, Date transactionDate, Time transactionTime, String paymentStatus, BigDecimal amount) {
-        this.TransactionsID = TransactionsID;
-        this.courseID = courseID;
-        this.userID = userID;
+    public Transactions(int transactionsID, UploadCourse course, User user, Date transactionDate, Time transactionTime, String paymentStatus, BigDecimal amount) {
+        this.transactionsID = transactionsID;
+        this.course = course;
+        this.user = user;
         this.transactionDate = transactionDate;
         this.transactionTime = transactionTime;
         this.paymentStatus = paymentStatus;
@@ -47,27 +49,27 @@ public class Transactions {
 
     // Getters and setters
     public int getTransactionsID() {
-        return TransactionsID;
+        return transactionsID;
     }
 
-    public void setTransactionsID(int TransactionsID) {
-        this.TransactionsID = TransactionsID;
+    public void setTransactionsID(int transactionsID) {
+        this.transactionsID = transactionsID;
     }
 
-    public int getCourseID() {
-        return courseID;
+    public UploadCourse getCourse() {
+        return course;
     }
 
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
+    public void setCourse(UploadCourse course) {
+        this.course = course;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getTransactionDate() {

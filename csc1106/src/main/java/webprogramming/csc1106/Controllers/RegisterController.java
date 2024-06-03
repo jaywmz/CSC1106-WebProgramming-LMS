@@ -42,11 +42,11 @@ public class RegisterController {
         logger.debug("Username: {}", user.getUserName());
         logger.debug("User Password: {}", user.getUserPassword());
         logger.debug("User Email: {}", user.getUserEmail());
-        logger.debug("Joined Date: {}", user.getJoineddDate());
+        logger.debug("Joined Date: {}", user.getJoinedDate());
         logger.debug("Joined Time: {}", user.getJoinedTime());
 
         // Set joinedDate and joinedTime
-        user.setJoineddDate(new Date(System.currentTimeMillis()));
+        user.setJoinedDate(new Date(System.currentTimeMillis()));
         user.setJoinedTime(new Time(System.currentTimeMillis()));
         
         // Set initial balance to 1000

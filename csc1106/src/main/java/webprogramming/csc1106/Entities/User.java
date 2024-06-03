@@ -3,6 +3,8 @@ package webprogramming.csc1106.Entities;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
 
@@ -35,6 +37,9 @@ public class User {
 
     @Column(name = "user_balance", nullable = false, precision = 38, scale = 2)
     private BigDecimal userBalance;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transactions> transactions = new ArrayList<>();
 
     // Default constructor
     public User() {}
@@ -114,5 +119,13 @@ public class User {
 
     public void setUserBalance(BigDecimal userBalance) {
         this.userBalance = userBalance;
+    }
+
+    public List<Transactions> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transactions> transactions) {
+        this.transactions = transactions;
     }
 }
