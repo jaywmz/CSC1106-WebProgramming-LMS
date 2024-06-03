@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class CategoryPostsController {
+public class CategoryController {
 
     // @Autowired
     // private CourseForumRepo courseForumRepo;
@@ -34,11 +34,11 @@ public class CategoryPostsController {
     //     return "forum";
     // }
 
-    @GetMapping("/posts")
-    public String getMethodName(@RequestParam("category_name") String param, Model model) {
-        param = param.substring(0, 1).toUpperCase() + param.substring(1); // capitalise first letter of category name
-        model.addAttribute("category_name", param);
-        return "posts";
+    @GetMapping("/{category_name}")
+    public String getMethodName(@PathVariable String category_name, Model model) {
+        category_name = category_name.substring(0, 1).toUpperCase() + category_name.substring(1); // capitalise first letter of category name
+        model.addAttribute("category_name", category_name);
+        return "category";
     }
     
     

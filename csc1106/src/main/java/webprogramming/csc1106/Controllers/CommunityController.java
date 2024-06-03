@@ -23,7 +23,7 @@ public class CommunityController {
     }
     
     @GetMapping("/community/{category_name}")
-    public String getPosts(@PathVariable String category_name) {
-        return "redirect:/posts?category_name=" + category_name;
+    public String getCategory(@PathVariable String category_name) {
+        return "redirect:/" + category_name;
     }
 }

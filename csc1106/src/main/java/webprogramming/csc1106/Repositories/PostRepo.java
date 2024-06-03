@@ -1,8 +1,8 @@
 package webprogramming.csc1106.Repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import webprogramming.csc1106.Entities.Post;
 
-import webprogramming.csc1106.Entities.Comment;
+public interface PostRepo extends JpaRepository<Post, Integer>{
 
-public interface PostRepo extends CrudRepository<Comment, Integer>{
 }

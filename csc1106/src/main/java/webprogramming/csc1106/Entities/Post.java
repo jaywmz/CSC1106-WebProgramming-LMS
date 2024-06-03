@@ -1,10 +1,9 @@
 package webprogramming.csc1106.Entities;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,8 +21,11 @@ public class Post {
     @ManyToOne
     private Category category;
    
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostAttachments> attachments;
 
     private String posterName; // username that posted the thread
     private Timestamp timestamp;

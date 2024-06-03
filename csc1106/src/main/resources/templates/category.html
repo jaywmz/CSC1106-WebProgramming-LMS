@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Forum - LearnZenith</title>
+  <title>Community - LearnZenith</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -30,7 +30,7 @@
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
   <style>
-    #newThreadBtn {
+    #newPostBtn {
       float: right; 
       margin-top: 12px; 
     }
@@ -390,7 +390,7 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item">Community</li>
+          <li class="breadcrumb-item"><a href="/community">Community</a></li>
           <li class="breadcrumb-item active" th:text="${category_name}"/>
         </ol>
       </nav>
@@ -403,20 +403,20 @@
           <div class="card">
             <div class="card-body">
 
-              <a href="post-thread">
-                <button type="button" class="btn btn-primary" id="newThreadBtn">
-                  <i class="bi bi-plus me-1"></i> Post new thread
+              <a th:href="@{/new-post?category_name={category_name}(category_name=${category_name})}">
+                <button type="button" class="btn btn-primary" id="newPostBtn">
+                  <i class="bi bi-plus me-1"></i> New post
                 </button>
               </a>
 
-              <h5 class="card-title">Threads</h5>
+              <h5 class="card-title">Posts</h5>
               
               <!-- Table with hoverable rows -->
               <table class="table table-hover">
                 <thead>
                   <tr>
                     <th scope="col">Title</th>
-                    <th scope="col">Created By</th>
+                    <th scope="col">Poster</th>
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
                   </tr>
