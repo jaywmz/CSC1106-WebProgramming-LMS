@@ -16,7 +16,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; // primary key
+    private long id;
 
     @ManyToOne
     private Category category;
