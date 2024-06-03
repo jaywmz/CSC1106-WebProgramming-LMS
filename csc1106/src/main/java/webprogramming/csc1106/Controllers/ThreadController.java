@@ -13,65 +13,65 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import webprogramming.csc1106.Entities.ForumThread;
-import webprogramming.csc1106.Entities.ThreadReply;
-import webprogramming.csc1106.Repositories.ForumThreadRepo;
-import webprogramming.csc1106.Repositories.ThreadReplyRepo;
+import webprogramming.csc1106.Entities.Post;
+import webprogramming.csc1106.Entities.Comment;
+import webprogramming.csc1106.Repositories.CategoryRepo;
+import webprogramming.csc1106.Repositories.CommentRepo;
 
 @Controller
 public class ThreadController {
     
-    @Autowired
-    private ForumThreadRepo forumThreadRepo;
+    // @Autowired
+    // private CategoryRepo forumThreadRepo;
 
-    @Autowired
-    private ThreadReplyRepo threadReplyRepo;
+    // @Autowired
+    // private CommentRepo threadReplyRepo;
 
-    @GetMapping("/forum/{id}")
-    public String openThread(@PathVariable String id, Model model) {
-        int threadId = Integer.parseInt(id); // Convert String to int
+    // @GetMapping("/forum/{id}")
+    // public String openThread(@PathVariable String id, Model model) {
+    //     int threadId = Integer.parseInt(id); // Convert String to int
 
-        Optional<ForumThread> thread = forumThreadRepo.findById(threadId); // Find thread by id
-        ArrayList<ForumThread> threadSelected = new ArrayList<>();
+    //     Optional<Post> thread = forumThreadRepo.findById(threadId); // Find thread by id
+    //     ArrayList<Post> threadSelected = new ArrayList<>();
 
-        thread.ifPresent(t -> threadSelected.add(t));
+    //     thread.ifPresent(t -> threadSelected.add(t));
 
-        model.addAttribute("threadSelected", threadSelected.toArray());
+    //     model.addAttribute("threadSelected", threadSelected.toArray());
 
-        Iterable<ThreadReply> threadReply = threadReplyRepo.findByThreadIDOrderByReplyDateDescReplyTimeDesc(threadId); // Find replies by id
-        ArrayList<ThreadReply> replies = new ArrayList<>();
-        ArrayList<ThreadReply> replyReplies = new ArrayList<>();
-        for (ThreadReply r : threadReply) {
-            if (r.getCommentID() == 0){
-                replies.add(r);
-            }else{
-                replyReplies.add(r);
-            }
-        }
+    //     Iterable<Comment> threadReply = threadReplyRepo.findByThreadIDOrderByReplyDateDescReplyTimeDesc(threadId); // Find replies by id
+    //     ArrayList<Comment> replies = new ArrayList<>();
+    //     ArrayList<Comment> replyReplies = new ArrayList<>();
+    //     for (Comment r : threadReply) {
+    //         if (r.getCommentID() == 0){
+    //             replies.add(r);
+    //         }else{
+    //             replyReplies.add(r);
+    //         }
+    //     }
 
-        model.addAttribute("replies", replies.toArray());
-        model.addAttribute("replyReplies", replyReplies.toArray());
-        // System.out.println(replies.toArray());
-        model.addAttribute("newReply", new ThreadReply());
+    //     model.addAttribute("replies", replies.toArray());
+    //     model.addAttribute("replyReplies", replyReplies.toArray());
+    //     // System.out.println(replies.toArray());
+    //     model.addAttribute("newReply", new Comment());
 
-        return "thread";
-    }
+    //     return "thread";
+    // }
 
-    @PostMapping("/add-reply/{commentID}/{threadID}")
-    public String addReply(@ModelAttribute ThreadReply newReply, Model model, @PathVariable String commentID, @PathVariable String threadID){
-        java.util.Date date = new java.util.Date();
-        Date sqlDate = new Date(date.getTime());
-        Time sqlTime = new Time(date.getTime());
-        newReply.setReplyDate(sqlDate);
-        newReply.setReplyTime(sqlTime);
-        newReply.setResponderName("Example name"); // placeholder
-        newReply.setCommentID(Integer.parseInt(commentID));
-        newReply.setThreadID(Integer.parseInt(threadID));
+    // @PostMapping("/add-reply/{commentID}/{threadID}")
+    // public String addReply(@ModelAttribute Comment newReply, Model model, @PathVariable String commentID, @PathVariable String threadID){
+    //     java.util.Date date = new java.util.Date();
+    //     Date sqlDate = new Date(date.getTime());
+    //     Time sqlTime = new Time(date.getTime());
+    //     newReply.setReplyDate(sqlDate);
+    //     newReply.setReplyTime(sqlTime);
+    //     newReply.setResponderName("Example name"); // placeholder
+    //     newReply.setCommentID(Integer.parseInt(commentID));
+    //     newReply.setThreadID(Integer.parseInt(threadID));
 
-        threadReplyRepo.save(newReply);
+    //     threadReplyRepo.save(newReply);
 
-        // need to change so it actually redirects to the newly created thread's dedicated page
-        return "redirect:/forum/{threadID}"; 
-    }
+    //     // need to change so it actually redirects to the newly created thread's dedicated page
+    //     return "redirect:/forum/{threadID}"; 
+    // }
 
 }

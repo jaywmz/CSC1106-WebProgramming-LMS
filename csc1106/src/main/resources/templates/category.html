@@ -18,19 +18,19 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="assets/css/dashboard-style.css" rel="stylesheet">
+  <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
   <style>
-    #newThreadBtn {
+    #newPostBtn {
       float: right; 
       margin-top: 12px; 
     }
@@ -321,8 +321,8 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link active" href="/community">
-          <i class="bi bi-people"></i>
+        <a class="nav-link active" href="/forum">
+          <i class="bi bi-chat-left-text"></i>
           <span>Community</span>
         </a>
       </li><!-- End Forum Nav -->
@@ -386,123 +386,82 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1></h1>
+      <h1 th:text="${category_name}"/>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active">Community</li>
+          <li class="breadcrumb-item"><a href="/community">Community</a></li>
+          <li class="breadcrumb-item active" th:text="${category_name}"/>
         </ol>
       </nav>
     </div><!-- End Page Title -->
 
     <section class="section">
+      <div class="row">
         <div>
-            <h1 class="text-center">LearnZenith Community</h1>
-            <p class="text-center">Join the LearnZenith community to ask questions, share knowledge, and connect with other members.</p>
-        </div>
-        <div class="row align-items-center justify-content-center">
-            <div class="form-floating mb-3" style="width: 40%;">
-                <form method="POST" action="#">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="floatingInput" placeholder="Search Community">
-                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
 
-        <div class="row align-items-top">
-            <div class="col-lg-4">
-                <!-- Announcements Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
-                        <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
-                    </div>
-                </div><!-- Announcements Card -->
-            </div>
-            <div class="col-lg-4">
-                <!-- Questions Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/community/questions">Questions</a></h5>
-                        <p class="card-text">Ask questions and get help from the LearnZenith community.</p>
-                    </div>
-                </div><!-- Questions Card -->
-            </div>
-            <div class="col-lg-4">
-                <!-- Questions Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/community/events">Events</a></h5>
-                        <p class="card-text">Stay up to date with the latest events and webinars from LearnZenith.</p>
-                    </div>
-                </div><!-- Questions Card -->
-            </div>
-        </div>
-
-        <div class="card">
+          <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Browse the Community</h5>
-                <table class="table table-hover">
-                    <colgroup>
-                        <col style="width: 60%;">
-                        <col style="width: 20%;">
-                        <col style="width: 20%;">
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Posts</th>
-                        <th scope="col">Last Post</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">
-                                <a href="/community/introductions">Introductions</a>
-                                <p class="fs-6 fw-normal">Introduce yourself to the LearnZenith community.</p>
-                            </th>
-                            <td>SQL count</td>
-                            <td>xxx</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <a href="/community/guides">Guides?</a>
-                                <p class="fs-6 fw-normal">Check out guides made by the community.</p>
-                            </th>
-                            <td>xxx</td>
-                            <td>xxx</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <a href="/community/jobs">Job Postings</a>
-                                <p class="fs-6 fw-normal">Post job openings or find a job in the community.</p>
-                            </th>
-                            <td>xxx</td>
-                            <td>xxx</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <a href="/community/offtopic">Off-Topic</a>
-                                <p class="fs-6 fw-normal">Discuss anything not related to Learning.</p>
-                            </th>
-                            <td>xxx</td>
-                            <td>xxx</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
-        <div class="card">
+              <a th:href="@{/new-post?category_name={category_name}(category_name=${category_name})}">
+                <button type="button" class="btn btn-primary" id="newPostBtn">
+                  <i class="bi bi-plus me-1"></i> New post
+                </button>
+              </a>
+
+              <h5 class="card-title">Posts</h5>
+              
+              <!-- Table with hoverable rows -->
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Poster</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <!-- 
+                <tbody th:each="thread: ${threads}">
+                  <tr>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.title}" id="threadTitle"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.posterName}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.postDate}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.postTime}"></a></td>
+                  </tr>
+                </tbody>
+                -->
+              </table>
+              <!-- End Table with hoverable rows -->
+
+            </div>
+
             <div class="card-body">
-                <h5 class="card-title">Recent Threads</h5>
+              <!-- Disabled and active states -->
+              <!--
+              <nav aria-label="...">
+                  <ul class="pagination justify-content-center">
+                      <li th:class="${currentPage == 1} ? 'disabled' : 'page-item'">
+                          <a class="page-link" th:href="@{'/forum?page=' + ${currentPage-1}}" tabindex="-1" aria-disabled="true">Previous</a>
+                      </li>
+                      <li class="page-item" 
+                        th:each="pageNum : ${#numbers.sequence(currentPage > 1 ? currentPage - 1 : currentPage, currentPage < totalPage ? currentPage + 1 : currentPage)}" 
+                        th:class="${pageNum == currentPage} ? 'active' : ''">
+                          <a class="page-link" th:href="@{'/forum?page=' + ${pageNum}}" th:text="${pageNum}"></a>
+                      </li>
+                      <li th:class="${currentPage == totalPage} ? 'disabled' : 'page-item'">
+                          <a class="page-link" th:href="@{'/forum?page=' + ${currentPage+1}}">Next</a>
+                      </li>
+                  </ul>
+              </nav>
+              -->
+              <!-- End Disabled and active states -->
             </div>
-        </div>
 
+          </div>
+
+        </div>
+      </div>
     </section>
 
   </main><!-- End #main -->
