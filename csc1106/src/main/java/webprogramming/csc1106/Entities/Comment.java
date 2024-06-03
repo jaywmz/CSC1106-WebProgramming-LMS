@@ -1,14 +1,14 @@
 package webprogramming.csc1106.Entities;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Comment {
@@ -19,6 +19,12 @@ public class Comment {
 
     @ManyToOne
     private Post post;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Comment> replies;
+
+    @ManyToOne
+    private Comment parent;
 
     private String commenterName; // name of user that posted the thread
     private Timestamp timestamp;
