@@ -34,7 +34,7 @@ public class CategoryController {
     //     return "forum";
     // }
 
-    @GetMapping("/{category_name}")
+    @GetMapping("/community/{category_name}")
     public String getMethodName(@PathVariable String category_name, Model model) {
         category_name = category_name.substring(0, 1).toUpperCase() + category_name.substring(1); // capitalise first letter of category name
         model.addAttribute("category_name", category_name);

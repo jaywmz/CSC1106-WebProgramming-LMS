@@ -25,14 +25,14 @@ public class NewPostController {
     @Autowired
     private CategoryRepo categoryRepo;
 
-    @GetMapping("/new-post")
+    @GetMapping("/community/new-post")
     public String getNewPostForm(@Param("category_name") String category_name, Model model) {
         model.addAttribute("category_name", category_name);
         model.addAttribute("newPost", new Post());
         return "new-post"; 
     }
 
-    @PostMapping("/new-post")
+    @PostMapping("/community/new-post")
     public String postNewPost(@Param("category_name") String category_name, @ModelAttribute Post newPost) {
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
@@ -45,7 +45,7 @@ public class NewPostController {
         postRepo.save(newPost);
 
         // need to change so it actually redirects to the newly created thread's dedicated page
-        return "redirect:/" + category_name; 
+        return "redirect:/community/" + category_name; 
     }
     
 }

@@ -22,8 +22,8 @@ public class CommunityController {
         return "community-home";
     }
     
-    @GetMapping("/community/{category_name}")
-    public String getCategory(@PathVariable String category_name) {
-        return "redirect:/" + category_name;
-    }
+    // @GetMapping("/community/{category_name}")
+    // public String getCategory(@PathVariable String category_name) {
+    //     return "redirect:/" + category_name;
+    // }
 }
