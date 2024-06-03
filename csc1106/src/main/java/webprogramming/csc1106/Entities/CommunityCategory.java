@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "category")
-public class Category {
+@Table(name = "community_category")
+public class CommunityCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +19,9 @@ public class Category {
     private List<Post> posts;
 
     // Constructors
-    public Category() {}
+    public CommunityCategory() {}
 
-    public Category(String name) {
+    public CommunityCategory(String name) {
         this.name = name;
     }
 

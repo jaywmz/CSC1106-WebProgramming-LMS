@@ -16,7 +16,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private CommunityCategory category;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
@@ -39,7 +39,7 @@ public class Post {
     // Constructors
     public Post() {}
 
-    public Post(String posterName, Timestamp timestamp, String title, String content, Category category) {
+    public Post(String posterName, Timestamp timestamp, String title, String content, CommunityCategory category) {
         this.posterName = posterName;
         this.timestamp = timestamp;
         this.title = title;
@@ -56,11 +56,11 @@ public class Post {
         this.id = id;
     }
 
-    public Category getCategory() {
+    public CommunityCategory getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CommunityCategory category) {
         this.category = category;
     }
 

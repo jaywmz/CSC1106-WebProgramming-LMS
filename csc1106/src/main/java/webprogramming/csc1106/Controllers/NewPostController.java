@@ -8,9 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import webprogramming.csc1106.Entities.Category;
+import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
 import webprogramming.csc1106.Repositories.CategoryRepo;
 import webprogramming.csc1106.Repositories.PostRepo;
@@ -39,7 +38,7 @@ public class NewPostController {
         newPost.setTimestamp(timestamp);
         newPost.setPosterName("Example Name"); // placeholder
 
-        Category category = categoryRepo.findByName(category_name).getFirst();
+        CommunityCategory category = categoryRepo.findByName(category_name);
         newPost.setCategory(category);
         
         postRepo.save(newPost);

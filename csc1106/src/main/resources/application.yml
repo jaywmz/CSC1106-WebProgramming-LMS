@@ -9,9 +9,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
