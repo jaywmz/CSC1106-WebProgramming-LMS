@@ -55,6 +55,7 @@
 
         function addSection() {
             sectionCount++;
+            lessonCount = 0; // reset lesson count for each section
             const sectionHtml = `
                 <div class="card mt-3" id="section-${sectionCount}">
                     <div class="card-body">
