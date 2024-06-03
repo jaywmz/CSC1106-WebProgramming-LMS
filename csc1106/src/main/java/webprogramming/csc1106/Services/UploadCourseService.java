@@ -37,7 +37,6 @@ public class UploadCourseService {
     @Autowired
     private AzureBlobService azureBlobService;
 
-
     public List<UploadCourse> getAllCourses() {
         return courseRepository.findAll();
     }
@@ -82,6 +81,12 @@ public class UploadCourseService {
 
     public Optional<CategoryGroup> getCategoryById(Long id) {
         return categoryGroupRepository.findById(id);
+    }
+
+    public void clearCourseCategories(UploadCourse course) {
+        List<CourseCategory> courseCategories = courseCategoryRepository.findByCourse(course);
+        courseCategoryRepository.deleteAll(courseCategories);
+        course.getCourseCategories().clear();
     }
 
     public void deleteCourse(Long courseId) {

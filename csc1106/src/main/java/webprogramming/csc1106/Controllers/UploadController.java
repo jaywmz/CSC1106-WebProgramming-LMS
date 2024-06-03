@@ -16,7 +16,6 @@ import webprogramming.csc1106.Services.UploadCourseService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -40,7 +39,7 @@ public class UploadController {
     @PostMapping("/upload")
     public String uploadCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
-                               @RequestParam("selectedCategories") List<Long> selectedCategories,
+                               @RequestParam("selectedCategory") Long selectedCategory,
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
@@ -57,13 +56,12 @@ public class UploadController {
             }
             courseService.addCourse(course);
 
-            for (Long categoryId : selectedCategories) {
-                CategoryGroup categoryGroup = courseService.getCategoryById(categoryId)
-                        .orElseThrow(() -> new RuntimeException("Category not found"));
-                CourseCategory courseCategory = new CourseCategory(course, categoryGroup);
-                courseService.addCourseCategory(courseCategory);
-                course.getCourseCategories().add(courseCategory);
-            }
+            // Handle the category
+            CategoryGroup categoryGroup = courseService.getCategoryById(selectedCategory)
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            CourseCategory courseCategory = new CourseCategory(course, categoryGroup);
+            courseService.addCourseCategory(courseCategory);
+            course.getCourseCategories().add(courseCategory);
 
             for (Section section : course.getSections()) {
                 section.setCourse(course);
@@ -119,6 +117,7 @@ public class UploadController {
         Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
         if (courseOptional.isPresent()) {
             model.addAttribute("course", courseOptional.get());
+            model.addAttribute("categories", courseService.getAllCategories());
             return "edit";
         } else {
             return "redirect:/coursesupload";
@@ -128,6 +127,7 @@ public class UploadController {
     @PostMapping("/update")
     public String updateCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
+                               @RequestParam("selectedCategory") Long selectedCategory,
                                Model model, RedirectAttributes redirectAttributes) {
         try {
             Optional<UploadCourse> existingCourseOpt = courseService.getCourseById(course.getId());
@@ -161,6 +161,14 @@ public class UploadController {
             existingCourse.setDescription(course.getDescription());
             existingCourse.setLecturer(course.getLecturer());
             existingCourse.setPrice(course.getPrice());
+
+            // Update the category
+            courseService.clearCourseCategories(existingCourse);
+            CategoryGroup categoryGroup = courseService.getCategoryById(selectedCategory)
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            CourseCategory courseCategory = new CourseCategory(existingCourse, categoryGroup);
+            courseService.addCourseCategory(courseCategory);
+            existingCourse.getCourseCategories().add(courseCategory);
 
             // Clear and update sections and lessons
             existingCourse.getSections().clear();
