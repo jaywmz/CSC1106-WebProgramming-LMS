@@ -10,15 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import webprogramming.csc1106.Entities.Lesson;
-import webprogramming.csc1106.Entities.Section;
-import webprogramming.csc1106.Entities.UploadCourse;
-import webprogramming.csc1106.Entities.FileResource;
+import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Services.UploadCourseService;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -35,55 +33,64 @@ public class UploadController {
     @GetMapping("/upload")
     public String showUploadPage(Model model) {
         model.addAttribute("course", new UploadCourse());
+        model.addAttribute("categories", courseService.getAllCategories());
         return "upload";
     }
 
     @PostMapping("/upload")
-public String uploadCourse(@ModelAttribute UploadCourse course,
-                           @RequestParam("coverImage") MultipartFile coverImage,
-                           Model model,
-                           RedirectAttributes redirectAttributes) {
-    try {
-        if (coverImage != null && !coverImage.isEmpty()) {
-            // Validate file type
-            String contentType = coverImage.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                model.addAttribute("errorMessage", "Invalid file type for cover image. Only images are allowed.");
-                return "upload";
+    public String uploadCourse(@ModelAttribute UploadCourse course,
+                               @RequestParam("coverImage") MultipartFile coverImage,
+                               @RequestParam("selectedCategories") List<Long> selectedCategories,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            if (coverImage != null && !coverImage.isEmpty()) {
+                // Validate file type
+                String contentType = coverImage.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    model.addAttribute("errorMessage", "Invalid file type for cover image. Only images are allowed.");
+                    return "upload";
+                }
+                String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+                coverImageUrl = courseService.generateSasUrl(coverImageUrl);
+                course.setCoverImageUrl(coverImageUrl);
             }
-            String coverImageUrl = courseService.uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
-            coverImageUrl = courseService.generateSasUrl(coverImageUrl);
-            course.setCoverImageUrl(coverImageUrl);
-        }
-        courseService.addCourse(course);
+            courseService.addCourse(course);
 
-        for (Section section : course.getSections()) {
-            section.setCourse(course);
-            courseService.addSection(section);
+            for (Long categoryId : selectedCategories) {
+                CategoryGroup categoryGroup = courseService.getCategoryById(categoryId)
+                        .orElseThrow(() -> new RuntimeException("Category not found"));
+                CourseCategory courseCategory = new CourseCategory(course, categoryGroup);
+                courseService.addCourseCategory(courseCategory);
+                course.getCourseCategories().add(courseCategory);
+            }
 
-            for (Lesson lesson : section.getLessons()) {
-                lesson.setSection(section);
-                courseService.addLesson(lesson);
+            for (Section section : course.getSections()) {
+                section.setCourse(course);
+                courseService.addSection(section);
 
-                MultipartFile lessonFile = lesson.getFile();
-                if (lessonFile != null && !lessonFile.isEmpty()) {
-                    String fileUrl = courseService.uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
-                    fileUrl = courseService.generateSasUrl(fileUrl);
-                    FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
-                    fileResource.setLesson(lesson);
-                    courseService.addFileResource(fileResource);
-                    lesson.getFiles().add(fileResource);
+                for (Lesson lesson : section.getLessons()) {
+                    lesson.setSection(section);
+                    courseService.addLesson(lesson);
+
+                    MultipartFile lessonFile = lesson.getFile();
+                    if (lessonFile != null && !lessonFile.isEmpty()) {
+                        String fileUrl = courseService.uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                        fileUrl = courseService.generateSasUrl(fileUrl);
+                        FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                        fileResource.setLesson(lesson);
+                        courseService.addFileResource(fileResource);
+                        lesson.getFiles().add(fileResource);
+                    }
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
+            return "upload";
         }
-    } catch (IOException e) {
-        e.printStackTrace();
-        model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
-        return "upload";
+        return "redirect:/coursesupload";
     }
-    return "redirect:/coursesupload";
-}
-
 
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {

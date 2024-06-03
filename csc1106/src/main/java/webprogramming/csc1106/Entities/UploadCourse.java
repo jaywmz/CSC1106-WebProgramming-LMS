@@ -19,6 +19,12 @@ public class UploadCourse {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Section> sections = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rating> ratings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseCategory> courseCategories = new ArrayList<>();
+
     // Constructors
     public UploadCourse() {}
 
@@ -85,5 +91,21 @@ public class UploadCourse {
 
     public void setSections(List<Section> sections) {
         this.sections = sections;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public List<CourseCategory> getCourseCategories() {
+        return courseCategories;
+    }
+
+    public void setCourseCategories(List<CourseCategory> courseCategories) {
+        this.courseCategories = courseCategories;
     }
 }

@@ -4,14 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
-import webprogramming.csc1106.Entities.FileResource;
-import webprogramming.csc1106.Entities.Lesson;
-import webprogramming.csc1106.Entities.Section;
-import webprogramming.csc1106.Entities.UploadCourse;
-import webprogramming.csc1106.Repositories.FileResourceRepository;
-import webprogramming.csc1106.Repositories.LessonRepository;
-import webprogramming.csc1106.Repositories.SectionRepository;
-import webprogramming.csc1106.Repositories.UploadCourseRepository;
+import webprogramming.csc1106.Entities.*;
+import webprogramming.csc1106.Repositories.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,7 +29,14 @@ public class UploadCourseService {
     private FileResourceRepository fileResourceRepository;
 
     @Autowired
+    private CategoryGroupRepository categoryGroupRepository;
+
+    @Autowired
+    private CourseCategoryRepository courseCategoryRepository;
+
+    @Autowired
     private AzureBlobService azureBlobService;
+
 
     public List<UploadCourse> getAllCourses() {
         return courseRepository.findAll();
@@ -52,6 +54,9 @@ public class UploadCourseService {
         if (course.getSections() == null) {
             course.setSections(new ArrayList<>());
         }
+        if (course.getCourseCategories() == null) {
+            course.setCourseCategories(new ArrayList<>());
+        }
         return courseRepository.save(course);
     }
 
@@ -65,6 +70,18 @@ public class UploadCourseService {
 
     public FileResource addFileResource(FileResource fileResource) {
         return fileResourceRepository.save(fileResource);
+    }
+
+    public CourseCategory addCourseCategory(CourseCategory courseCategory) {
+        return courseCategoryRepository.save(courseCategory);
+    }
+
+    public List<CategoryGroup> getAllCategories() {
+        return categoryGroupRepository.findAll();
+    }
+
+    public Optional<CategoryGroup> getCategoryById(Long id) {
+        return categoryGroupRepository.findById(id);
     }
 
     public void deleteCourse(Long courseId) {
@@ -118,9 +135,11 @@ public class UploadCourseService {
         if (course.getSections() == null) {
             course.setSections(new ArrayList<>());
         }
+        if (course.getCourseCategories() == null) {
+            course.setCourseCategories(new ArrayList<>());
+        }
         return courseRepository.save(course);
     }
-    
 
     public void deleteBlob(String blobUrl) {
         azureBlobService.deleteBlob(blobUrl);

@@ -14,6 +14,12 @@
         <form th:action="@{/upload}" th:object="${course}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
             <div class="form-group">
+                <label for="selectedCategories">Category</label>
+                <select id="selectedCategories" name="selectedCategories" class="form-control" multiple>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="title">Course Title</label>
                 <input type="text" id="title" th:field="*{title}" class="form-control" required>
             </div>
