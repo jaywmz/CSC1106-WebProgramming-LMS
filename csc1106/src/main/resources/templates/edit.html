@@ -36,10 +36,9 @@
             </div>
             <div class="form-group">
                 <label for="selectedCategory">Category</label>
-                <select id="selectedCategory" name="selectedCategory" class="form-control">
+                <select id="selectedCategory" name="selectedCategory" class="form-control" required>
                     <option value="" disabled>Select a category</option>
-                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                        th:selected="${category.id == course.courseCategories[0].categoryGroup.id}"></option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                 </select>
             </div>
             <h3>Sections</h3>
@@ -51,12 +50,12 @@
                             <div class="form-group">
                                 <label th:for="|sections[${sectionStat.index}].title|">Section Title</label>
                                 <input type="text" th:id="|sections[${sectionStat.index}].title|"
-                                       th:field="*{sections[${sectionStat.index}].title}" class="form-control" required>
+                                       th:field="*{sections[__${sectionStat.index}__].title}" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label th:for="|sections[${sectionStat.index}].description|">Section Description</label>
                                 <textarea th:id="|sections[${sectionStat.index}].description|"
-                                          th:field="*{sections[${sectionStat.index}].description}" class="form-control"
+                                          th:field="*{sections[__${sectionStat.index}__].description}" class="form-control"
                                           required></textarea>
                             </div>
                             <h5>Lessons</h5>
@@ -65,11 +64,11 @@
                                     <div class="form-group mt-2">
                                         <label th:for="|sections[${sectionStat.index}].lessons[${lessonStat.index}].title|">Lesson Title</label>
                                         <input type="text" th:id="|sections[${sectionStat.index}].lessons[${lessonStat.index}].title|"
-                                               th:field="*{sections[${sectionStat.index}].lessons[${lessonStat.index}].title}"
+                                               th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].title}"
                                                class="form-control" required>
                                         <label th:for="|sections[${sectionStat.index}].lessons[${lessonStat.index}].file|">Upload File</label>
                                         <input type="file" th:id="|sections[${sectionStat.index}].lessons[${lessonStat.index}].file|"
-                                               th:field="*{sections[${sectionStat.index}].lessons[${lessonStat.index}].file}"
+                                               th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].file}"
                                                class="form-control">
                                     </div>
                                 </div>
