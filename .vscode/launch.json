@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "RunApplication",
+            "request": "launch",
+            "mainClass": "webprogramming.csc1106.RunApplication",
+            "projectName": "csc1106"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-Csc1106Application<csc1106>",
             "request": "launch",
             "cwd": "${workspaceFolder}",

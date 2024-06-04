@@ -2,7 +2,7 @@ spring:
   application:
     name: csc1106
   datasource:
-    url: jdbc:mysql://learnzenith.mysql.database.azure.com:3306/webprogDB?ssl-mode=REQUIRED
+    url: jdbc:mysql://learnzenith.mysql.database.azure.com:3306/WebDB?ssl-mode=REQUIRED
     username: grp7
     password: Naim6oo3!!!!!
     driver-class-name: com.mysql.cj.jdbc.Driver
