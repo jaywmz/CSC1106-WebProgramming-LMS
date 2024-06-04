@@ -15,6 +15,9 @@ public class CommunityCategory {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = true)
+    private String description;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Post> posts;
 

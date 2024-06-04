@@ -19,13 +19,13 @@ public class CommunityCategoryController {
     private CategoryRepo categoryRepo;
 
     @GetMapping("/community/{category_name}")
-    public String getMethodName(@PathVariable String category_name, Model model) {
+    public String getCategoryPosts(@PathVariable String category_name, Model model) {
         category_name = category_name.substring(0, 1).toUpperCase() + category_name.substring(1); // capitalise first letter of category name
-        model.addAttribute("category_name", category_name);
+        model.addAttribute("category_name", category_name); // add category name to template model
 
-        CommunityCategory category = categoryRepo.findByName(category_name);
-        List<Post> posts = category.getPosts();
-        model.addAttribute("posts", posts);
+        CommunityCategory category = categoryRepo.findByName(category_name); // retrieve category object from db by name
+        List<Post> posts = category.getPosts(); // get retrieved category's posts
+        model.addAttribute("posts", posts); // add posts to template model
 
         return "community-category";
     }

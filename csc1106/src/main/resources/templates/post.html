@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Thread - LearnZenith</title>
+  <title>Post - LearnZenith</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -328,12 +328,13 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Thread</h1>
+      <h1>Post</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/forum">Forum</a></li>
-          <li class="breadcrumb-item active">Thread</li>
+          <li class="breadcrumb-item"><a href="/community">Community</a></li>
+          <li class="breadcrumb-item active"><a th:href="@{/community/{category_name}(category_name=${category_name})}" th:text="${category_name}"></a></li>
+          <li class="breadcrumb-item active">Post</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -343,22 +344,22 @@
       <div class="row">
         <div class="col-lg-15">
 
-          <!-- Card with header and footer -->
-          <div class="card" th:each="thread: ${threadSelected}">
+          <!-- Post title and content section -->
+          <div class="card">
             <div class="card-body">
-              <h5 class="card-title" th:text="${thread.title}"></h5>
-              <span th:utext="${thread.content}"></span>
+              <h5 class="card-title" th:text="${post.title}"></h5>
+              <span th:utext="${post.content}"></span>
             </div>
             <div class="card-footer">
-              <span th:text="'Posted on ' + ${thread.postDate} + ' at ' + ${thread.postTime} + ' by ' + ${thread.posterName}"></span>
+              <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
             </div>
-          </div><!-- End Card with header and footer -->
+          </div>
 
-          <!-- Reply to thread textbox section -->
-          <div th:with="thread=${threadSelected[0]}">
-            <form action="#" th:action="@{/add-reply/0/{threadID}(threadID=${thread.threadID})}" th:object="${newReply}" method="post" class="needs-validation" novalidate> 
+          <!-- Comment on post textbox section -->
+          <div th:with="post=${post}">
+            <form action="#" th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.id})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
               <div class="form-floating">
-                <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{replyContent}"></textarea>
+                <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{content}"></textarea>
                 <label for="floatingTextarea">Add a reply</label>
                 <div class="invalid-feedback">Please enter your reply</div>
               </div>
@@ -366,42 +367,40 @@
                 <button type="submit" class="btn btn-primary" id="submitReplyBtn">Submit</button>
               </div>
             </form>
-          </div><!-- End of reply to thread textbox section -->
+          </div>
 
-          <!-- Replies section header -->
-          <h4 th:if="${replies.length != 0}" th:text="Replies" id="replySectHeader"></h4>
+          <!-- Comments section header -->
+          <h4 th:text="Comments" id="replySectHeader"></h4> 
           
-          <!-- Replies section -->
-          <div th:each="reply: ${replies}">
+          <!-- Comments section -->
+          <div th:each="comment: ${comments}">
             <div class="card">
-              <div th:if="${reply.commentID == 0}">
+              <div>
 
-                <!-- Reply template section-->
                 <div class="card-body">
-                  <span th:utext="${reply.replyContent}"></span>
+                  <span th:utext="${comment.content}"></span>
                 </div>
                 <div class="card-footer">
-                  <span th:text="'Posted on ' + ${reply.replyDate} + ' at ' + ${reply.replyTime} + ' by ' + ${reply.responderName}"></span>
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered'+${reply.replyID}" id="replyBtn">
+                  <span th:text="'Posted on ' + ${#dates.format(comment.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${comment.commenterName}"></span>
+                  <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered' + ${comment.id}" id="replyBtn">
                     Reply
-                  </button>
-                </div><!-- End of reply template section -->
+                  </button> -->
+                </div>
                 
-                <!-- Reply to reply modal popup template section -->
-                <div class="modal fade" th:id="'verticalycentered' + ${reply.replyID}" tabindex="-1">
+                <div class="modal fade" th:id="'verticalycentered' + ${comment.id}" tabindex="-1">
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" style="color: black;" th:text="'Reply to comment by ' + ${reply.responderName}"></h5>
+                        <h5 class="modal-title" style="color: black;" th:text="'Reply to comment by ' + ${comment.commenterName}"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body" style="color: black;">
-                        <span th:utext="${reply.replyContent}"></span>
+                        <span th:utext="${comment.content}"></span>
                       </div>
-                      <form action="#" method="post" class="needs-validation" novalidate th:action="@{/add-reply/{replyID}/{threadID}(threadID=${reply.threadID}, replyID=${reply.replyID})}" th:object="${newReply}">
+                      <form action="#" method="post" class="needs-validation" novalidate th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.id})}" th:object="${newComment}">
                         <div class="modal-body" style="color: black;">
                           <div class="form-floating">
-                            <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;" th:field="*{replyContent}"></textarea>
+                            <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;" th:field="*{content}"></textarea>
                             <label for="floatingReplyArea">Add a reply</label>
                             <div class="invalid-feedback">Please enter your reply</div>
                           </div>
@@ -413,12 +412,12 @@
                       </form>
                     </div>
                   </div>
-                </div><!-- End of reply to reply popup section -->
+                </div> 
 
               </div>
-            </div>
+            </div> 
 
-            <!-- Reply to reply template section  -->
+            <!-- Reply to reply section -->
             <div class="card" th:each="replyReply: ${replyReplies}" th:if="${replyReply.commentID == reply.replyID}" style="width: 90%; margin-left: 10%">
                 <div class="card-body">
                   <span th:utext="${replyReply.replyContent}"></span>
@@ -426,8 +425,8 @@
                 <div class="card-footer">
                   <span th:text="'Posted on ' + ${replyReply.replyDate} + ' at ' + ${replyReply.replyTime} + ' by ' + ${replyReply.responderName}"></span>
                 </div>
-            </div><!-- Reply to reply template section -->
-          </div><!-- End of Replies section -->
+            </div>
+          </div>  
           
         </div>
       </div>

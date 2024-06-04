@@ -7,4 +7,6 @@ import webprogramming.csc1106.Entities.Post;
 
 public interface PostRepo extends JpaRepository<Post, Integer>{
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
+
+    Post findById(long id);
 }   

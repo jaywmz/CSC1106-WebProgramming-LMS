@@ -82,4 +82,8 @@ public class Comment {
     public void setParent(Comment parent) {
         this.parent = parent;
     }
+
+    public long getId() {
+        return id;
+    }
 }
