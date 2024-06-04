@@ -2,6 +2,8 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Comparator;
+
 
 @Entity
 @Table(name = "community_category")
@@ -46,6 +48,7 @@ public class CommunityCategory {
     }
 
     public List<Post> getPosts() {
+        posts.sort(Comparator.comparing(Post::getTimestamp).reversed());
         return posts;
     }
 
