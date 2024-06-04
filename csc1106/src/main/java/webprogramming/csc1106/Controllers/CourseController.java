@@ -55,5 +55,19 @@ public class CourseController {
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String test() {
+        Course course = new Course();
+        course.setCourseId(1);
+        course.setCourseName("Java Programming");
+        course.setCourseDescription("Learn Java Programming");
+        course.setCourseInstructor("John Doe");
+        course.setCourseLevel("Beginner");
+        course.setCoursePrice("0");
+        course.setCourseDuration("1");
+        course.setCourseImageUrl("https://example.com/image.jpg");
 
+        courseService.addCourse(course);
+        return "Hello World!";
+    }
 }
