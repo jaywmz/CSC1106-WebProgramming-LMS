@@ -21,13 +21,19 @@ public class CommunityController {
     private PostRepo postRepo;
     
     @GetMapping("/community")
-    public String getCommunityHome() {
+    public String getCommunityHome(@RequestParam(defaultValue = "1") int page, Model model) {
+        Page<Post> posts = postRepo.findAllByOrderByTimestampDesc(PageRequest.of(page - 1, 10));
+
+        model.addAttribute("posts", posts.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPage", posts.getTotalPages());
+
         return "community-home";
     }
     
     @GetMapping("/community/search")
     public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model) {
-        Page<Post> queriedPosts = postRepo.findAllByTitleContainingOrContentContainingOrderByTimestampDesc(key, key, PageRequest.of(page - 1, 10));
+        Page<Post> queriedPosts = postRepo.findAllByTitleContainingOrContentContainingOrderByTimestampDesc(key, key, PageRequest.of(page - 1, 5));
         
         model.addAttribute("posts", queriedPosts.getContent());
         model.addAttribute("currentPage", page);

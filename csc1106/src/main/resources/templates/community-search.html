@@ -416,7 +416,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                          <th scope="col">Title</th>
+                          <th scope="col" style="width:50%">Title</th>
                           <th scope="col">Poster</th>
                           <th scope="col">Date</th>
                           <th scope="col">Time</th>
@@ -425,10 +425,10 @@
                       <!-- TODO: add a "No results" message if no posts -->
                       <tbody th:each="post: ${posts}">
                         <tr>
-                          <td style="padding: 0px;"><a th:href="#" th:text="${post.title}" id="threadTitle"></a></td>
-                          <td style="padding: 0px;"><a th:href="#" th:text="${post.posterName}"></a></td>
-                          <td style="padding: 0px;"><a th:href="#" th:text="${post.timestamp}"></a></td>
-                          <td style="padding: 0px;"><a th:href="#" th:text="${thread.timestamp}"></a></td>
+                          <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></a></td>
+                          <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.posterName}"></a></td>
+                          <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM yyyy')}"></a></td>
+                          <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'hh:mm a')}"></a></td>
                           <!-- <td style="padding: 0px;"><a th:href="@{'/forum/' + ${thread.threadID}}" th:text="${thread.postTime}"></a></td> -->
                         </tr>
                       </tbody>

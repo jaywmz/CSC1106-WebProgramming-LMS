@@ -500,7 +500,26 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Recent Threads</h5>
+                <table class="table table-hover">
+                  <thead>
+                      <tr>
+                        <th scope="col" style="width:50%">Title</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Poster</th>
+                        <th scope="col">Posted at</th>
+                      </tr>
+                    </thead>
+                    <tbody th:each="post: ${posts}">
+                      <tr>
+                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></a></td>
+                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.getCategory().getName()}"></a></td>
+                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.posterName}"></a></td>
+                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                      </tr>
+                    </tbody>
+              </table>
             </div>
+          </div>
         </div>
 
     </section>
