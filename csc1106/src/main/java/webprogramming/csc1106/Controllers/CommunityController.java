@@ -1,5 +1,7 @@
 package webprogramming.csc1106.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,16 @@ public class CommunityController {
         model.addAttribute("posts", posts.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPage", posts.getTotalPages());
+
+        List<Object[]> categoryCounts = postRepo.findCategoryCounts();
+        Object[] announcementCount = categoryCounts.get(0);
+        Object[] questionsCount = categoryCounts.get(1);
+        Object[] eventsCount = categoryCounts.get(2);
+        model.addAttribute("announcementCount", announcementCount[1]);
+        model.addAttribute("questionsCount", questionsCount[1]);
+        model.addAttribute("eventsCount", eventsCount[1]);
+
+        // TODO: add more counters for the other categories, once finalised
 
         return "community-home";
     }
