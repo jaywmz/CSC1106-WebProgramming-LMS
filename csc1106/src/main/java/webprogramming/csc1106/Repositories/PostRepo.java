@@ -12,6 +12,8 @@ public interface PostRepo extends JpaRepository<Post, Integer>{
     Page<Post> findAllByOrderByTimestampDesc(Pageable pageable);
     Post findById(long id);
     
-    @Query(value = "SELECT category_id, COUNT(category_id) FROM post GROUP BY category_id", nativeQuery = true)
+    @Query(value = "SELECT c.id, COUNT(p.category_id) FROM community_category c \r\n" + //
+                "LEFT JOIN post p ON c.id = p.category_id \r\n" + //
+                "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCounts();
 }   
