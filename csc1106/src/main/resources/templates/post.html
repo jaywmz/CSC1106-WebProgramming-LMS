@@ -344,16 +344,37 @@
       <div class="row">
         <div class="col-lg-15">
 
-          <!-- Post title and content section -->
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title" th:text="${post.title}"></h5>
-              <span th:utext="${post.content}"></span>
-            </div>
-            <div class="card-footer">
-              <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
+        <!-- Post title and content section -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title" th:text="${post.title}"></h5>
+            <span th:utext="${post.content}"></span>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
+            <div>
+              <button type="button" class="btn btn-outline-primary" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')"><i class="bi bi-heart me-1"></i><span> Like</span></button>
+              <button type="button" class="btn btn-outline-primary" onclick="toggleActive(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')"><i class="bi bi-bell me-1"></i><span> Subscribe</span></button>
+
+              <script>
+              function toggleActive(button, defaultText, activeText, defaultIcon, activeIcon) {
+                button.classList.toggle('active');
+                var buttonText = button.querySelector('span');
+                var buttonIcon = button.querySelector('i');
+                if (button.classList.contains('active')) {
+                  buttonText.textContent = activeText;
+                  buttonIcon.classList.remove(defaultIcon);
+                  buttonIcon.classList.add(activeIcon);
+                } else {
+                  buttonText.textContent = defaultText;
+                  buttonIcon.classList.remove(activeIcon);
+                  buttonIcon.classList.add(defaultIcon);
+                }
+              }
+              </script>
             </div>
           </div>
+        </div>
 
           <!-- Comment on post textbox section -->
           <div th:with="post=${post}">
