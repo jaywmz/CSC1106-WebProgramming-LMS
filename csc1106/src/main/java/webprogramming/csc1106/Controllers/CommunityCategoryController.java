@@ -27,7 +27,7 @@ public class CommunityCategoryController {
         List<Post> posts = category.getPosts(); // get retrieved category's posts
         model.addAttribute("posts", posts); // add posts to template model
 
-        return "community-category";
+        return "Community/community-category";
     }
     
 }

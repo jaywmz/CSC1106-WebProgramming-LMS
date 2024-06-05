@@ -28,7 +28,7 @@ public class NewPostController {
     public String getNewPostForm(@Param("category_name") String category_name, Model model) {
         model.addAttribute("category_name", category_name);
         model.addAttribute("newPost", new Post());
-        return "new-post"; 
+        return "Community/new-post"; 
     }
 
     @PostMapping("/community/new-post")

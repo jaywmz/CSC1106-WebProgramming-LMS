@@ -31,23 +31,23 @@ public class MarketPlaceController {
             logger.info("Course: " + course.getTitle());
         }
 
-        return "market";
+        return "Marketplace/market";
     }
 
     @GetMapping("/checkout")
     public String redirectToCheckout() {
-        return "checkout";
+        return "Marketplace/checkout";
     }
 
     @GetMapping("/IT_Software")
     public String redirectToITandSoftware() {
-        return "IT_Software";
+        return "Marketplace/IT_Software";
     }
 
     @GetMapping("/business")
     public String redirectToBusiness(Model model) {
         long totalCourses = courseService.getTotalCourses();
         model.addAttribute("totalCourses", totalCourses);
-        return "business";
+        return "Marketplace/business";
     }
 }

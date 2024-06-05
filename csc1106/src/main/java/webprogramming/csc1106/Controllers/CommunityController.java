@@ -51,6 +51,6 @@ public class CommunityController {
         model.addAttribute("currentPage", page);
         model.addAttribute("search_term", key);
         model.addAttribute("totalPage", queriedPosts.getTotalPages());
-        return "community-search";
+        return "Community/community-search";
     }
 }

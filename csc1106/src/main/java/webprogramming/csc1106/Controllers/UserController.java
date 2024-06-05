@@ -32,13 +32,13 @@ public class UserController {
 
     @GetMapping("/login")
     public String loginForm() {
-        return "pages-login"; // Return the login form
+        return "User/pages-login"; // Return the login form
     }
 
     @GetMapping("/register")
     public String registerForm() {
         logger.debug("GET request received for registration form");
-        return "pages-register"; // Return the registration form
+        return "User/pages-register"; // Return the registration form
     }
 
     @PostMapping("/login")

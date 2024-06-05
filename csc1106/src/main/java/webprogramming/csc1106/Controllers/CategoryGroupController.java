@@ -18,7 +18,7 @@ public class CategoryGroupController {
     @GetMapping("/add-category")
     public String showAddCategoryPage(Model model) {
         model.addAttribute("categoryGroup", new CategoryGroup());
-        return "add-category";
+        return "Marketplace/add-category";
     }
 
     @PostMapping("/add-category")
@@ -29,7 +29,7 @@ public class CategoryGroupController {
             return "redirect:/add-category";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Failed to add category group. Please try again.");
-            return "add-category";
+            return "Marketplace/add-category";
         }
     }
 }

@@ -36,7 +36,7 @@ public class PostController {
         model.addAttribute("newComment", new Comment());
         model.addAttribute("comments", post.getComments().reversed());
 
-        return "post";
+        return "Community/post";
     }
 
     @PostMapping("/community/{category_name}/{post_id}/add-comment")

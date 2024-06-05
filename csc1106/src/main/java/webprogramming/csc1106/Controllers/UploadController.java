@@ -27,14 +27,14 @@ public class UploadController {
     @GetMapping("/coursesupload")
     public String showCoursesPage(Model model) {
         model.addAttribute("courses", courseService.getAllCourses());
-        return "coursesupload";
+        return "Marketplace/coursesupload";
     }
 
     @GetMapping("/upload")
     public String showUploadPage(Model model) {
         model.addAttribute("course", new UploadCourse());
         model.addAttribute("categories", courseService.getAllCategories());
-        return "upload";
+        return "Marketplace/upload";
     }
 
     @PostMapping("/upload")
@@ -86,7 +86,7 @@ public class UploadController {
         if (courseOptional.isPresent()) {
             model.addAttribute("course", courseOptional.get());
             model.addAttribute("categories", courseService.getAllCategories());
-            return "edit";
+            return "Marketplace/edit";
         } else {
             return "redirect:/coursesupload";
         }
