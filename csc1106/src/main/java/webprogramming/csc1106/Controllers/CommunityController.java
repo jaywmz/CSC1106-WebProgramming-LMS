@@ -40,7 +40,7 @@ public class CommunityController {
 
         // TODO: add more counters for the other categories, once finalised
 
-        return "community-home";
+        return "Community/community-home";
     }
     
     @GetMapping("/community/search")
