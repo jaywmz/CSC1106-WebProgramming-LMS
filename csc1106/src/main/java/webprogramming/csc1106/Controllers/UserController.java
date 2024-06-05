@@ -3,17 +3,24 @@ package webprogramming.csc1106.Controllers;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Map;
+import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
@@ -59,6 +66,49 @@ public class UserController {
         }
 
         return modelAndView;
+    }
+
+    @PostMapping("/logmein")
+    public ResponseEntity<String> logMeIn(@RequestBody Map<String, String> loginData){
+        
+        try{
+            User user = userRepository.findByUserEmailAndUserPassword(loginData.get("email"), loginData.get("password"));
+            
+            if(user == null){
+                return new ResponseEntity<>("Invalid email or password", HttpStatus.BAD_REQUEST);
+            }
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            user.setLastLogin(timestamp);
+
+            String cookie = user.generateRandomCookie(200);
+            user.setLoginCookie(cookie);
+
+            saveUser(user);
+
+            return new ResponseEntity<>(cookie, HttpStatus.OK);
+
+        }catch(Exception e){
+            logger.error(e.toString());
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+    
+    }
+
+    @PostMapping("checkmycookie")
+    public ResponseEntity<String> checkMyCookie(@RequestBody Map<String, String> cookieData){
+        try{
+            String cookie = cookieData.get("cookie");
+            User user = userRepository.findByLoginCookie(cookie);
+            if(user == null){
+                return new ResponseEntity<>("Invalid Cookie", HttpStatus.BAD_REQUEST);
+            }
+            String userName = user.getUserName();
+            return new ResponseEntity<>(userName, HttpStatus.OK);
+        }catch(Exception e){
+            logger.error(e.toString());
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/register")
