@@ -31,12 +31,15 @@ public class CommunityController {
         model.addAttribute("totalPage", posts.getTotalPages());
 
         List<Object[]> categoryCounts = postRepo.findCategoryCounts();
-        Object[] announcementCount = categoryCounts.get(0);
-        Object[] questionsCount = categoryCounts.get(1);
-        Object[] eventsCount = categoryCounts.get(2);
-        model.addAttribute("announcementCount", announcementCount[1]);
-        model.addAttribute("questionsCount", questionsCount[1]);
-        model.addAttribute("eventsCount", eventsCount[1]);
+        String[] categories = {
+            "announcementCount", 
+            "questionsCount", 
+            "eventsCount"
+        };
+
+        for (int i = 0; i < categoryCounts.size(); i++) {
+            model.addAttribute(categoryCounts.get(i)[0].toString() + "Count", categoryCounts.get(i)[1]);
+        }
 
         // TODO: add more counters for the other categories, once finalised
 
