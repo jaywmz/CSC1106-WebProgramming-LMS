@@ -3,7 +3,9 @@ package webprogramming.csc1106.Entities;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Random;
 import java.util.ArrayList;
 
 import jakarta.persistence.*;
@@ -38,6 +40,12 @@ public class User {
     @Column(name = "user_balance", nullable = false, precision = 38, scale = 2)
     private BigDecimal userBalance;
 
+    @Column(name = "last_login", nullable = true)
+    private Timestamp lastLogin;
+
+    @Column(name = "login_cookie", nullable = true)
+    private String loginCookie;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transactions> transactions = new ArrayList<>();
 
@@ -45,7 +53,7 @@ public class User {
     public User() {}
 
     // Parameterized constructor
-    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joinedDate, Time joinedTime, BigDecimal userBalance) {
+    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joinedDate, Time joinedTime, BigDecimal userBalance, Timestamp lastLogin, String loginCookie) {
         this.userID = userID;
         this.roleID = roleID;
         this.userName = userName;
@@ -54,6 +62,8 @@ public class User {
         this.joinedDate = joinedDate;
         this.joinedTime = joinedTime;
         this.userBalance = userBalance;
+        this.lastLogin = lastLogin;
+        this.loginCookie = loginCookie;
     }
 
     // Getters and setters
@@ -128,4 +138,39 @@ public class User {
     public void setTransactions(List<Transactions> transactions) {
         this.transactions = transactions;
     }
+
+    public Timestamp getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Timestamp lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public String getLoginCookie() {
+        return loginCookie;
+    }
+
+    public void setLoginCookie(String loginCookie) {
+        this.loginCookie = loginCookie;
+    }
+
+    // Generate Random String with Numbers
+    private static Random random = new Random();
+
+    public String generateRandomCookie(int length){
+        String cookieCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
+                            "abcdefghijklmnopqrstuvwxyz" + 
+                            "0123456789" + 
+                            "!@#$%^&*()";
+
+        StringBuilder builder = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            builder.append(cookieCharacters.charAt(random.nextInt(cookieCharacters.length())));
+        }
+
+        return builder.toString();
+    }
+
 }

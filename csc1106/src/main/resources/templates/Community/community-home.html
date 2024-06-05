@@ -420,7 +420,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
                         <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
-                        <p class="card-text" th:text="${announcementCount} + ' Posts'"></p>
+                        <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p>
                     </div>
                 </div><!-- Announcements Card -->
             </div>
@@ -430,7 +430,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><a href="/community/questions">Questions</a></h5>
                         <p class="card-text">Post your questions here and get help from others in the LearnZenith community.</p>
-                        <p class="card-text" th:text="${questionsCount} + ' Posts'"></p>
+                        <p class="card-text" th:text="${QuestionsCount != null ? QuestionsCount : 0} + ' Posts'"></p>
                       </div>
                 </div><!-- Questions Card -->
             </div>
@@ -440,7 +440,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><a href="/community/events">Events</a></h5>
                         <p class="card-text">Stay up to date with the latest events and webinars from LearnZenith.</p>
-                        <p class="card-text" th:text="${eventsCount} + ' Posts'"></p>
+                        <p class="card-text" th:text="${EventsCount != null ? EventsCount : 0} + ' Posts'"></p>
                       </div>
                 </div><!-- Questions Card -->
             </div>
@@ -468,7 +468,7 @@
                                 <a href="/community/introductions">Introductions</a>
                                 <p class="fs-6 fw-normal">Introduce yourself to the LearnZenith community.</p>
                             </th>
-                            <td>SQL count</td>
+                            <td th:text="${IntroductionsCount != null ? IntroductionsCount : 0}"></td>
                             <td>xxx</td>
                         </tr>
                         <tr>
