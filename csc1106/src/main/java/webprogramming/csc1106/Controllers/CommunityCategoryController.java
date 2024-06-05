@@ -45,5 +45,10 @@ public class CommunityCategoryController {
     public String getStudents(Model model) {
         return "Community/community-students";
     }
+
+    @GetMapping("/community/instructors")
+    public String getInstructors(Model model) {
+        return "Community/community-instructors";
+    }
     
 }
