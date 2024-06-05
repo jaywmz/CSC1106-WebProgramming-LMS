@@ -18,16 +18,32 @@ public class CommunityCategoryController {
     @Autowired
     private CategoryRepo categoryRepo;
 
-    @GetMapping("/community/{category_name}")
-    public String getCategoryPosts(@PathVariable String category_name, Model model) {
-        category_name = category_name.substring(0, 1).toUpperCase() + category_name.substring(1); // capitalise first letter of category name
-        model.addAttribute("category_name", category_name); // add category name to template model
+    // @GetMapping("/community/{category_name}")
+    // public String getCategoryPosts(@PathVariable String category_name, Model model) {
+    //     category_name = category_name.substring(0, 1).toUpperCase() + category_name.substring(1); // capitalise first letter of category name
+    //     model.addAttribute("category_name", category_name); // add category name to template model
 
-        CommunityCategory category = categoryRepo.findByName(category_name); // retrieve category object from db by name
-        List<Post> posts = category.getPosts(); // get retrieved category's posts
-        model.addAttribute("posts", posts); // add posts to template model
+    //     CommunityCategory category = categoryRepo.findByName(category_name); // retrieve category object from db by name
+    //     List<Post> posts = category.getPosts(); // get retrieved category's posts
+    //     model.addAttribute("posts", posts); // add posts to template model
+
+    //     return "Community/community-category";
+    // }
+
+    @GetMapping("/community/announcements")
+    public String getAnnouncements(Model model) {
+        model.addAttribute("category_name", "Announcements");
+
+        CommunityCategory category = categoryRepo.findByName("Announcements");
+        List<Post> posts = category.getPosts();
+        model.addAttribute("posts", posts);
 
         return "Community/community-category";
+    }
+
+    @GetMapping("/community/students")
+    public String getStudents(Model model) {
+        return "Community/community-students";
     }
     
 }
