@@ -2,8 +2,11 @@ package webprogramming.csc1106.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
+
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
 
@@ -148,5 +151,110 @@ public class UploadCourseService {
 
     public void deleteBlob(String blobUrl) {
         azureBlobService.deleteBlob(blobUrl);
+    }
+
+    public void processCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String contentType = coverImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
+            }
+            String coverImageUrl = uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+            coverImageUrl = generateSasUrl(coverImageUrl);
+            course.setCoverImageUrl(coverImageUrl);
+        }
+        addCourse(course);
+
+        CategoryGroup categoryGroup = getCategoryById(selectedCategory)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        CourseCategory courseCategory = new CourseCategory(course, categoryGroup);
+        addCourseCategory(courseCategory);
+        course.getCourseCategories().add(courseCategory);
+
+        for (Section section : course.getSections()) {
+            section.setCourse(course);
+            addSection(section);
+
+            for (Lesson lesson : section.getLessons()) {
+                lesson.setSection(section);
+                addLesson(lesson);
+
+                MultipartFile lessonFile = lesson.getFile();
+                if (lessonFile != null && !lessonFile.isEmpty()) {
+                    String fileUrl = uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                    fileUrl = generateSasUrl(fileUrl);
+                    FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                    fileResource.setLesson(lesson);
+                    addFileResource(fileResource);
+                    lesson.getFiles().add(fileResource);
+                }
+            }
+        }
+    }
+
+    public void processCourseUpdate(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
+        Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
+        if (!existingCourseOpt.isPresent()) {
+            throw new RuntimeException("Course not found.");
+        }
+
+        UploadCourse existingCourse = existingCourseOpt.get();
+
+        // Update cover image if a new one is provided
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String contentType = coverImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
+            }
+            if (existingCourse.getCoverImageUrl() != null) {
+                deleteBlob(existingCourse.getCoverImageUrl());
+            }
+            String coverImageUrl = uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+            coverImageUrl = generateSasUrl(coverImageUrl);
+            existingCourse.setCoverImageUrl(coverImageUrl);
+        }
+
+        // Update basic fields
+        existingCourse.setTitle(course.getTitle());
+        existingCourse.setDescription(course.getDescription());
+        existingCourse.setLecturer(course.getLecturer());
+        existingCourse.setPrice(course.getPrice());
+
+        // Update the category
+        clearCourseCategories(existingCourse);
+        CategoryGroup categoryGroup = getCategoryById(selectedCategory)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        CourseCategory courseCategory = new CourseCategory(existingCourse, categoryGroup);
+        addCourseCategory(courseCategory);
+        existingCourse.getCourseCategories().add(courseCategory);
+
+        // Clear and update sections and lessons
+        existingCourse.getSections().clear();
+        for (Section section : course.getSections()) {
+            section.setCourse(existingCourse);
+            Section savedSection = addSection(section);
+
+            for (Lesson lesson : section.getLessons()) {
+                lesson.setSection(savedSection);
+                Lesson savedLesson = addLesson(lesson);
+
+                MultipartFile lessonFile = lesson.getFile();
+                if (lessonFile != null && !lessonFile.isEmpty()) {
+                    for (FileResource existingFile : lesson.getFiles()) {
+                        deleteBlob(existingFile.getFileUrl());
+                    }
+                    lesson.getFiles().clear();
+                    String fileUrl = uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                    fileUrl = generateSasUrl(fileUrl);
+                    FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                    fileResource.setLesson(savedLesson);
+                    addFileResource(fileResource);
+                    savedLesson.getFiles().add(fileResource);
+                }
+            }
+            existingCourse.getSections().add(savedSection);
+        }
+
+        updateCourse(existingCourse);
     }
 }
