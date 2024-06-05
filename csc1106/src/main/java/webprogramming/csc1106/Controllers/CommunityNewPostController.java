@@ -43,7 +43,6 @@ public class CommunityNewPostController {
         
         postRepo.save(newPost);
 
-        // need to change so it actually redirects to the newly created thread's dedicated page
         return "redirect:/community/" + category_name; 
     }
     
