@@ -27,9 +27,11 @@ document.querySelector('#login-form').addEventListener('submit', function(event)
             
             console.log(responseText);
             if(rememberMe === 'true'){
+                // If remember me is checked, set cookie to 365 days
                 setCookie('lrnznth_User_Cookie', responseText, 365);
             }
             else{
+                // If remember me is not checked, set cookie to 1 day
                 setCookie('lrnznth_User_Cookie', responseText, 1);
             }
 
@@ -45,8 +47,13 @@ document.querySelector('#login-form').addEventListener('submit', function(event)
 });
 
 document.addEventListener('DOMContentLoaded', async function(){
+    
+    // Get Cookie and check if it is valid
     const thisCheck = getCookie('lrnznth_User_Cookie');
+    
     if(thisCheck){
+
+        // Check if cookie is valid
         const response = await fetch('/checkmycookie', {
             method: 'POST',
             headers: {
@@ -54,11 +61,16 @@ document.addEventListener('DOMContentLoaded', async function(){
             },
             body: JSON.stringify({cookie: thisCheck})
         });
+
+        // Wait for response
         const responseText = await response.text();
+
+        // If response is 200, redirect to dashboard, set Name Cookie (1 Days)
         if(response.status === 200){
             setCookie('lrnznth_User_Name', responseText, 1);
             window.location.href = '/dashboard';
         }
+        // Remove Cookie if it is not valid
         else{
             deleteCookie('lrnznth_User_Cookie');
         }

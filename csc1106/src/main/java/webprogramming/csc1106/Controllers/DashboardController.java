@@ -3,18 +3,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
+import java.util.List;
 
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Securities.Encoding;
 
+import webprogramming.csc1106.Entities.DashboardSidebarItems;
+import webprogramming.csc1106.Repositories.DashboardSidebarItemsRepository;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
 public class DashboardController {
+    
     private final UserRepository userRepository;
-    public DashboardController(UserRepository userRepository) {
+    private final DashboardSidebarItemsRepository dashboardSidebarItemsRepository;
+    
+    public DashboardController(
+        UserRepository userRepository, 
+        DashboardSidebarItemsRepository dashboardSidebarItemsRepository
+    ) {
         this.userRepository = userRepository;
+        this.dashboardSidebarItemsRepository = dashboardSidebarItemsRepository;
     }
 
     @GetMapping("/board/{email}")
