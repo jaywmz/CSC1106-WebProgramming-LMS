@@ -19,7 +19,7 @@ import java.net.URLConnection;
 import java.util.Optional;
 
 @Controller
-public class UploadController {
+public class MarketplaceUploadController {
 
     @Autowired
     private UploadCourseService courseService;

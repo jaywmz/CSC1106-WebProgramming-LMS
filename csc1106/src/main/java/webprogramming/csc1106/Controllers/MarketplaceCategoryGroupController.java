@@ -10,7 +10,7 @@ import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Services.CategoryGroupService;
 
 @Controller
-public class CategoryGroupController {
+public class MarketplaceCategoryGroupController {
 
     @Autowired
     private CategoryGroupService categoryGroupService;

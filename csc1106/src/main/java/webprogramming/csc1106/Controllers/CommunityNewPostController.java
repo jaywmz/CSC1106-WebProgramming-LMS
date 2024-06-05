@@ -17,7 +17,7 @@ import webprogramming.csc1106.Repositories.PostRepo;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class NewPostController {
+public class CommunityNewPostController {
 
     @Autowired
     private PostRepo postRepo;

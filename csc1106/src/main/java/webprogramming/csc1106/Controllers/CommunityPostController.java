@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
-public class PostController {
+public class CommunityPostController {
     @Autowired
     private PostRepo postRepo;
     @Autowired
