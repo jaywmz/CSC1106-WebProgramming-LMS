@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.PostRepo;
@@ -24,19 +23,16 @@ public class CommunityController {
     
     @GetMapping("/community")
     public String getCommunityHome(@RequestParam(defaultValue = "1") int page, Model model) {
-        Page<Post> posts = postRepo.findAllByOrderByTimestampDesc(PageRequest.of(page - 1, 10));
+        List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
 
-        model.addAttribute("posts", posts.getContent());
+        model.addAttribute("posts", posts);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPage", posts.getTotalPages());
 
         List<Object[]> categoryCounts = postRepo.findCategoryCounts();
 
         for (int i = 0; i < categoryCounts.size(); i++) {
             model.addAttribute(categoryCounts.get(i)[0].toString() + "Count", categoryCounts.get(i)[1]);
         }
-
-        // TODO: add more counters for the other categories, once finalised
 
         return "Community/community-home";
     }

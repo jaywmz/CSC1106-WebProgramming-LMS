@@ -203,7 +203,7 @@
                         <td style="padding: 0px;">
                           <div style="display: flex;">
                             <div style="flex: 1;">
-                                <a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></a>
+                                <a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></a>
                                 <p th:text="${post.content}" id="postDetails"></p> 
                             </div>
                             <div style="flex: 1; text-align: right;">

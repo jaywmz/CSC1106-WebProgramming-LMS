@@ -191,10 +191,10 @@
                 </thead>
                 <tbody th:each="post: ${posts}">
                   <tr>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${post.posterName}"></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM yyyy')}"></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'hh:mm a')}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_name} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_name} + '/' + ${post.id}}" th:text="${post.posterName}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_name} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM yyyy')}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_name} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'hh:mm a')}"></td>
                   </tr>
                 </tbody>
               </table>

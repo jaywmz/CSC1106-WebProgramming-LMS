@@ -47,6 +47,10 @@ public class CommunityCategory {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public List<Post> getPosts() {
         posts.sort(Comparator.comparing(Post::getTimestamp).reversed());
         return posts;

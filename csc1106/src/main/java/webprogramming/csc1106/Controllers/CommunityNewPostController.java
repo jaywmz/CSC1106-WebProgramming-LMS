@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
@@ -47,6 +46,17 @@ public class CommunityNewPostController {
         return "Community/new-post"; 
     }
 
+    @GetMapping("/community/announcements/new-post")
+    public String getNewPostForm3(@Param("category_id") String category_id, Model model) {
+        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
+
+        model.addAttribute("user_group", "announcements");
+        model.addAttribute("category_name", category.getName());
+        model.addAttribute("category_id", category_id);
+        model.addAttribute("newPost", new Post());
+        return "Community/new-post"; 
+    }
+
     @PostMapping("/community/new-post")
     public String postNewPost(@Param("category_id") String category_id, @ModelAttribute Post newPost) {
         java.util.Date date = new java.util.Date();
@@ -60,7 +70,7 @@ public class CommunityNewPostController {
         postRepo.save(newPost);
 
         if(Integer.parseInt(category_id) <= 2){
-            return "redirect:/community/announcements/" + category_id;
+            return "redirect:/community/announcements";
         }else if(Integer.parseInt(category_id) <= 8){
             return "redirect:/community/students/" + category_id;
         }else if(Integer.parseInt(category_id) <= 10){

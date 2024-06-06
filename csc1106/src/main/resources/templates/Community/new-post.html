@@ -126,7 +126,7 @@
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item"><a href="/community">Community</a></li>
           <li class="breadcrumb-item"><a th:href="@{/community/{user_group}(user_group=${user_group})}" th:text="${#strings.capitalize(user_group)}"></a></li>
-          <li class="breadcrumb-item"><a th:href="@{/community/{category_name}(category_name=${category_name})}" th:text="${category_name}"></a></li>
+          <li class="breadcrumb-item"><a th:href="@{/community/{user_group}/{category_id}(category_id=${category_id}, user_group=${user_group})}" th:text="${category_name}"></a></li>
           <li class="breadcrumb-item active">New post</li>
         </ol>
       </nav>

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PostRepo extends JpaRepository<Post, Integer>{
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
-    Page<Post> findAllByOrderByTimestampDesc(Pageable pageable);
+    List<Post> findTop5ByOrderByTimestampDesc();
     Post findById(long id);
     
     @Query(value = "SELECT c.id, COUNT(p.category_id) FROM community_category c \r\n" + //
