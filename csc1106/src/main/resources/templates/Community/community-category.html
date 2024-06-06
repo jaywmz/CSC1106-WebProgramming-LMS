@@ -158,6 +158,7 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item"><a href="/community">Community</a></li>
+          <li class="breadcrumb-item"><a th:href="@{/community/{user_group}(user_group=${user_group})}" th:text="${#strings.capitalize(user_group)}"></a></li>          
           <li class="breadcrumb-item active" th:text="${category_name}"/>
         </ol>
       </nav>

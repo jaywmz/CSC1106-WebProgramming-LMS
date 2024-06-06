@@ -6,4 +6,5 @@ import webprogramming.csc1106.Entities.CommunityCategory;
 
 public interface CategoryRepo extends JpaRepository<CommunityCategory, Integer>{
     CommunityCategory findByName(String name);
+    CommunityCategory findById(int id);
 }
