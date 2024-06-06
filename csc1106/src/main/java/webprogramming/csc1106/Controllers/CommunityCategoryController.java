@@ -34,6 +34,21 @@ public class CommunityCategoryController {
         return "Community/community-category";
     }
 
+    @GetMapping("/community/instructors/{category_id}")
+    public String getCategortPostsInstructors(@PathVariable String category_id, Model model) {
+
+        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
+        List<Post> posts = category.getPosts(); // get retrieved category's posts
+        
+        model.addAttribute("user_group", "instructors");
+        model.addAttribute("category_name", category.getName()); // add category name to template model
+        model.addAttribute("category_id", category_id); // used for new post later
+        model.addAttribute("posts", posts); // add posts to template model
+
+        return "Community/community-category";
+    }
+
+
     @GetMapping("/community/announcements")
     public String getAnnouncements(Model model) {
         model.addAttribute("category_name", "Announcements");

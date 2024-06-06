@@ -171,8 +171,8 @@
           <div class="card">
             <div class="card-body">
 
-              <a th:href="@{/community/new-post?category_name={category_name}(category_name=${category_name})}">
-                <button type="button" class="btn btn-primary" id="newPostBtn">
+              <a th:href="@{/community/{user_group}/new-post(category_id=${category_id}, user_group=${user_group})}">
+                  <button type="button" class="btn btn-primary" id="newPostBtn">
                   <i class="bi bi-plus me-1"></i> New post
                 </button>
               </a>
