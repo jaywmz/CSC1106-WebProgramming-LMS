@@ -29,45 +29,6 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
-  <style>
-    #newPostBtn {
-      float: right; 
-      margin-top: 12px; 
-    }
-
-    .card-title {
-      font-size: 1.3rem;
-    }
-
-    .table {
-      table-layout: fixed;
-      font-size: 1.1rem;
-    }
-
-    thead {
-      font-family: Poppins;
-    }
-
-    #threadTitle {
-      text-overflow: ellipsis; 
-      overflow: hidden; 
-      white-space: nowrap;
-    }
-
-    #timeCol {
-      width: 50px;
-    }
-
-    td a {
-      display: block;
-      padding: 12px 12px 12px 8px;
-    }
-
-    a:hover {
-      color: #4154f1;
-    }
-  </style>
-
   <!-- =======================================================
   * Template Name: LearnZenith
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -169,51 +130,44 @@
         <p>Welcome to the Students Community. Ask questions, share your knowledge and learn from others.</p>
       </div>
 
-      <div class="row align-items-top">
-        <!-- General Card -->
-        <div class="col-lg-3">
-          <div class="card">
-              <div class="card-body">
-                  <h5 class="card-title"><a href="/community/students/4">General</a></h5>
-                  <p class="card-text">Ask any questions about LearnZenith!</p>
-                  <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
-              </div>
-            </div>
-          </div>
+      <div class="row">
+        <div class="card-group mb-4 gap-4">
           <!-- General Card -->
-        <!-- IT & Software Card -->
-        <div class="col-lg-3">
           <div class="card">
-              <div class="card-body">
-                  <h5 class="card-title"><a href="/community/students/5">IT & Software</a></h5>
-                  <p class="card-text">Ask questions regarding IT & Software</p>
-                  <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
-              </div>
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/students/4">General</a></h5>
+              <p class="card-text">Ask any questions about LearnZenith!</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
             </div>
           </div>
+
           <!-- IT & Software Card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/students/5">IT & Software</a></h5>
+              <p class="card-text">Ask questions regarding IT & Software</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+            </div>  
+          </div>
+        
           <!-- Business Card -->
-          <div class="col-lg-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title"><a href="/community/students/6">Business</a></h5>
-                <p class="card-text">Ask questions regarding Business</p>
-                <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
-              </div>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/students/6">Business</a></h5>
+              <p class="card-text">Ask questions regarding Business</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
             </div>
           </div>
-        <!-- Business Card -->
-        <!-- Finance & Accounting Card -->
-          <div class="col-lg-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title"><a href="/community/students/7">FInance & Accounting</a></h5>
-                <p class="card-text">Ask questions regarding Finance & Accounting</p>
-                <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
-              </div>
-            </div>
-          </div>
+        
           <!-- Finance & Accounting Card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/students/7">FInance & Accounting</a></h5>
+              <p class="card-text">Ask questions regarding Finance & Accounting</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="card">

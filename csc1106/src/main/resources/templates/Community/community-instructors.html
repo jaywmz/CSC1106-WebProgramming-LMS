@@ -29,45 +29,6 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
-  <style>
-    #newPostBtn {
-      float: right; 
-      margin-top: 12px; 
-    }
-
-    .card-title {
-      font-size: 1.3rem;
-    }
-
-    .table {
-      table-layout: fixed;
-      font-size: 1.1rem;
-    }
-
-    thead {
-      font-family: Poppins;
-    }
-
-    #threadTitle {
-      text-overflow: ellipsis; 
-      overflow: hidden; 
-      white-space: nowrap;
-    }
-
-    #timeCol {
-      width: 50px;
-    }
-
-    td a {
-      display: block;
-      padding: 12px 12px 12px 8px;
-    }
-
-    a:hover {
-      color: #4154f1;
-    }
-  </style>
-
   <!-- =======================================================
   * Template Name: LearnZenith
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -170,28 +131,27 @@
       </div>
 
       <div class="row align-items-top">
-        <!-- Course Creation Card -->
-        <div class="col-lg-3">
-          <div class="card">
-              <div class="card-body">
-                  <h5 class="card-title"><a href="/community/instructors/9">Course Creation Help</a></h5>
-                  <p class="card-text">Ask questions regarding course creation</p>
-                  <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
-              </div>
-            </div>
-          </div>
+        <div class="card-group mb-4 gap-4">
+          
           <!-- Course Creation Card -->
-        <!-- Teaching Card -->
-        <div class="col-lg-3">
           <div class="card">
-              <div class="card-body">
-                  <h5 class="card-title"><a href="/community/instructors/10">Teaching Help</a></h5>
-                  <p class="card-text">Ask fellow instructors questions regarding teaching</p>
-                  <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
-              </div>
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/instructors/9">Course Creation Help</a></h5>
+              <p class="card-text">Ask questions regarding course creation</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
             </div>
           </div>
+          
           <!-- Teaching Card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/instructors/10">Teaching Help</a></h5>
+              <p class="card-text">Ask fellow instructors questions regarding teaching</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+            </div>
+          </div>
+          
+        </div>
       </div>
 
       <div class="card">

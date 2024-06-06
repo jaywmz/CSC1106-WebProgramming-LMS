@@ -29,45 +29,6 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
-  <style>
-    #newThreadBtn {
-      float: right; 
-      margin-top: 12px; 
-    }
-
-    .card-title {
-      font-size: 1.3rem;
-    }
-
-    .table {
-      table-layout: fixed;
-      font-size: 1.1rem;
-    }
-
-    thead {
-      font-family: Poppins;
-    }
-
-    #threadTitle {
-      text-overflow: ellipsis; 
-      overflow: hidden; 
-      white-space: nowrap;
-    }
-
-    #timeCol {
-      width: 50px;
-    }
-
-    td a {
-      display: block;
-      padding: 12px 12px 12px 8px;
-    }
-
-    a:hover {
-      color: #4154f1;
-    }
-  </style>
-
   <!-- =======================================================
   * Template Name: LearnZenith
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -167,115 +128,114 @@
         <h1 class="text-center">LearnZenith Community</h1>
         <p class="text-center">Join the LearnZenith community to ask questions, share knowledge, and connect with other members.</p>
       </div>
+      
       <div class="row align-items-center justify-content-center">
         <div class="form-floating mb-3" style="width: 40%;">
-              <form method="GET" action="/community/search">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="floatingInput" placeholder="Search Community" name="key">
-                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
+          <form method="GET" action="/community/search">
+            <div class="input-group">
+              <input type="text" class="form-control" id="floatingInput" placeholder="Search Community" name="key" />
+              <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+                <i class="bi bi-search"></i>
+              </button>
             </div>
+          </form>
         </div>
+      </div>
 
-        <div class="row align-items-top">
-            <div class="col-lg-4">
-                <!-- Announcements Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
-                        <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
-                        <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p>
-                    </div>
-                </div><!-- Announcements Card -->
-            </div>
-            <div class="col-lg-4">
-                <!-- Questions Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/community/students">Students</a></h5>
-                        <p class="card-text">Ask questions, share knowledge, and connect with other students.</p>
-                        <!-- <p class="card-text" th:text="${QuestionsCount != null ? QuestionsCount : 0} + ' Posts'"></p> -->
-                      </div>
-                </div><!-- Questions Card -->
-            </div>
-            <div class="col-lg-4">
-                <!-- Questions Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/community/instructors">Instructors</a></h5>
-                        <p class="card-text">Ask questions, share knowledge, and connect with other instructors.</p>
-                        <!-- <p class="card-text" th:text="${EventsCount != null ? EventsCount : 0} + ' Posts'"></p> -->
-                      </div>
-                </div><!-- Questions Card -->
-            </div>
-        </div>
-
-        <div class="card">
+      <div class="row align-items-top">
+        <div class="card-group mb-4 gap-4">
+          <!-- Announcements Card -->
+          <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Browse the Community</h5>
-                <table class="table table-hover">
-                    <colgroup>
-                        <col style="width: 60%;">
-                        <col style="width: 20%;">
-                        <col style="width: 20%;">
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Posts</th>
-                        <th scope="col">Last Post</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">
-                                <a href="/community/guides">Guides?</a>
-                                <p class="fs-6 fw-normal">Check out guides made by the community.</p>
-                            </th>
-                            <td>xxx</td>
-                            <td>xxx</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <a href="/community/offtopic">Off-Topic</a>
-                                <p class="fs-6 fw-normal">Discuss anything not related to Learning.</p>
-                            </th>
-                            <td>xxx</td>
-                            <td>xxx</td>
-                        </tr>
-                    </tbody>
-                </table>
+              <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
+              <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
+              <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p>
             </div>
-        </div>
+          </div><!-- Announcements Card -->
 
-        <div class="card">
+          <!-- Questions Card -->
+          <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Recent Threads</h5>
-                <table class="table table-hover">
+              <h5 class="card-title"><a href="/community/students">Students</a></h5>
+              <p class="card-text">Ask questions, share knowledge, and connect with other students.</p>
+              <!-- <p class="card-text" th:text="${QuestionsCount != null ? QuestionsCount : 0} + ' Posts'"></p> -->
+            </div>  
+          </div><!-- Questions Card -->
+
+          <!-- Questions Card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/instructors">Instructors</a></h5>
+              <p class="card-text">Ask questions, share knowledge, and connect with other instructors.</p>
+              <!-- <p class="card-text" th:text="${EventsCount != null ? EventsCount : 0} + ' Posts'"></p> -->
+            </div>
+          </div><!-- Questions Card -->
+        </div>
+      </div>
+
+      <div class="card">
+          <div class="card-body">
+              <h5 class="card-title">Browse the Community</h5>
+              <table class="table table-hover">
+                  <colgroup>
+                      <col style="width: 60%;">
+                      <col style="width: 20%;">
+                      <col style="width: 20%;">
+                  </colgroup>
                   <thead>
+                    <tr>
+                      <th scope="col">Category</th>
+                      <th scope="col">Posts</th>
+                      <th scope="col">Last Post</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                       <tr>
-                        <th scope="col" style="width:50%">Title</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Poster</th>
-                        <th scope="col">Posted at</th>
+                          <th scope="row">
+                              <a href="/community/guides">Guides?</a>
+                              <p class="fs-6 fw-normal">Check out guides made by the community.</p>
+                          </th>
+                          <td>xxx</td>
+                          <td>xxx</td>
                       </tr>
-                    </thead>
-                    <tbody th:each="post: ${posts}">
                       <tr>
-                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></a></td>
-                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.getCategory().getName()}"></a></td>
-                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.posterName}"></a></td>
-                        <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                          <th scope="row">
+                              <a href="/community/offtopic">Off-Topic</a>
+                              <p class="fs-6 fw-normal">Discuss anything not related to Learning.</p>
+                          </th>
+                          <td>xxx</td>
+                          <td>xxx</td>
                       </tr>
-                    </tbody>
+                  </tbody>
               </table>
-            </div>
+          </div>
+      </div>
+
+      <div class="card">
+          <div class="card-body">
+              <h5 class="card-title">Recent Threads</h5>
+              <table class="table table-hover">
+                <thead>
+                    <tr>
+                      <th scope="col" style="width:50%">Title</th>
+                      <th scope="col">Category</th>
+                      <th scope="col">Poster</th>
+                      <th scope="col">Posted at</th>
+                    </tr>
+                  </thead>
+                  <tbody th:each="post: ${posts}">
+                    <tr>
+                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></a></td>
+                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.getCategory().getName()}"></a></td>
+                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${post.posterName}"></a></td>
+                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getName()} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                    </tr>
+                  </tbody>
+            </table>
           </div>
         </div>
-
+      </div>
+      </div>
     </section>
 
   </main><!-- End #main -->
