@@ -125,7 +125,9 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item"><a href="/community">Community</a></li>
-          <li class="breadcrumb-item active"><a th:href="@{/community/{category_name}(category_name=${category_name})}" th:text="${category_name}"></a></li>
+          <li class="breadcrumb-item"><a th:href="@{/community/{user_group}(user_group=${user_group})}" th:text="${#strings.capitalize(user_group)}"></a></li>
+          <li class="breadcrumb-item"><a th:href="@{/community/{category_name}(category_name=${category_name})}" th:text="${category_name}"></a></li>
+          <li class="breadcrumb-item active">New post</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -133,7 +135,7 @@
     <section class="section">
       <div class="row">
         <div>
-          <form action="#" th:action="@{/community/new-post?category_name={category_name}(category_name=${category_name})}" th:object="${newPost}" method="post" class="needs-validation" novalidate>
+          <form action="#" th:action="@{/community/new-post?category_id={category_id}(category_id=${category_id})}" th:object="${newPost}" method="post" class="needs-validation" novalidate>
 
             <div class="card">
               <div class="card-body">
