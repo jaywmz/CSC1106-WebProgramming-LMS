@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
@@ -24,33 +25,11 @@ public class CommunityNewPostController {
     @Autowired
     private CategoryRepo categoryRepo;
 
-    @GetMapping("/community/students/new-post")
-    public String getNewPostForm(@Param("category_id") String category_id, Model model) {
+    @GetMapping("/community/{user_group}/new-post")
+    public String getNewPostForm(@PathVariable String user_group, @Param("category_id") String category_id, Model model) {
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
 
-        model.addAttribute("user_group", "students");
-        model.addAttribute("category_name", category.getName());
-        model.addAttribute("category_id", category_id);
-        model.addAttribute("newPost", new Post());
-        return "Community/new-post"; 
-    }
-
-    @GetMapping("/community/instructors/new-post")
-    public String getNewPostForm2(@Param("category_id") String category_id, Model model) {
-        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
-
-        model.addAttribute("user_group", "instructors");
-        model.addAttribute("category_name", category.getName());
-        model.addAttribute("category_id", category_id);
-        model.addAttribute("newPost", new Post());
-        return "Community/new-post"; 
-    }
-
-    @GetMapping("/community/announcements/new-post")
-    public String getNewPostForm3(@Param("category_id") String category_id, Model model) {
-        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
-
-        model.addAttribute("user_group", "announcements");
+        model.addAttribute("user_group", user_group);
         model.addAttribute("category_name", category.getName());
         model.addAttribute("category_id", category_id);
         model.addAttribute("newPost", new Post());

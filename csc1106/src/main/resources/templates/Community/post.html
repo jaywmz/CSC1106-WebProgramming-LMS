@@ -197,10 +197,10 @@
 
           <!-- Comment on post textbox section -->
           <div th:with="post=${post}">
-            <form action="#" th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.id})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
+            <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/add-comment(category_id=${category_id}, post_id=${post.id}, user_group=${user_group})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
               <div class="form-floating">
                 <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{content}"></textarea>
-                <label for="floatingTextarea">Add a reply</label>
+                <label for="floatingTextarea">Add a comment</label>
                 <div class="invalid-feedback">Please enter your reply</div>
               </div>
               <div class="d-grid gap-2 mt-3">  

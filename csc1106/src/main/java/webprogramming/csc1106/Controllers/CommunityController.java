@@ -30,9 +30,23 @@ public class CommunityController {
 
         List<Object[]> categoryCounts = postRepo.findCategoryCounts();
 
+        Long totalAnnouncements = 0L;
+        Long totalStudents = 0L;
+        Long totalInstructors = 0L;
+
         for (int i = 0; i < categoryCounts.size(); i++) {
-            model.addAttribute(categoryCounts.get(i)[0].toString() + "Count", categoryCounts.get(i)[1]);
+            if("announcements".equals(categoryCounts.get(i)[1])){
+                totalAnnouncements += (Long) categoryCounts.get(i)[2];
+            } else if("students".equals(categoryCounts.get(i)[1])){
+                totalStudents += (Long) categoryCounts.get(i)[2];
+            } else if("instructors".equals(categoryCounts.get(i)[1])){
+                totalInstructors += (Long) categoryCounts.get(i)[2];
+            }
         }
+
+            model.addAttribute("announcementsCount", String.valueOf(totalAnnouncements));
+            model.addAttribute("studentsCount", String.valueOf(totalStudents));
+            model.addAttribute("instructorsCount", String.valueOf(totalInstructors));
 
         return "Community/community-home";
     }

@@ -12,7 +12,7 @@ public interface PostRepo extends JpaRepository<Post, Integer>{
     List<Post> findTop5ByOrderByTimestampDesc();
     Post findById(long id);
     
-    @Query(value = "SELECT c.id, COUNT(p.category_id) FROM community_category c \r\n" + //
+    @Query(value = "SELECT c.id, c.description, COUNT(p.category_id) FROM community_category c \r\n" + //
                 "LEFT JOIN post p ON c.id = p.category_id \r\n" + //
                 "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCounts();

@@ -149,7 +149,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
               <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
-              <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p>
+              <p class="card-text" th:text="${announcementsCount} + ' Posts'"></p>
             </div>
           </div><!-- Announcements Card -->
 
@@ -158,7 +158,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/students">Students</a></h5>
               <p class="card-text">Ask questions, share knowledge, and connect with other students.</p>
-              <!-- <p class="card-text" th:text="${QuestionsCount != null ? QuestionsCount : 0} + ' Posts'"></p> -->
+              <p class="card-text" th:text="${studentsCount} + ' Posts'"></p>
             </div>  
           </div><!-- Questions Card -->
 
@@ -167,7 +167,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/instructors">Instructors</a></h5>
               <p class="card-text">Ask questions, share knowledge, and connect with other instructors.</p>
-              <!-- <p class="card-text" th:text="${EventsCount != null ? EventsCount : 0} + ' Posts'"></p> -->
+              <p class="card-text" th:text="${instructorsCount} + ' Posts'"></p>
             </div>
           </div><!-- Questions Card -->
         </div>
