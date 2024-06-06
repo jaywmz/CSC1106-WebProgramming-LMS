@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import webprogramming.csc1106.Models.Course; // Import the Course class
 
 @RestController
-public class CourseController {
+public class CourseRestController {
     private final CourseService courseService;
-    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CourseRestController.class);
     @Autowired
-    public CourseController(CourseService courseService) {
+    public CourseRestController(CourseService courseService) {
         this.courseService = courseService;
     }
 

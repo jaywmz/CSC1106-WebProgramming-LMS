@@ -13,14 +13,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.Comment;
-import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
 import webprogramming.csc1106.Entities.PostAttachments;
 import webprogramming.csc1106.Repositories.CategoryRepo;
 import webprogramming.csc1106.Repositories.CommentRepo;
 import webprogramming.csc1106.Repositories.PostRepo;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -30,10 +28,11 @@ public class CommunityPostController {
     @Autowired
     private CommentRepo commentRepo;
 
-    @GetMapping("/community/{category_name}/{post_id}")
-    public String getPost(@PathVariable String category_name, @PathVariable String post_id, Model model) {
+    @GetMapping("/community/{user_group}/{category_id}/{post_id}")
+    public String getPost(@PathVariable String category_id, @PathVariable String post_id, @PathVariable String user_group, Model model) {
         Long post_ID = Long.parseLong(post_id);
         Post post = postRepo.findById(post_ID);
+        String category_name = post.getCategory().getName();
         
         List<PostAttachments> attachments = post.getAttachments();
         ArrayList<String> urls = new ArrayList<String>();
@@ -49,14 +48,15 @@ public class CommunityPostController {
 
         model.addAttribute("post", post);
         model.addAttribute("category_name", category_name);
+        model.addAttribute("user_group", user_group);
         model.addAttribute("newComment", new Comment());
         model.addAttribute("comments", post.getComments().reversed());
 
         return "Community/post";
     }
 
-    @PostMapping("/community/{category_name}/{post_id}/add-comment")
-    public String postComment(@ModelAttribute Comment newComment, @PathVariable String category_name, @PathVariable String post_id) {
+    @PostMapping("/community/{user_group}/{category_id}/{post_id}/add-comment")
+    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id) {
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newComment.setTimestamp(timestamp);
@@ -69,7 +69,7 @@ public class CommunityPostController {
         // postRepo.save(post);
         commentRepo.save(newComment);
         
-        return "redirect:/community/{category_name}/{post_id}";
+        return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
     
 }   

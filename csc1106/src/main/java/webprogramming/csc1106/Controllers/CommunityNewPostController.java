@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
@@ -37,21 +38,28 @@ public class CommunityNewPostController {
     @Autowired
     private AzureBlobService azureBlobService;
 
-    @GetMapping("/community/new-post")
-    public String getNewPostForm(@Param("category_name") String category_name, Model model) {
-        model.addAttribute("category_name", category_name);
+    // @GetMapping("/community/new-post")
+    // public String getNewPostForm(@Param("category_name") String category_name, Model model) {
+    //     model.addAttribute("category_name", category_name);
+    @GetMapping("/community/{user_group}/new-post")
+    public String getNewPostForm(@PathVariable String user_group, @Param("category_id") String category_id, Model model) {
+        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
+
+        model.addAttribute("user_group", user_group);
+        model.addAttribute("category_name", category.getName());
+        model.addAttribute("category_id", category_id);
         model.addAttribute("newPost", new Post());
         return "Community/new-post"; 
     }
 
     @PostMapping("/community/new-post")
-    public String postNewPost(@Param("category_name") String category_name, @RequestParam("postAttachment") MultipartFile attachment, @ModelAttribute Post newPost) {
+    public String postNewPost(@Param("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @ModelAttribute Post newPost) {
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newPost.setTimestamp(timestamp);
         newPost.setPosterName("Example Name"); // placeholder
-        
-        CommunityCategory category = categoryRepo.findByName(category_name);
+
+        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id));
         newPost.setCategory(category);
         postRepo.save(newPost);
 
@@ -71,8 +79,16 @@ public class CommunityNewPostController {
         } catch (IOException exception) {
             return "Community/new-post";
         }
-
-        return "redirect:/community/" + category_name; 
+  
+        if(Integer.parseInt(category_id) <= 2){
+            return "redirect:/community/announcements";
+        }else if(Integer.parseInt(category_id) <= 8){
+            return "redirect:/community/students/" + category_id;
+        }else if(Integer.parseInt(category_id) <= 10){
+            return "redirect:/community/instructors/" + category_id;
+        }else{
+            return "redirect:/community/" + category_id; 
+        }
     }
     
 }

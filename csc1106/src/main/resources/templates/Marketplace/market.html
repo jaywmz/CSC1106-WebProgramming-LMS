@@ -47,10 +47,11 @@
             transform: translateY(0px);
         }
 
-        .nav-profile .nav-link, 
+        .nav-profile .nav-link,
         .nav-item .nav-link {
             position: relative;
         }
+
         .carousel-indicators li {
             list-style: none;
         }
@@ -68,35 +69,32 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div>
 
-        
-
         <nav class="header-nav ms-auto" aria-label="Navigation">
             <ul class="d-flex align-items-center">
-                
-
                 <li class="nav-item dropdown pe-3 nav-profile">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
                         <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
                     </a>
-
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
                         </li>
-                        
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}">
                                 <i class="bi bi-box-arrow-right"></i>
@@ -111,64 +109,6 @@
 
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard}">
-                    <i class="bi bi-grid"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-menu-button-wide"></i><span>Courses</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a class="nav-link collapsed" th:href="@{/IT_Software}">
-                            <i class="bi bi-circle"></i><span>IT & Software</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link collapsed" th:href="@{/business}">
-                            <i class="bi bi-circle"></i><span>Business</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link collapsed" th:href="@{/Finance_Accounting}">
-                            <i class="bi bi-circle"></i><span>Finance & Accounting</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/userprofile" th:href="@{/userprofile}">
-                    <i class="bi bi-book"></i>
-                    <span>My-Learning</span>
-                </a>
-            </li>
-            <li class="nav-heading">Pages</li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" th:href="@{/checkout}">
-                    <i class="bi bi-cart"></i>
-                    <span>Cart</span>
-                </a>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/userprofile" th:href="@{/userprofile}">
-                    <i class="bi bi-person"></i>
-                    <span>Profile</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/faq" th:href="@{/faq}">
-                    <i class="bi bi-question-circle"></i>
-                    <span>F.A.Q</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-contact.html" th:href="@{/pages-contact.html}">
-                    <i class="bi bi-envelope"></i>
-                    <span>Contact</span>
-                </a>
-            </li>
         </ul>
     </aside>
 
@@ -234,114 +174,34 @@
                     </div>
                 </div>
                 <!-- End Carousel -->
-
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-xxl-4 col-md-6 mb-4">
-                            <div class="card info-card enrolled-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Enrolled Course</h5>
-                                    <div class="d-flex align-items-center">
-                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-journals"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6>145</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xxl-4 col-md-6 mb-4">
-                            <div class="card info-card ongoing-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Ongoing Course</h5>
-                                    <div class="d-flex align-items-center">
-                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-book"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6 th:text="${totalCourses}">0</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xxl-4 col-xl-12 mb-4">
-                            <div class="card info-card completed-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Completed Course</h5>
-                                    <div class="d-flex align-items-center">
-                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-journal-check"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6>1244</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-4">
-                            <div class="card">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>Price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
-                                            <td>$79</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                            <td class="fw-bold">41</td>
-                            <td>$3,239</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
+        </section>
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
         </div>
-    </div>
+        <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </footer>
 
-</div>
-</div>
-</div>
-</section>
-</main>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-<footer id="footer" class="footer">
-<div class="copyright">
-&copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
-</div>
-<div class="credits">
-Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-</div>
-</footer>
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/apexcharts/apexcharts.min.js" th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script src="assets/vendor/chart.js/chart.umd.js" th:src="@{/assets/vendor/chart.js/chart.umd.js}"></script>
+    <script src="assets/vendor/echarts/echarts.min.js" th:src="@{/assets/vendor/echarts/echarts.min.js}"></script>
+    <script src="assets/vendor/quill/quill.js" th:src="@{/assets/vendor/quill/quill.js}"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
+    <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
 
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-<!-- Vendor JS Files -->
-<script src="assets/vendor/apexcharts/apexcharts.min.js" th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}"></script>
-<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script src="assets/vendor/chart.js/chart.umd.js" th:src="@{/assets/vendor/chart.js/chart.umd.js}"></script>
-<script src="assets/vendor/echarts/echarts.min.js" th:src="@{/assets/vendor/echarts/echarts.min.js}"></script>
-<script src="assets/vendor/quill/quill.js" th:src="@{/assets/vendor/quill/quill.js}"></script>
-<script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
-<script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
-<script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
-
-<!-- Template Main JS File -->
-<script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
-<script src="assets/js/dashboard-checker.js"></script>
+    <!-- Template Main JS File -->
+    <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
+    <script src="assets/js/dashboard-checker.js"></script>
 </body>
 
 </html>

@@ -171,8 +171,8 @@
           <div class="card">
             <div class="card-body">
 
-              <a th:href="@{/community/new-post?category_name={category_name}(category_name=${category_name})}">
-                <button type="button" class="btn btn-primary" id="newPostBtn">
+              <a th:href="@{/community/{user_group}/new-post(category_id=${category_id}, user_group=${user_group})}">
+                  <button type="button" class="btn btn-primary" id="newPostBtn">
                   <i class="bi bi-plus me-1"></i> New post
                 </button>
               </a>
@@ -191,10 +191,10 @@
                 </thead>
                 <tbody th:each="post: ${posts}">
                   <tr>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${post.posterName}"></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM yyyy')}"></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${category_name} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'hh:mm a')}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.id}}" th:text="${post.title}" id="threadTitle"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.id}}" th:text="${post.posterName}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'dd MMM yyyy')}"></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.id}}" th:text="${#dates.format(post.timestamp, 'hh:mm a')}"></td>
                   </tr>
                 </tbody>
               </table>

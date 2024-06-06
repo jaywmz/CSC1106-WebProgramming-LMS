@@ -49,4 +49,9 @@ public class RedirectionController {
         return "User/logout";
     }
 
+    @GetMapping("/mylearning")
+    public String myLearning() {
+        return "Course/mylearning";
+    }
+
 }
