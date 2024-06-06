@@ -133,7 +133,7 @@
     <section class="section">
       <div class="row">
         <div>
-          <form action="#" th:action="@{/community/new-post?category_name={category_name}(category_name=${category_name})}" th:object="${newPost}" method="post" class="needs-validation" novalidate>
+          <form th:action="@{/community/new-post?category_name={category_name}(category_name=${category_name})}" th:object="${newPost}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
 
             <div class="card">
               <div class="card-body">
@@ -142,7 +142,7 @@
                   <div class="row mb-3">
                     <label for="inputText" class="col-sm-1 col-form-label">Title</label>
                     <div class="col-sm-5">
-                      <input type="text" class="form-control" required th:field="*{title}"></input>
+                      <input required type="text" class="form-control" th:field="*{title}"></input>
                       <div class="invalid-feedback">Please enter title</div>
                     </div>
                   </div>
@@ -151,14 +151,14 @@
                     <label for="inputPassword" class="col-sm-1 col-form-label">Body</label>
                   </div>
                   <div class="col-sm-10 mb-3">
-                    <textarea required class="form-control" style="height: 100px" th:field="*{content}"></textarea>
+                    <textarea required type="text" class="form-control" th:field="*{content}" style="height: 100px"></textarea>
                     <div class="invalid-feedback">Please enter content</div>
                   </div>
 
                   <div class="row mb-3">
                     <div class="col-sm-5">
                       <label>Add attachments</label>
-                      <input class="form-control" type="file" id="formFile"></input>
+                      <input type="file" class="form-control" id="postAttachment" name="postAttachment" accept="image/png, image/jpeg"></input>
                     </div>
                   </div>
                   <!-- Quill Editor Default -->

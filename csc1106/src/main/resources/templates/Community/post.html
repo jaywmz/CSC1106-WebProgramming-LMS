@@ -328,6 +328,9 @@
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}"></h5>
             <span th:utext="${post.content}"></span>
+            <div th:each="attachment: ${attachment_urls}">
+              <img th:src="${attachment}" class="img-thumbnail" alt="Cover Image">
+            </div>
           </div>
           <div class="card-footer d-flex justify-content-between align-items-center">
             <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>

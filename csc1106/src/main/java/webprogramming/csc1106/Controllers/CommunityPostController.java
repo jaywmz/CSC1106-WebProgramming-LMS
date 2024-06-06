@@ -1,7 +1,9 @@
 package webprogramming.csc1106.Controllers;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import webprogramming.csc1106.Entities.Comment;
 import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
+import webprogramming.csc1106.Entities.PostAttachments;
 import webprogramming.csc1106.Repositories.CategoryRepo;
 import webprogramming.csc1106.Repositories.CommentRepo;
 import webprogramming.csc1106.Repositories.PostRepo;
@@ -31,6 +34,19 @@ public class CommunityPostController {
     public String getPost(@PathVariable String category_name, @PathVariable String post_id, Model model) {
         Long post_ID = Long.parseLong(post_id);
         Post post = postRepo.findById(post_ID);
+        
+        List<PostAttachments> attachments = post.getAttachments();
+        ArrayList<String> urls = new ArrayList<String>();
+        if (!attachments.isEmpty()) {
+            for (PostAttachments attachment : attachments) {
+                urls.add(attachment.getURI());
+            }
+            model.addAttribute("attachment_urls", urls);
+        }
+        else {
+            model.addAttribute("attach_urls", new String[0]);
+        }
+
         model.addAttribute("post", post);
         model.addAttribute("category_name", category_name);
         model.addAttribute("newComment", new Comment());
