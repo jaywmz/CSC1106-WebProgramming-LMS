@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,15 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.Map;
-import java.util.Optional;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
@@ -116,7 +113,7 @@ public class UserController {
         logger.debug("POST request received for registration form submission");
         logger.debug("Received user registration form submission:");
         logger.debug("User ID: {}", user.getUserID());
-        logger.debug("Role ID: {}", user.getRoleID());
+        logger.debug("Role ID: {}", user.getRole().getRoleID());
         logger.debug("Username: {}", user.getUserName());
         logger.debug("User Password: {}", user.getUserPassword());
         logger.debug("User Email: {}", user.getUserEmail());
