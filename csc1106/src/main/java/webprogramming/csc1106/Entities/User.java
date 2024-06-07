@@ -4,11 +4,21 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.ArrayList;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "users")
@@ -19,8 +29,9 @@ public class User {
     @Column(name = "user_id")
     private Integer userID;
 
-    @Column(name = "role_id", nullable = false)
-    private Integer roleID;
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Roles role;
 
     @Column(name = "user_name", nullable = false)
     private String userName;
@@ -53,9 +64,9 @@ public class User {
     public User() {}
 
     // Parameterized constructor
-    public User(Integer userID, Integer roleID, String userName, String userPassword, String userEmail, Date joinedDate, Time joinedTime, BigDecimal userBalance, Timestamp lastLogin, String loginCookie) {
+    public User(Integer userID, Roles role, String userName, String userPassword, String userEmail, Date joinedDate, Time joinedTime, BigDecimal userBalance, Timestamp lastLogin, String loginCookie) {
         this.userID = userID;
-        this.roleID = roleID;
+        this.role = role;
         this.userName = userName;
         this.userPassword = userPassword;
         this.userEmail = userEmail;
@@ -75,12 +86,12 @@ public class User {
         this.userID = userID;
     }
 
-    public Integer getRoleID() {
-        return roleID;
+    public Roles getRole() {
+        return role;
     }
 
-    public void setRoleID(Integer roleID) {
-        this.roleID = roleID;
+    public void setRole(Roles role) {
+        this.role = role;
     }
 
     public String getUserName() {
@@ -172,5 +183,4 @@ public class User {
 
         return builder.toString();
     }
-
 }
