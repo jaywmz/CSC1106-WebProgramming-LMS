@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Repositories.CategoryGroupRepository;
 
+import java.util.List;
+
 @Service
 public class CategoryGroupService {
 
@@ -13,5 +15,17 @@ public class CategoryGroupService {
 
     public void addCategoryGroup(CategoryGroup categoryGroup) {
         categoryGroupRepository.save(categoryGroup);
+    }
+
+    public List<CategoryGroup> getAllCategoryGroups() {
+        return categoryGroupRepository.findAll();
+    }
+
+    public void deleteCategoryGroup(Long id) {
+        categoryGroupRepository.deleteById(id);
+    }
+
+    public CategoryGroup getCategoryGroupById(Long id) {
+        return categoryGroupRepository.findById(id).orElse(null);
     }
 }

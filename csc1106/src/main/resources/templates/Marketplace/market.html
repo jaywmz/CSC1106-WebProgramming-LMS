@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
     <title>Dashboard - LearnZenith</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
@@ -15,7 +13,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
@@ -25,35 +23,75 @@
     <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
-
-    <!-- Template Main CSS File -->
     <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
-
     <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .category-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-color: #007bff;
+        }
+        .category-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .category-description {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.5) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+        .category-card:hover::before {
+            opacity: 1;
+        }
+        .btn {
+            display: none;
+        }
+        .category-card:hover .btn {
+            display: block;
+        }
+        /* Existing styles for the carousel */
         .carousel-item img {
             max-height: 300px;
             object-fit: cover;
         }
-
-        .header-nav .nav-item.dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
-
-        .header-nav .dropdown-menu {
-            right: 0;
-            left: auto;
-            top: 100%;
-            transform: translateY(0px);
-        }
-
-        .nav-profile .nav-link,
-        .nav-item .nav-link {
-            position: relative;
-        }
-
-        .carousel-indicators li {
-            list-style: none;
+        /* New styles for the marketplace categories */
+        .category-card .card-img-top {
+            max-height: 200px; /* Adjust the height as needed */
+            object-fit: cover;
         }
     </style>
 </head>
@@ -109,6 +147,7 @@
 
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
+            <!-- Sidebar navigation will be dynamically populated -->
         </ul>
     </aside>
 
@@ -129,7 +168,7 @@
             </div>
         </section>
 
-        <!-- Move Carousel here -->
+        <!-- Carousel Section -->
         <section class="section dashboard">
             <div class="row">
                 <div class="col-12 mb-5">
@@ -173,9 +212,37 @@
                         </a>
                     </div>
                 </div>
-                <!-- End Carousel -->
             </div>
         </section>
+        <!-- End Carousel Section -->
+
+        <!-- Marketplace Categories Section -->
+        <section id="marketplace-categories" class="section">
+    <div class="container">
+        <h2>Marketplace Categories</h2>
+        <div class="row">
+            <!-- Iterate over marketplace categories here -->
+            <div class="col-md-4 mb-4" th:each="category : ${categories}">
+                <div class="card category-card">
+                    <a th:href="@{'/category/' + ${category.id}}">
+                        <img src="assets/img/category-placeholder.jpg" class="card-img-top" alt="Category Image" th:src="@{/assets/img/category-placeholder.jpg}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${category.name}">Category Name</h5>
+                        <p class="card-text" th:text="${category.description}">Category Description</p>
+                        <form th:action="@{'/delete-category/' + ${category.id}}" method="post" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- End iteration -->
+        </div>
+    </div>
+</section>
+
+        
+
     </main>
 
     <footer id="footer" class="footer">
@@ -197,11 +264,14 @@
     <script src="assets/vendor/quill/quill.js" th:src="@{/assets/vendor/quill/quill.js}"></script>
     <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
     <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
-    <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
 
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script src="assets/js/dashboard-checker.js"></script>
+    <script>
+        function redirectToCategory(categoryId) {
+            window.location.href = "/category/" + categoryId;
+        }
+    </script>
 </body>
-
 </html>

@@ -49,10 +49,10 @@ public class MarketplaceUploadController {
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
-            return "upload";
+            return "Marketplace/upload";
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "upload";
+            return "Marketplace/upload";
         }
         return "redirect:/coursesupload";
     }

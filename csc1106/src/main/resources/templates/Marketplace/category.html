@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${category.name} + ' - LearnZenith'">Category - LearnZenith</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 th:text="${category.name}">Category Name</h2>
+        <p th:text="${category.description}">Category Description</p>
+        <div class="row">
+            <div class="col-md-4 mb-4" th:each="course : ${courses}">
+                <div class="card">
+                    <img th:src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${course.title}">Course Title</h5>
+                        <p class="card-text" th:text="${course.description}">Course Description</p>
+                        <p class="card-text"><strong th:text="'$' + ${course.price}">Course Price</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
