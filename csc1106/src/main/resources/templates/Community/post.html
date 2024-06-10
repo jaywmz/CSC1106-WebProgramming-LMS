@@ -1,6 +1,12 @@
+<!-- =======================================================
+  * Template Name: LearnZenith
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Updated: Apr 20 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -61,13 +67,45 @@
     }
   </style>
 
-  <!-- =======================================================
-  * Template Name: LearnZenith
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Updated: Apr 20 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+  <!--
+  <script>
+    const likeButton = document.getElementById('like-button');
+    const likeCountElement = document.getElementById('like-count');
+    const postID = [[${post.id}]];
+    const userGroup = [[${user_group}]];
+    const categoryID = [[${category_id}]];
+
+    async function toggleActive(button, defaultText, activeText, defaultIcon, activeIcon) {
+      button.classList.toggle('active');
+      var buttonText = button.querySelector('span');
+      var buttonIcon = button.querySelector('i');
+      if (button.classList.contains('active')) {
+        buttonText.textContent = activeText;
+        buttonIcon.classList.remove(defaultIcon);
+        buttonIcon.classList.add(activeIcon);
+      } else {
+        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/like', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({post: postID})
+        });
+    
+        const responseText = await response.text();
+    
+        if(response.status === 200) {
+          buttonText.textContent = defaultText;
+          buttonIcon.classList.remove(activeIcon);
+          buttonIcon.classList.add(defaultIcon);
+          likeCountElement = [[${post.likes}]] + 1;
+          return responseText;
+        }
+        else return null;
+      }
+    }
+  </script>
+  -->
 </head>
 
 <body>
@@ -174,103 +212,82 @@
           </div>
           <div class="card-footer d-flex justify-content-between align-items-center">
             <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
+            <!-- like button -->
             <div>
-              <button type="button" class="btn btn-outline-primary" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')"><i class="bi bi-heart me-1"></i><span> Like</span></button>
-              <button type="button" class="btn btn-outline-primary" onclick="toggleActive(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')"><i class="bi bi-bell me-1"></i><span> Subscribe</span></button>
-
-              <script>
-              function toggleActive(button, defaultText, activeText, defaultIcon, activeIcon) {
-                button.classList.toggle('active');
-                var buttonText = button.querySelector('span');
-                var buttonIcon = button.querySelector('i');
-                if (button.classList.contains('active')) {
-                  buttonText.textContent = activeText;
-                  buttonIcon.classList.remove(defaultIcon);
-                  buttonIcon.classList.add(activeIcon);
-                } else {
-                  buttonText.textContent = defaultText;
-                  buttonIcon.classList.remove(activeIcon);
-                  buttonIcon.classList.add(defaultIcon);
-                }
-              }
-              </script>
+              <span id="like-count" th:text="${post.likes}"></span> likes
+              <button type="button" class="btn btn-outline-primary" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')"><i class="bi bi-heart me-1"></i><span> Like</span></button>
+              <button type="button" class="btn btn-outline-primary" id="subscribe-button" onclick="toggleActive(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')"><i class="bi bi-bell me-1"></i><span> Subscribe</span></button>              
             </div>
+            <!-- End like button -->
           </div>
         </div>
 
-          <!-- Comment on post textbox section -->
-          <div th:with="post=${post}">
-            <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/add-comment(category_id=${category_id}, post_id=${post.id}, user_group=${user_group})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
-              <div class="form-floating">
-                <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{content}"></textarea>
-                <label for="floatingTextarea">Add a comment</label>
-                <div class="invalid-feedback">Please enter your reply</div>
-              </div>
-              <div class="d-grid gap-2 mt-3">  
-                <button type="submit" class="btn btn-primary" id="submitReplyBtn">Submit</button>
-              </div>
-            </form>
-          </div>
+        <!-- Comment on post textbox -->
+        <div th:with="post=${post}">
+          <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/add-comment(category_id=${category_id}, post_id=${post.id}, user_group=${user_group})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
+            <div class="form-floating">
+              <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{content}"></textarea>
+              <label for="floatingTextarea">Add a comment</label>
+              <div class="invalid-feedback">Please enter your reply</div>
+            </div>
+            <div class="d-grid gap-2 mt-3">  
+              <button type="submit" class="btn btn-primary" id="submitReplyBtn">Submit</button>
+            </div>
+          </form>
+        </div>
 
-          <!-- Comments section header -->
-          <h4 th:text="Comments" id="replySectHeader"></h4> 
+        <!-- Comments section header -->
+        <h4 th:text="Comments" id="replySectHeader"></h4> 
           
-          <!-- Comments section -->
-          <div th:each="comment: ${comments}">
-            <div class="card">
-              <div>
-
-                <div class="card-body">
-                  <span th:utext="${comment.content}"></span>
-                </div>
-                <div class="card-footer">
-                  <span th:text="'Posted on ' + ${#dates.format(comment.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${comment.commenterName}"></span>
-                  <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered' + ${comment.id}" id="replyBtn">
-                    Reply
-                  </button> -->
-                </div>
-                
-                <div class="modal fade" th:id="'verticalycentered' + ${comment.id}" tabindex="-1">
-                  <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" style="color: black;" th:text="'Reply to comment by ' + ${comment.commenterName}"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body" style="color: black;">
-                        <span th:utext="${comment.content}"></span>
-                      </div>
-                      <form action="#" method="post" class="needs-validation" novalidate th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.id})}" th:object="${newComment}">
-                        <div class="modal-body" style="color: black;">
-                          <div class="form-floating">
-                            <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;" th:field="*{content}"></textarea>
-                            <label for="floatingReplyArea">Add a reply</label>
-                            <div class="invalid-feedback">Please enter your reply</div>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                      </form>
-                    </div>
+        <!-- Comments section -->
+        <div th:each="comment: ${comments}">
+          <div class="card">
+            <div class="card-body">
+              <span th:utext="${comment.content}"></span>
+            </div>
+            <div class="card-footer">
+              <span th:text="'Posted on ' + ${#dates.format(comment.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${comment.commenterName}"></span>
+              <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:attr="data-bs-target='#verticalycentered' + ${comment.id}" id="replyBtn">
+                Reply
+              </button> -->
+            </div>
+            <!-- reply to comment -->
+            <div class="modal fade" th:id="'verticalycentered' + ${comment.id}" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" style="color: black;" th:text="'Reply to comment by ' + ${comment.commenterName}"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                </div> 
-
+                  <div class="modal-body" style="color: black;">
+                    <span th:utext="${comment.content}"></span>
+                  </div>
+                  <form action="#" method="post" class="needs-validation" novalidate th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.id})}" th:object="${newComment}">
+                    <div class="modal-body" style="color: black;">
+                      <div class="form-floating">
+                        <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;" th:field="*{content}"></textarea>
+                        <label for="floatingReplyArea">Add a reply</label>
+                        <div class="invalid-feedback">Please enter your reply</div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div> 
-
-            <!-- Reply to reply section -->
-            <div class="card" th:each="replyReply: ${replyReplies}" th:if="${replyReply.commentID == reply.replyID}" style="width: 90%; margin-left: 10%">
-                <div class="card-body">
-                  <span th:utext="${replyReply.replyContent}"></span>
-                </div>
-                <div class="card-footer">
-                  <span th:text="'Posted on ' + ${replyReply.replyDate} + ' at ' + ${replyReply.replyTime} + ' by ' + ${replyReply.responderName}"></span>
-                </div>
-            </div>
-          </div>  
-          
+          </div> 
+          <!-- Reply to reply section -->
+          <div class="card" th:each="replyReply: ${replyReplies}" th:if="${replyReply.commentID == reply.replyID}" style="width: 90%; margin-left: 10%">
+              <div class="card-body">
+                <span th:utext="${replyReply.replyContent}"></span>
+              </div>
+              <div class="card-footer">
+                <span th:text="'Posted on ' + ${replyReply.replyDate} + ' at ' + ${replyReply.replyTime} + ' by ' + ${replyReply.responderName}"></span>
+              </div>
+          </div>
         </div>
       </div>
 
@@ -307,6 +324,7 @@
   <!-- Template Main JS File -->
   <script src="/assets/js/dashboard-main.js"></script>
   <script src="/assets/js/dashboard-checker.js"></script>
+  <script src="/assets/js/like-community-post.js"></script>
 </body>
 
 </html>

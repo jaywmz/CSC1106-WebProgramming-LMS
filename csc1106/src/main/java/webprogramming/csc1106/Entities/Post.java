@@ -36,6 +36,9 @@ public class Post {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "likes", columnDefinition = "integer default 0")
+    private Integer likes;
+
     // Constructors
     public Post() {}
 
@@ -110,5 +113,13 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 }
