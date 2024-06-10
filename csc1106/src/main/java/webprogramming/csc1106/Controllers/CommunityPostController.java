@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.Comment;
-import webprogramming.csc1106.Entities.LikePost;
 import webprogramming.csc1106.Entities.Post;
 import webprogramming.csc1106.Entities.PostAttachments;
 import webprogramming.csc1106.Repositories.CategoryRepo;
 import webprogramming.csc1106.Repositories.CommentRepo;
-import webprogramming.csc1106.Repositories.LikesRepo;
 import webprogramming.csc1106.Repositories.PostRepo;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
