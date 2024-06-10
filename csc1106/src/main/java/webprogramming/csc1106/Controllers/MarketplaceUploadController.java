@@ -25,8 +25,12 @@ public class MarketplaceUploadController {
     private UploadCourseService courseService;
 
     @GetMapping("/coursesupload")
-    public String showCoursesPage(Model model) {
-        model.addAttribute("courses", courseService.getAllCourses());
+    public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
+        if (categoryId != null) {
+            model.addAttribute("courses", courseService.getCoursesByCategoryId(categoryId));
+        } else {
+            model.addAttribute("courses", courseService.getAllCourses());
+        }
         return "Marketplace/coursesupload";
     }
 
@@ -49,10 +53,10 @@ public class MarketplaceUploadController {
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
-            return "upload";
+            return "Marketplace/upload";
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "upload";
+            return "Marketplace/upload";
         }
         return "redirect:/coursesupload";
     }

@@ -3,18 +3,16 @@ package webprogramming.csc1106.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
-
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class UploadCourseService {
@@ -257,4 +255,15 @@ public class UploadCourseService {
 
         updateCourse(existingCourse);
     }
+
+    public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
+        List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
+        List<UploadCourse> courses = new ArrayList<>();
+        for (CourseCategory courseCategory : courseCategories) {
+            courses.add(courseCategory.getCourse());
+        }
+        return courses;
+    }
+
+    
 }
