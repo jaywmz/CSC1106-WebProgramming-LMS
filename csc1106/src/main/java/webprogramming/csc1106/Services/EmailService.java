@@ -28,5 +28,22 @@ public class EmailService {
         }
     }
 
+    public void sendRejectionEmail(String toEmail, String companyName) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("learnzenith7@outlook.com");
+            message.setTo(toEmail);
+            message.setSubject("Partnership Rejection Notification");
+            message.setText("Dear " + companyName + ",\n\nWe regret to inform you that your partnership application has been rejected. Thank you for your interest.\n\nBest regards,\nWeb Programming Team");
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Failed to send email: " + e.getMessage());
+            // Re-throw the exception to ensure the error is handled appropriately
+            throw new RuntimeException("Failed to send rejection email", e);
+        }
+    }
+
 
 }
