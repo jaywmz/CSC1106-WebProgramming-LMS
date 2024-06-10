@@ -176,7 +176,7 @@
                 <h2>Marketplace Categories</h2> 
                 <div class="row"> 
                     <div class="col-md-4 mb-4" th:each="category : ${categories}"> 
-                        <a th:href="@{'/coursesupload?categoryId=' + ${category.id}}" class="card-link"> 
+                        <a th:href="@{'/category/' + ${category.id}}" class="card-link"> 
                             <div class="card category-card card-custom"> 
                                 <img src="assets/img/category-placeholder.jpg" class="card-img-top" alt="Category Image" th:src="@{/assets/img/category-placeholder.jpg}"> 
                                 <div class="card-body"> 
@@ -192,6 +192,7 @@
                 </div> 
             </div> 
         </section>
+        
 
         <!-- Add Category Button for Staff only -->
         <section id="add-category" class="section">

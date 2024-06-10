@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${category.name} + ' - LearnZenith'">Category - LearnZenith</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -18,10 +19,31 @@
                         <h5 class="card-title" th:text="${course.title}">Course Title</h5>
                         <p class="card-text" th:text="${course.description}">Course Description</p>
                         <p class="card-text"><strong th:text="'$' + ${course.price}">Course Price</strong></p>
+                        <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                     </div>
                 </div>
             </div>
         </div>
+        <a class="btn btn-secondary" href="/cart">View Cart</a>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.add-to-cart').click(function() {
+                var courseId = $(this).data('course-id');
+                $.ajax({
+                    url: '/cart/add',
+                    type: 'POST',
+                    data: { courseId: courseId },
+                    success: function(response) {
+                        alert('Course added to cart successfully.');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to add course to cart. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

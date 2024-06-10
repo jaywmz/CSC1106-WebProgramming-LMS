@@ -16,6 +16,7 @@ import webprogramming.csc1106.Services.UploadCourseService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -121,5 +122,21 @@ public class MarketplaceUploadController {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete the course. Please try again.");
         }
         return "redirect:/coursesupload";
+    }
+    
+    @GetMapping("/category/{id}")
+    public String getCategoryPage(@PathVariable("id") Long id, Model model) {
+        Optional<CategoryGroup> category = courseService.getCategoryById(id);
+        List<UploadCourse> courses = courseService.getCoursesByCategoryId(id);
+
+        if (category.isPresent()) {
+            model.addAttribute("category", category.get());
+        } else {
+            model.addAttribute("category", new CategoryGroup());
+        }
+
+        model.addAttribute("courses", courses);
+
+        return "Marketplace/category-page"; // Make sure this matches your Thymeleaf template name
     }
 }

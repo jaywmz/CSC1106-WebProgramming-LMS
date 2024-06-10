@@ -1,10 +1,14 @@
 package webprogramming.csc1106.Services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
+
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
 import java.io.IOException;
@@ -13,9 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class UploadCourseService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UploadCourseService.class);
 
     @Autowired
     private UploadCourseRepository courseRepository;
@@ -81,6 +86,7 @@ public class UploadCourseService {
     }
 
     public Optional<CategoryGroup> getCategoryById(Long id) {
+        logger.info("Fetching category by id: {}", id);
         return categoryGroupRepository.findById(id);
     }
 
@@ -265,5 +271,4 @@ public class UploadCourseService {
         return courses;
     }
 
-    
 }

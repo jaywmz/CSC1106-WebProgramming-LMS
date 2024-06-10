@@ -47,27 +47,6 @@ public class MarketplaceCategoryGroupController {
         }
     }
 
-   @GetMapping("/category/{id}")
-    public String showCategoryPage(@PathVariable Long id, Model model) {
-        logger.info("Showing category page for category ID: " + id);
-        CategoryGroup category = categoryGroupService.getCategoryGroupById(id);
-        List<UploadCourse> courses = uploadCourseService.getCoursesByCategoryId(id);
-
-        if (category == null) {
-            logger.severe("Category with ID: " + id + " not found.");
-            model.addAttribute("errorMessage", "Category not found.");
-            return "error/404";
-        }
-
-        if (courses == null || courses.isEmpty()) {
-            logger.info("No courses found for category ID: " + id);
-        }
-
-        model.addAttribute("category", category);
-        model.addAttribute("courses", courses);
-        return "category";
-     
-    }
     @PostMapping("/delete-category/{id}")
     public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
