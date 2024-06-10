@@ -98,7 +98,7 @@
                     <td th:text="${partner.partnerStatus}"></td>
                     <td>
                         <button class="btn btn-primary" th:if="${partner.partnerStatus == 'Pending'}" th:attr="onclick=|approvePartner(${partner.partnerId})|">Approve</button>
-                       
+                        <button class="btn btn-danger" th:if="${partner.partnerStatus == 'Pending'}" th:attr="onclick=|rejectPartner(${partner.partnerId})|">Reject</button>
                     </td>
                 </tr>
             </tbody>
