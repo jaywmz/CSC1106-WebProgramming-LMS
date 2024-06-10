@@ -1,8 +1,13 @@
 package webprogramming.csc1106.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,5 +45,27 @@ public class PartnershipController {
         partnerService.savePartner(partner);
 
         return "{\"message\":\"Your application has been submitted successfully!\"}";
+    }
+
+    @GetMapping("/list")
+    public String listPartners(Model model) {
+        List<Partner> partners = partnerService.getAllPartners();
+        model.addAttribute("partners", partners);
+        return "User/partnershiplisting";
+    }
+
+    @PostMapping("/approve/{partnerId}")
+    @ResponseBody
+    public ResponseEntity<String> approvePartner(@PathVariable Integer partnerId) {
+        try {
+            boolean success = partnerService.approvePartner(partnerId);
+            if (success) {
+                return ResponseEntity.ok("{\"success\": true}");
+            } else {
+                return ResponseEntity.status(500).body("{\"success\": false, \"error\": \"Failed to approve partner.\"}");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 }
