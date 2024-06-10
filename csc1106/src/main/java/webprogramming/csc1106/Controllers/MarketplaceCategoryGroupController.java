@@ -1,8 +1,8 @@
 package webprogramming.csc1106.Controllers;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,6 @@ import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Services.CategoryGroupService;
 import webprogramming.csc1106.Services.UploadCourseService;
-
 import java.util.logging.Logger;
 
 @Controller
@@ -28,15 +27,16 @@ public class MarketplaceCategoryGroupController {
     private static final Logger logger = Logger.getLogger(MarketplaceCategoryGroupController.class.getName());
 
     @GetMapping("/add-category")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     public String showAddCategoryPage(Model model) {
         model.addAttribute("categoryGroup", new CategoryGroup());
         return "Marketplace/add-category";
     }
 
     @PostMapping("/add-category")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     public String addCategory(CategoryGroup categoryGroup, Model model, RedirectAttributes redirectAttributes) {
         try {
-            
             categoryGroupService.addCategoryGroup(categoryGroup);
             redirectAttributes.addFlashAttribute("successMessage", "Category group added successfully.");
             return "redirect:/market";
@@ -47,7 +47,7 @@ public class MarketplaceCategoryGroupController {
         }
     }
 
-   @GetMapping("/category/{id}")
+    @GetMapping("/category/{id}")
     public String showCategoryPage(@PathVariable Long id, Model model) {
         logger.info("Showing category page for category ID: " + id);
         CategoryGroup category = categoryGroupService.getCategoryGroupById(id);
@@ -66,9 +66,10 @@ public class MarketplaceCategoryGroupController {
         model.addAttribute("category", category);
         model.addAttribute("courses", courses);
         return "category";
-     
     }
+
     @PostMapping("/delete-category/{id}")
+    @PreAuthorize("hasRole('ROLE_STAFF')")
     public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             categoryGroupService.deleteCategoryGroup(id);
@@ -79,6 +80,4 @@ public class MarketplaceCategoryGroupController {
         }
         return "redirect:/market";
     }
-    
 }
-

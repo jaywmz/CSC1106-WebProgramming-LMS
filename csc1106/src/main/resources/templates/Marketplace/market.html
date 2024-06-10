@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -41,7 +41,7 @@
         .nav-profile {
             margin-left: auto;
         }
-        
+
         h2 {
             text-align: center;
             margin-bottom: 30px;
@@ -192,8 +192,19 @@
                 </div>
             </div>
         </section>
+
+        <!-- Add Category Button for Staff only -->
+        <section id="add-category" class="section">
+            <div class="container">
+                <div sec:authorize="hasRole('ROLE_STAFF')">
+                    <a href="/add-category" class="btn btn-primary">Add Category</a>
+                </div>
+            </div>
+        </section>
+
     </main>
 
+    
     <footer id="footer" class="footer">
         <div class="copyright">
             &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
@@ -217,5 +228,10 @@
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script src="assets/js/dashboard-checker.js"></script>
+    <script>
+        function redirectToCategory(categoryId) {
+            window.location.href = "/category/" + categoryId;
+        }
+    </script>
 </body>
 </html>
