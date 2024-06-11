@@ -7,16 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import webprogramming.csc1106.Entities.CommunityCategory;
-import webprogramming.csc1106.Entities.Post;
-import webprogramming.csc1106.Entities.PostAttachments;
-import webprogramming.csc1106.Repositories.AttachmentsRepo;
-import webprogramming.csc1106.Repositories.CategoryRepo;
-import webprogramming.csc1106.Repositories.PostRepo;
+import webprogramming.csc1106.Entities.*;
+import webprogramming.csc1106.Repositories.*;
 import webprogramming.csc1106.Services.AzureBlobService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class CommunityNewPostController {
+
+    @Autowired
+    private UserRepository userRepo;
 
     @Autowired
     private PostRepo postRepo;
@@ -38,9 +38,6 @@ public class CommunityNewPostController {
     @Autowired
     private AzureBlobService azureBlobService;
 
-    // @GetMapping("/community/new-post")
-    // public String getNewPostForm(@Param("category_name") String category_name, Model model) {
-    //     model.addAttribute("category_name", category_name);
     @GetMapping("/community/{user_group}/new-post")
     public String getNewPostForm(@PathVariable String user_group, @Param("category_id") String category_id, Model model) {
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
@@ -53,16 +50,25 @@ public class CommunityNewPostController {
     }
 
     @PostMapping("/community/new-post")
-    public String postNewPost(@Param("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @ModelAttribute Post newPost) {
+    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_Name") String username, @ModelAttribute Post newPost) {
+        // set post timestamp
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newPost.setTimestamp(timestamp);
-        newPost.setPosterName("Example Name"); // placeholder
 
+        // retrieve user by user object and set post's User link and username attribute
+        User user = userRepo.findByUserName(username);
+        newPost.setUser(user);
+        newPost.setPosterName(username);
+
+        // set post category
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id));
         newPost.setCategory(category);
+
+        // save post to repository
         postRepo.save(newPost);
 
+        // if post has image attachment, save attachment to attachment repo
         try {
             if (attachment != null && !attachment.isEmpty()) {
                 String contentType = attachment.getContentType();
@@ -79,7 +85,7 @@ public class CommunityNewPostController {
         } catch (IOException exception) {
             return "Community/new-post";
         }
-  
+        
         if(Integer.parseInt(category_id) <= 2){
             return "redirect:/community/announcements";
         }else if(Integer.parseInt(category_id) <= 8){

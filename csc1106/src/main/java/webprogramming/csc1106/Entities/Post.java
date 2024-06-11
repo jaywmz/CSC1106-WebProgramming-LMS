@@ -12,17 +12,24 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long postID;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private CommunityCategory category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostAttachments> attachments;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Likes> likedBy;
 
     @Column(name = "poster_name", nullable = false)
     private String posterName; // username that posted the thread
@@ -37,10 +44,9 @@ public class Post {
     private String content;
 
     @Column(name = "likes", columnDefinition = "integer default 0")
-    private Integer likes;
+    private Integer likes = 0;
 
-    // Constructors
-    public Post() {}
+    public Post() {};
 
     public Post(String posterName, Timestamp timestamp, String title, String content, CommunityCategory category) {
         this.posterName = posterName;
@@ -51,12 +57,20 @@ public class Post {
     }
 
     // Getters and setters
-    public long getId() {
-        return id;
+    public Long getPostID() {
+        return postID;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setPostID(Long id) {
+        this.postID = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public CommunityCategory getCategory() {
@@ -81,6 +95,14 @@ public class Post {
 
     public void setAttachments(List<PostAttachments> attachments) {
         this.attachments = attachments;
+    }
+
+    public List<Likes> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(List<Likes> likedBy) {
+        this.likedBy = likedBy;
     }
 
     public String getPosterName() {

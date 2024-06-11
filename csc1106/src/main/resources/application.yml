@@ -23,9 +23,3 @@ azure:
     connection-string: DefaultEndpointsProtocol=https;AccountName=learnzenithblob;AccountKey=AImtsIhXXZHqqyeCr/uD/QuCy+JyvYUDwE1feJqoMtBYnsxu48QGVW6j7pAnKwfakT1qNkZqKoA9+ASt0lTZWQ==
     container-name: courseuploads
 
-logging:
-  level:
-    org:
-      springframework: DEBUG
-    webprogramming:
-      csc1106: DEBUG
