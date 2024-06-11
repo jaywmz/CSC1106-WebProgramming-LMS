@@ -3,18 +3,19 @@ package webprogramming.csc1106.Services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class UploadCourseService {
@@ -277,6 +278,24 @@ public class UploadCourseService {
             courses.add(course);
         }
         return courses;
+    }
+
+    public List<UploadCourse> getFilteredAndSortedCourses(Long category, String sortBy) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate"); // Default sort
+
+        if ("price-low-high".equals(sortBy)) {
+            sort = Sort.by(Sort.Direction.ASC, "price");
+        } else if ("price-high-low".equals(sortBy)) {
+            sort = Sort.by(Sort.Direction.DESC, "price");
+        } else if ("rating".equals(sortBy)) {
+            sort = Sort.by(Sort.Direction.DESC, "averageRating");
+        }
+
+        if (category != null) {
+            return courseRepository.findByCourseCategories_CategoryGroup_Id(category, sort);
+        } else {
+            return courseRepository.findAll(sort);
+        }
     }
 
     private void calculateRating(UploadCourse course) {
