@@ -42,4 +42,15 @@ public class PartnerService {
         logger.warn("Failed to approve partner with ID {}. Either partner not found or status is not Pending.", partnerId);
         return false;
     }
+
+    public boolean rejectPartner(Integer partnerId) {
+        Partner partner = partnerRepository.findById(partnerId).orElse(null);
+        if (partner != null && "Pending".equals(partner.getPartnerStatus())) {
+            partner.setPartnerStatus("Rejected");
+            partnerRepository.save(partner);
+            emailService.sendRejectionEmail(partner.getPartnerEmail(), partner.getCompanyName());
+            return true;
+        }
+        return false;
+    }
 }

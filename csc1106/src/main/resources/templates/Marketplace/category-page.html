@@ -53,16 +53,43 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
-        .carousel-item img {
-            max-height: 300px;
-            object-fit: cover;
-        }
-        .carousel-caption h5 {
-            font-size: 1.5rem;
-        }
         .nav-link-custom {
             font-size: 1.1rem;
             font-weight: 500;
+        }
+        
+        .card {
+            width: 18rem;
+            height: 25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 10rem;
+            object-fit: contain;
+            padding: 5px;
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .course-rating .star {
+            color: #ffbf00;
+            margin-right: 5px;
+        }
+
+        .course-rating .reviews {
+            margin-left: 5px;
+            font-size: 14px;
+            color: #777;
         }
     </style>
 </head>
@@ -119,86 +146,26 @@
             </nav>
         </div>
 
-        <section id="ongoing-courses" class="section">
-            <div class="container">
-                <h2>Ongoing Courses</h2>
-                <p>Total Courses Available: <span th:text="${totalCourses}"></span></p>
-            </div>
-        </section>
-
-        <section class="section dashboard">
-            <div class="row">
-                <div class="col-12 mb-5">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                        <ol class="carousel-indicators">
-                            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
-                            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
-                            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
-                        </ol>
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="assets/img/slide1.png" class="d-block w-100" alt="Slide 1" th:src="@{/assets/img/slide1.png}">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Slow and steady</h5>
-                                    <p>Try learning just 5–10 minutes a day. Continue your course and reach your peak potential.</p>
+        <section class="section">
+            <div class="container mt-5">
+                <h2 th:text="${category.name}">Category Name</h2>
+                <p th:text="${category.description}">Category Description</p>
+                <div class="row">
+                    <div class="col-md-4 mb-4" th:each="course : ${courses}">
+                        <div class="card card-custom">
+                            <img th:src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${course.title}">Course Title</h5>
+                                <p class="card-text" th:text="${course.description}">Course Description</p>
+                                <div class="course-rating">
+                                    <span class="star">&#9733;</span>
+                                    <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'">4.5 (602 reviews)</span>
                                 </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="assets/img/slide2.png" class="d-block w-100" alt="Slide 2" th:src="@{/assets/img/slide2.png}">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Prep for your IT certificate.</h5>
-                                    <p>Explore a future in IT. Start learning toward AWS certification, CompTIA A+ certification, and more.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="assets/img/slide3.png" class="d-block w-100" alt="Slide 3" th:src="@{/assets/img/slide3.png}">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>A big sale for your big opportunity</h5>
-                                    <p>With courses from $12.98, it's the right time for the right skills and you. Our biggest sale of the season ends Aug 24.</p>
-                                </div>
+                                <p class="card-text"><strong th:text="'$' + ${course.price}">Course Price</strong></p>
+                                <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                             </div>
                         </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="marketplace-categories" class="section"> 
-            <div class="container"> 
-                <h2>Marketplace Categories</h2> 
-                <div class="row"> 
-                    <div class="col-md-4 mb-4" th:each="category : ${categories}"> 
-                        <a th:href="@{'/category/' + ${category.id}}" class="card-link"> 
-                            <div class="card category-card card-custom"> 
-                                <img src="assets/img/category-placeholder.jpg" class="card-img-top" alt="Category Image" th:src="@{/assets/img/category-placeholder.jpg}"> 
-                                <div class="card-body"> 
-                                    <h5 class="card-title" th:text="${category.name}">Category Name</h5> 
-                                    <p class="card-text" th:text="${category.description}">Category Description</p> 
-                                    <form th:action="@{'/delete-category/' + ${category.id}}" method="post" onsubmit="return confirm('Are you sure you want to delete this category?');"> 
-                                        <button type="submit" class="btn btn-danger">Delete</button> 
-                                    </form> 
-                                </div> 
-                            </div> 
-                        </a> 
-                    </div> 
-                </div> 
-            </div> 
-        </section>
-        
-
-        <!-- Add Category Button for Staff only -->
-        <section id="add-category" class="section">
-            <div class="container">
-                <div sec:authorize="hasRole('ROLE_STAFF')">
-                    <a href="/add-category" class="btn btn-primary">Add Category</a>
                 </div>
             </div>
         </section>
@@ -227,5 +194,24 @@
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script src="assets/js/dashboard-checker.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.add-to-cart').click(function() {
+                var courseId = $(this).data('course-id');
+                $.ajax({
+                    url: '/cart/add',
+                    type: 'POST',
+                    data: { courseId: courseId },
+                    success: function(response) {
+                        alert('Course added to cart successfully.');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to add course to cart. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+

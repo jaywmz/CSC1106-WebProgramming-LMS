@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import webprogramming.csc1106.Entities.CategoryGroup;
-import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Services.CategoryGroupService;
-import webprogramming.csc1106.Services.UploadCourseService;
+
 
 import java.util.logging.Logger;
 
@@ -21,9 +20,6 @@ public class MarketplaceCategoryGroupController {
 
     @Autowired
     private CategoryGroupService categoryGroupService;
-
-    @Autowired
-    private UploadCourseService uploadCourseService;
 
     private static final Logger logger = Logger.getLogger(MarketplaceCategoryGroupController.class.getName());
 
@@ -47,27 +43,6 @@ public class MarketplaceCategoryGroupController {
         }
     }
 
-   @GetMapping("/category/{id}")
-    public String showCategoryPage(@PathVariable Long id, Model model) {
-        logger.info("Showing category page for category ID: " + id);
-        CategoryGroup category = categoryGroupService.getCategoryGroupById(id);
-        List<UploadCourse> courses = uploadCourseService.getCoursesByCategoryId(id);
-
-        if (category == null) {
-            logger.severe("Category with ID: " + id + " not found.");
-            model.addAttribute("errorMessage", "Category not found.");
-            return "error/404";
-        }
-
-        if (courses == null || courses.isEmpty()) {
-            logger.info("No courses found for category ID: " + id);
-        }
-
-        model.addAttribute("category", category);
-        model.addAttribute("courses", courses);
-        return "category";
-     
-    }
     @PostMapping("/delete-category/{id}")
     public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

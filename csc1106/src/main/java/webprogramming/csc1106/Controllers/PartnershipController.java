@@ -68,4 +68,19 @@ public class PartnershipController {
             return ResponseEntity.status(500).body("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
         }
     }
+
+    @PostMapping("/reject/{partnerId}")
+    @ResponseBody
+    public ResponseEntity<String> rejectPartner(@PathVariable Integer partnerId) {
+        try {
+            boolean success = partnerService.rejectPartner(partnerId);
+            if (success) {
+                return ResponseEntity.ok("{\"success\": true}");
+            } else {
+                return ResponseEntity.status(500).body("{\"success\": false, \"error\": \"Failed to reject partner.\"}");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("{\"success\": false, \"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
 }
