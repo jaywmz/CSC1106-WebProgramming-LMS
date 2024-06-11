@@ -106,6 +106,7 @@
             <ul class="d-flex align-items-center">
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/checkout}">Cart</a></li>
                 <li class="nav-item dropdown pe-3 nav-profile">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
@@ -198,20 +199,21 @@
         $(document).ready(function() {
             $('.add-to-cart').click(function() {
                 var courseId = $(this).data('course-id');
-                $.ajax({
-                    url: '/cart/add',
-                    type: 'POST',
-                    data: { courseId: courseId },
-                    success: function(response) {
-                        alert('Course added to cart successfully.');
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Failed to add course to cart. Please try again.');
-                    }
-                });
+                if (confirm('Are you sure you want to add this course to the cart?')) {
+                    $.ajax({
+                        url: '/cart/add',
+                        type: 'POST',
+                        data: { courseId: courseId },
+                        success: function(response) {
+                            alert('Course added to cart successfully.');
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Failed to add course to cart. Please try again.');
+                        }
+                    });
+                }
             });
         });
     </script>
 </body>
 </html>
-
