@@ -66,46 +66,6 @@
       margin-left: 20px;
     }
   </style>
-
-  <!--
-  <script>
-    const likeButton = document.getElementById('like-button');
-    const likeCountElement = document.getElementById('like-count');
-    const postID = [[${post.id}]];
-    const userGroup = [[${user_group}]];
-    const categoryID = [[${category_id}]];
-
-    async function toggleActive(button, defaultText, activeText, defaultIcon, activeIcon) {
-      button.classList.toggle('active');
-      var buttonText = button.querySelector('span');
-      var buttonIcon = button.querySelector('i');
-      if (button.classList.contains('active')) {
-        buttonText.textContent = activeText;
-        buttonIcon.classList.remove(defaultIcon);
-        buttonIcon.classList.add(activeIcon);
-      } else {
-        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/like', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({post: postID})
-        });
-    
-        const responseText = await response.text();
-    
-        if(response.status === 200) {
-          buttonText.textContent = defaultText;
-          buttonIcon.classList.remove(activeIcon);
-          buttonIcon.classList.add(defaultIcon);
-          likeCountElement = [[${post.likes}]] + 1;
-          return responseText;
-        }
-        else return null;
-      }
-    }
-  </script>
-  -->
 </head>
 
 <body>
@@ -203,6 +163,7 @@
 
         <!-- Post title and content section -->
         <div class="card">
+
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}"></h5>
             <span th:utext="${post.content}"></span>
@@ -210,21 +171,31 @@
               <img th:src="${attachment}" class="img-thumbnail" alt="Cover Image">
             </div>
           </div>
+
           <div class="card-footer d-flex justify-content-between align-items-center">
             <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
-            <!-- like button -->
-            <div>
-              <span id="like-count" th:text="${post.likes}"></span> likes
-              <button type="button" class="btn btn-outline-primary" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')"><i class="bi bi-heart me-1"></i><span> Like</span></button>
-              <button type="button" class="btn btn-outline-primary" id="subscribe-button" onclick="toggleActive(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')"><i class="bi bi-bell me-1"></i><span> Subscribe</span></button>              
-            </div>
-            <!-- End like button -->
+            <div class="d-inline-flex gap-2 align-items-center">
+              Likes: <span id="like-count" th:text="${post.likes}"></span>
+              <!-- like button -->
+              <div th:switch="${liked}">
+                <button th:case="false" type="button" class="btn btn-outline-primary" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
+                  <i class="bi bi-heart me-1"></i><span> Like</span>
+                </button> 
+                <button th:case="true" type="button" class="btn btn-outline-primary active" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
+                  <i class="bi bi-heart-fill me-1"></i><span> Liked</span>
+                </button> 
+              </div>
+              <!-- End like button -->
+              <button type="button" class="btn btn-outline-primary" id="subscribe-button" onclick="toggleActive(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')">
+                <i class="bi bi-bell me-1"></i><span> Subscribe</span>
+              </button>    
+            </div>          
           </div>
         </div>
 
         <!-- Comment on post textbox -->
         <div th:with="post=${post}">
-          <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/add-comment(category_id=${category_id}, post_id=${post.id}, user_group=${user_group})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
+          <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/add-comment(category_id=${category_id}, post_id=${post.postID}, user_group=${user_group})}" th:object="${newComment}" method="post" class="needs-validation" novalidate> 
             <div class="form-floating">
               <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{content}"></textarea>
               <label for="floatingTextarea">Add a comment</label>
@@ -262,7 +233,7 @@
                   <div class="modal-body" style="color: black;">
                     <span th:utext="${comment.content}"></span>
                   </div>
-                  <form action="#" method="post" class="needs-validation" novalidate th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.id})}" th:object="${newComment}">
+                  <form action="#" method="post" class="needs-validation" novalidate th:action="@{/community/{category_name}/{post_id}/add-comment(category_name=${category_name}, post_id=${post.postID})}" th:object="${newComment}">
                     <div class="modal-body" style="color: black;">
                       <div class="form-floating">
                         <textarea required placeholder="" class="form-control" id="floatingReplyArea" style="height: 100px;" th:field="*{content}"></textarea>

@@ -18,15 +18,19 @@ public class CategoryGroup {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "cover_image_url")
+    private String coverImageUrl;
+
     @OneToMany(mappedBy = "categoryGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
     // Constructors
     public CategoryGroup() {}
 
-    public CategoryGroup(String name, String description) {
+    public CategoryGroup(String name, String description, String coverImageUrl) {
         this.name = name;
         this.description = description;
+        this.coverImageUrl = coverImageUrl;
     }
 
     // Getters and setters
@@ -52,6 +56,14 @@ public class CategoryGroup {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
     }
 
     public List<CourseCategory> getCourseCategories() {

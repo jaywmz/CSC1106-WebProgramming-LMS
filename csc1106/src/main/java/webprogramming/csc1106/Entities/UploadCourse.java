@@ -39,6 +39,13 @@ public class UploadCourse {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transactions> transactions = new ArrayList<>();
 
+    // Fields for average rating and review count
+    @Transient
+    private double averageRating;
+
+    @Transient
+    private int reviewCount;
+
     // Constructors
     public UploadCourse() {}
 
@@ -129,5 +136,21 @@ public class UploadCourse {
 
     public void setTransactions(List<Transactions> transactions) {
         this.transactions = transactions;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(int reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }

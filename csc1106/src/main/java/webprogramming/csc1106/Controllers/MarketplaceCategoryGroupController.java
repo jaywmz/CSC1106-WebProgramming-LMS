@@ -1,19 +1,18 @@
 package webprogramming.csc1106.Controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webprogramming.csc1106.Entities.CategoryGroup;
-import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Services.CategoryGroupService;
-import webprogramming.csc1106.Services.UploadCourseService;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 @Controller
@@ -21,9 +20,6 @@ public class MarketplaceCategoryGroupController {
 
     @Autowired
     private CategoryGroupService categoryGroupService;
-
-    @Autowired
-    private UploadCourseService uploadCourseService;
 
     private static final Logger logger = Logger.getLogger(MarketplaceCategoryGroupController.class.getName());
 
@@ -34,12 +30,15 @@ public class MarketplaceCategoryGroupController {
     }
 
     @PostMapping("/add-category")
-    public String addCategory(CategoryGroup categoryGroup, Model model, RedirectAttributes redirectAttributes) {
+    public String addCategory(CategoryGroup categoryGroup, @RequestParam("coverImageFile") MultipartFile coverImageFile, Model model, RedirectAttributes redirectAttributes) {
         try {
-            
-            categoryGroupService.addCategoryGroup(categoryGroup);
+            categoryGroupService.addCategoryGroup(categoryGroup, coverImageFile);
             redirectAttributes.addFlashAttribute("successMessage", "Category group added successfully.");
             return "redirect:/market";
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Failed to upload cover image. Please try again.");
+            logger.severe("Error adding category group: " + e.getMessage());
+            return "Marketplace/add-category";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Failed to add category group. Please try again.");
             logger.severe("Error adding category group: " + e.getMessage());
@@ -58,6 +57,4 @@ public class MarketplaceCategoryGroupController {
         }
         return "redirect:/market";
     }
-    
 }
-
