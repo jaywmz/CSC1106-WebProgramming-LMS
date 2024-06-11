@@ -5,10 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
-
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
 import java.io.IOException;
@@ -16,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class UploadCourseService {
@@ -41,14 +40,21 @@ public class UploadCourseService {
     private CourseCategoryRepository courseCategoryRepository;
 
     @Autowired
+    private RatingRepository ratingRepository;
+
+    @Autowired
     private AzureBlobService azureBlobService;
 
     public List<UploadCourse> getAllCourses() {
-        return courseRepository.findAll();
+        List<UploadCourse> courses = courseRepository.findAll();
+        courses.forEach(this::calculateRating);
+        return courses;
     }
 
     public Optional<UploadCourse> getCourseById(Long id) {
-        return courseRepository.findById(id);
+        Optional<UploadCourse> course = courseRepository.findById(id);
+        course.ifPresent(this::calculateRating);
+        return course;
     }
 
     public long getTotalCourses() {
@@ -266,9 +272,23 @@ public class UploadCourseService {
         List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
         List<UploadCourse> courses = new ArrayList<>();
         for (CourseCategory courseCategory : courseCategories) {
-            courses.add(courseCategory.getCourse());
+            UploadCourse course = courseCategory.getCourse();
+            calculateRating(course); // Calculate rating for each course
+            courses.add(course);
         }
         return courses;
     }
 
+    private void calculateRating(UploadCourse course) {
+        List<Rating> ratings = ratingRepository.findByCourse(course);
+        if (ratings != null && !ratings.isEmpty()) {
+            double averageRating = ratings.stream().mapToDouble(Rating::getScore).average().orElse(0.0);
+            int reviewCount = ratings.size();
+            course.setAverageRating(averageRating);
+            course.setReviewCount(reviewCount);
+        } else {
+            course.setAverageRating(0.0);
+            course.setReviewCount(0);
+        }
+    }
 }

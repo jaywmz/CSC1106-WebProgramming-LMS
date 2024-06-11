@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import webprogramming.csc1106.Entities.CategoryGroup;
-import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Services.CategoryGroupService;
-import webprogramming.csc1106.Services.UploadCourseService;
+
 
 import java.util.logging.Logger;
 
@@ -21,9 +20,6 @@ public class MarketplaceCategoryGroupController {
 
     @Autowired
     private CategoryGroupService categoryGroupService;
-
-    @Autowired
-    private UploadCourseService uploadCourseService;
 
     private static final Logger logger = Logger.getLogger(MarketplaceCategoryGroupController.class.getName());
 

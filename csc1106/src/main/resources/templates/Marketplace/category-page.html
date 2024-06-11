@@ -6,6 +6,41 @@
     <title th:text="${category.name} + ' - LearnZenith'">Category - LearnZenith</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .card {
+            width: 18rem;
+            height: 25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 10rem;
+            object-fit: contain;
+            padding: 5px;
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .course-rating .star {
+            color: #ffbf00;
+            margin-right: 5px;
+        }
+
+        .course-rating .reviews {
+            margin-left: 5px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -18,13 +53,16 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="${course.title}">Course Title</h5>
                         <p class="card-text" th:text="${course.description}">Course Description</p>
+                        <div class="course-rating">
+                            <span class="star">&#9733;</span>
+                            <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'">4.5 (602 reviews)</span>
+                        </div>
                         <p class="card-text"><strong th:text="'$' + ${course.price}">Course Price</strong></p>
                         <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                     </div>
                 </div>
             </div>
         </div>
-        <a class="btn btn-secondary" href="/cart">View Cart</a>
     </div>
 
     <script>
