@@ -54,7 +54,7 @@
         }
         .card {
             width: 18rem;
-            height: 25rem;
+            height: 30rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -80,6 +80,26 @@
             margin-left: 5px;
             font-size: 14px;
             color: #777;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .card-title, .card-text, .course-rating, .card-price, .add-to-cart {
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .card-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .btn {
+            margin-top: auto;
         }
     </style>
 </head>
@@ -165,7 +185,7 @@
                                     <span class="star">&#9733;</span>
                                     <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'">4.5 (602 reviews)</span>
                                 </div>
-                                <p class="card-text"><strong th:text="'$' + ${course.price}">Course Price</strong></p>
+                                <p class="card-price" th:text="'$' + ${course.price}">Course Price</p>
                                 <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                             </div>
                         </div>
@@ -206,12 +226,12 @@
             $('#sort-by').change(function() {
                 loadCourses();
             });
-    
+
             function loadCourses() {
                 var category = $('#filter-category').val();
                 var sortBy = $('#sort-by').val();
                 var categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
-    
+
                 $.ajax({
                     url: `/category/${categoryId}`,
                     type: 'GET',
@@ -231,7 +251,7 @@
                                                 <span class="star">&#9733;</span>
                                                 <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
                                             </div>
-                                            <p class="card-text"><strong>$${course.price}</strong></p>
+                                            <p class="card-price"><strong>$${course.price}</strong></p>
                                             <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                                         </div>
                                     </div>
@@ -244,10 +264,10 @@
                     }
                 });
             }
-    
+
             // Initial load
             loadCourses();
-    
+
             // Handle add to cart
             $(document).on('click', '.add-to-cart', function() {
                 var courseId = $(this).data('course-id');
