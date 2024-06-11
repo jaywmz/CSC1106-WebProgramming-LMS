@@ -245,7 +245,7 @@ async function redirectUserToCorrectDashboard(){
             userSigned();
             if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
             else await refreshDashboardSideBarItems();
-            document.querySelector('iframe[title="loading"]').style.display = 'none';
+            coverPage(false);
         }
     }
 
@@ -274,7 +274,7 @@ async function redirectUserToCorrectDashboard(){
         // Admin Role Confirmed
         // Continue what need to be done in Admin Dashboard
         userSigned();
-        document.querySelector('iframe[title="loading"]').style.display = 'none';
+        coverPage(false);
     }
 
     // Partner Dashboard Redirect
@@ -287,10 +287,23 @@ async function redirectUserToCorrectDashboard(){
         // Partner Role Confirmed
         // Continue what need to be done in Partner Dashboard
         userSigned();
-        document.querySelector('iframe[title="loading"]').style.display = 'none';
+        coverPage(false);
     }
 
     // What need to be done as general
     // currently nothing to need to be done after
 
+}
+
+async function coverPage(boolean){
+    if(boolean === true){
+        document.getElementById('whitecoverfullscreen').style.display = 'none';
+        document.querySelector('iframe[title="loading"]').style.display = 'block';
+        return;
+    }
+    else{
+        document.getElementById('whitecoverfullscreen').style.display = 'none';
+        document.querySelector('iframe[title="loading"]').style.display = 'none';
+        return;
+    }
 }
