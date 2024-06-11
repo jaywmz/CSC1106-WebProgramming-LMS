@@ -1,30 +1,20 @@
 let sidebarNav = document.getElementById('sidebar-nav');
 let currentUrl = window.location.href;
+let signOutButton = document.getElementById('signoutButton');
+
+signOutButton.addEventListener('click', function(){
+    deleteCookie('lrnznth_User_Cookie');
+    deleteCookie('lrnznth_User_Name');
+    window.location.href = '/logout';
+});
 
 document.addEventListener('DOMContentLoaded', async function(){
 
-    // If current page is logout page
-    if(currentUrl.endsWith('logout')) {
-
-        if(!getCookie('lrnznth_User_Cookie')) return window.location.href = '/';
-
-        deleteCookie('lrnznth_User_Cookie');
-        deleteCookie('lrnznth_User_Name');
-        
-        setTimeout(function() {
-            window.location.href = "/";
-        }, 5000);
-        
-        return;
-    }
-    
-    userSigned();
-    
-    if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
-    else await refreshDashboardSideBarItems();
+    await redirectUserToCorrectDashboard();
 
 });
 
+// Check if cookie exists and return the user name
 async function checkCookieReturnName(cookie){
     const response = await fetch('/checkmycookie', {
         method: 'POST',
@@ -38,6 +28,29 @@ async function checkCookieReturnName(cookie){
 
     if(response.status === 200) return responseText;
     else return null;
+}
+
+// Check if cookie exists and return the user object
+async function checkCookieProMax(cookie){
+    try {
+        const response = await fetch('/checkmycookiepromax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({cookie: cookie})
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const user = await response.json();
+
+        return user;
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
 }
 
 function getCookie(name) {
@@ -69,6 +82,7 @@ function setCookie(name, value, days){
     document.cookie = name + "=" + (encodedValue || "")  + expires + "; path=/";
 }
 
+// Function to fetch the dashboard items from the server
 async function getDashboardItems(){
     const response = await fetch('/dashboard/dashboard-sidebar-items', {
         method: 'GET',
@@ -85,6 +99,7 @@ async function getDashboardItems(){
     }
 }
 
+// Will check if user is signed in and set the username in the dashboard
 async function userSigned(){
 
     try {
@@ -115,6 +130,8 @@ async function userSigned(){
     
 }
 
+// Only for General Dashboard (Currently)
+// Refresh Dashboard Sidebar Items by retrieving from the server and set cookies
 async function refreshDashboardSideBarItems(){
 
     try {
@@ -168,6 +185,8 @@ async function refreshDashboardSideBarItems(){
     
 }
 
+// Only for General Dashboard (Currently)
+// Refresh Dashboard Sidebar Items by retrieving from the cookies
 async function refreshDashboardSideBarItemsLocally(){
     try {
         let itemsFullString = '';
@@ -206,4 +225,72 @@ async function refreshDashboardSideBarItemsLocally(){
     } catch (error) {
         console.error(error);
     }
+}
+
+async function redirectUserToCorrectDashboard(){
+
+    const userCookie = getCookie('lrnznth_User_Cookie');
+    if(!userCookie) return window.location.href = '/login';
+    const user = await checkCookieProMax(userCookie);
+
+    // Inner Layer
+    // Dashboard Redirect and Do refresh for dashboard items
+    if(currentUrl.endsWith('dashboard')) {
+        // Check for Admin Role
+        if(user.role.roleName === 'Staff') return window.location.href = '/admin';
+        // Check for Partner Role
+        else if(user.role.roleName === 'Partner') return window.location.href = '/partner';
+        // Student & Professor Role Confirmed
+        else {
+            userSigned();
+            if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
+            else await refreshDashboardSideBarItems();
+            document.querySelector('iframe[title="loading"]').style.display = 'none';
+        }
+    }
+
+    // Log Out Redirect
+    else if(currentUrl.endsWith('logout')) {
+
+        if(!getCookie('lrnznth_User_Cookie')) return window.location.href = '/';
+
+        deleteCookie('lrnznth_User_Cookie');
+        deleteCookie('lrnznth_User_Name');
+        
+        setTimeout(function() {
+            window.location.href = "/";
+        }, 5000);
+        
+        return;
+    }
+
+    // Admin Dashboard Redirect
+    else if(currentUrl.endsWith('admin')) {
+        // Check for Partner Role
+        if(user.role.roleName === 'Partner') return window.location.href = '/partner';
+        // Check for Student & Professor Role
+        if(user.role.roleName !== 'Staff') return window.location.href = '/dashboard';
+
+        // Admin Role Confirmed
+        // Continue what need to be done in Admin Dashboard
+        userSigned();
+        document.querySelector('iframe[title="loading"]').style.display = 'none';
+    }
+
+    // Partner Dashboard Redirect
+    else if(currentUrl.endsWith('partner')) {
+        // Check for Admin Role
+        if(user.role.roleName === 'Staff') return window.location.href = '/admin';
+        // Check for Student & Professor Role
+        if(user.role.roleName !== 'Partner') return window.location.href = '/dashboard';
+        
+        // Partner Role Confirmed
+        // Continue what need to be done in Partner Dashboard
+        userSigned();
+        document.querySelector('iframe[title="loading"]').style.display = 'none';
+    }
+
+    // What need to be done as general
+    // currently nothing to need to be done after
+
 }

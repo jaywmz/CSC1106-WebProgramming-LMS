@@ -54,4 +54,19 @@ public class RedirectionController {
         return "Course/mylearning";
     }
 
+    @GetMapping("/loading")
+    public String loading() {
+        return "loading";
+    }
+    
+    @GetMapping("/admin")
+    public String adminDashboard() {
+        return "Admin/adminDashboard";
+    }
+
+    @GetMapping("/partner")
+    public String partnerDashboard() {
+        return "Partnership/partnerDashboard";
+    }
+
 }
