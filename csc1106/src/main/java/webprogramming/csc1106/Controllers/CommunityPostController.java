@@ -67,11 +67,11 @@ public class CommunityPostController {
     }
 
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/add-comment")
-    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id) {
+    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username) {
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newComment.setTimestamp(timestamp);
-        newComment.setCommenterName("Bozo");
+        newComment.setCommenterName(username);
 
         Post post = postRepo.findByPostID(Long.parseLong(post_id));
         // post.getComments().add(newComment);

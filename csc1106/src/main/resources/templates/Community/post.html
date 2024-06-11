@@ -175,7 +175,7 @@
           <div class="card-footer d-flex justify-content-between align-items-center">
             <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
             <div class="d-inline-flex gap-2 align-items-center">
-              <span id="like-count" th:text="${post.likes}"></span> Likes
+              Likes: <span id="like-count" th:text="${post.likes}"></span>
               <!-- like button -->
               <div th:switch="${liked}">
                 <button th:case="false" type="button" class="btn btn-outline-primary" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
