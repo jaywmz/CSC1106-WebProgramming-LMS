@@ -1,4 +1,4 @@
-document.querySelector('#login-form').addEventListener('submit', function(event) {
+document.querySelector('#login-form').addEventListener('submit', async function(event) {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
@@ -13,68 +13,41 @@ document.querySelector('#login-form').addEventListener('submit', function(event)
     
     const rememberMe = data['remember'];
 
-    fetch('/logmein', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(async response => {
+    const thisUser = await logMeIn(data);
+    
+    // If user is not found
+    if(!thisUser) {
+        document.querySelector('#login-form').reset();
+        return alert('Invalid Email or Password')
+    }
 
-        const responseText = await response.text();
-        if(response.status === 200) {
-            
-            console.log(responseText);
-            if(rememberMe === 'true'){
-                // If remember me is checked, set cookie to 365 days
-                setCookie('lrnznth_User_Cookie', responseText, 365);
-            }
-            else{
-                // If remember me is not checked, set cookie to 1 day
-                setCookie('lrnznth_User_Cookie', responseText, 1);
-            }
+    // Set Cookie for user
+    if(rememberMe === 'true') {
+        setCookie('lrnznth_User_Cookie', thisUser.loginCookie, 365);
+        setCookie('lrnznth_User_Name', thisUser.userName, 1);
+    }
+    else{
+        setCookie('lrnznth_User_Cookie', thisUser.loginCookie, 1);
+        setCookie('lrnznth_User_Name', thisUser.userName, 1);
+    }
+    
+    // Redirect user to respective dashboard
+    await redirectUserDashboard(thisUser.role.roleName);
 
-            window.location.href = '/dashboard';
-
-        } else {
-            alert(responseText);
-            document.querySelector('#login-form').reset();
-        }
-    }).catch(error => {
-        console.log(error);
-    });        
 });
 
 document.addEventListener('DOMContentLoaded', async function(){
     
     // Get Cookie and check if it is valid
     const thisCheck = getCookie('lrnznth_User_Cookie');
+    const user = await checkCookieProMax(thisCheck);
     
-    if(thisCheck){
+    // If user is not found
+    if(!user) return deleteCookie('lrnznth_User_Cookie');
 
-        // Check if cookie is valid
-        const response = await fetch('/checkmycookie', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({cookie: thisCheck})
-        });
-
-        // Wait for response
-        const responseText = await response.text();
-
-        // If response is 200, redirect to dashboard, set Name Cookie (1 Days)
-        if(response.status === 200){
-            setCookie('lrnznth_User_Name', responseText, 1);
-            window.location.href = '/dashboard';
-        }
-        // Remove Cookie if it is not valid
-        else{
-            deleteCookie('lrnznth_User_Cookie');
-        }
-    }
+    // Redirect user to respective dashboard
+    await redirectUserDashboard(user.role.roleName);
+    
 });
 
 function getCookie(name) {
@@ -104,4 +77,57 @@ function setCookie(name, value, days){
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (encodedValue || "")  + expires + "; path=/";
+}
+
+async function logMeIn(data){
+    try {
+        const response = await fetch('/logmein', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const user = await response.json();
+        return user;
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
+}
+
+async function checkCookieProMax(cookie){
+    try {
+        const response = await fetch('/checkmycookiepromax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({cookie: cookie})
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const user = await response.json();
+
+        return user;
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
+}
+
+async function redirectUserDashboard(userRole){
+    // If user is staff, redirect to admin dashboard
+    if(userRole === 'Staff') return window.location.href = '/admin';
+    // If user is partner, redirect to partner dashboard
+    else if(userRole === 'Partner') return window.location.href = '/partner';
+    // If user is student & Professor, redirect to general dashboard
+    else return window.location.href = '/dashboard';
 }

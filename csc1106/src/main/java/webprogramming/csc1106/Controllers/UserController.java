@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
@@ -36,7 +38,9 @@ public class UserController {
 
     @GetMapping("/login")
     public String loginForm() {
+        
         return "User/pages-login"; // Return the login form
+        
     }
 
     @GetMapping("/register")
@@ -66,13 +70,13 @@ public class UserController {
     }
 
     @PostMapping("/logmein")
-    public ResponseEntity<String> logMeIn(@RequestBody Map<String, String> loginData){
+    public ResponseEntity<User> logMeIn(@RequestBody Map<String, String> loginData){
         
         try{
             User user = userRepository.findByUserEmailAndUserPassword(loginData.get("email"), loginData.get("password"));
             
             if(user == null){
-                return new ResponseEntity<>("Invalid email or password", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -83,16 +87,16 @@ public class UserController {
 
             saveUser(user);
 
-            return new ResponseEntity<>(cookie, HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
 
         }catch(Exception e){
             logger.error(e.toString());
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     
     }
 
-    @PostMapping("checkmycookie")
+    @PostMapping("/checkmycookie")
     public ResponseEntity<String> checkMyCookie(@RequestBody Map<String, String> cookieData){
         try{
             String cookie = cookieData.get("cookie");
@@ -105,6 +109,21 @@ public class UserController {
         }catch(Exception e){
             logger.error(e.toString());
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/checkmycookiepromax")
+    public ResponseEntity<User> checkMyCookieProMax(@RequestBody Map<String, String> cookieData){
+        try{
+            String cookie = cookieData.get("cookie");
+            User user = userRepository.findByLoginCookie(cookie);
+            if(user == null){
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }catch(Exception e){
+            logger.error(e.toString());
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
