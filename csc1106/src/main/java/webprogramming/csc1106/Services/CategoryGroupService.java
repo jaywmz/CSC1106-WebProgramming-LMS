@@ -7,7 +7,6 @@ import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Repositories.CategoryGroupRepository;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @Service
@@ -34,7 +33,11 @@ public class CategoryGroupService {
     }
 
     public List<CategoryGroup> getAllCategoryGroups() {
-        return categoryGroupRepository.findAll();
+        List<CategoryGroup> categoryGroups = categoryGroupRepository.findAll();
+        for (CategoryGroup categoryGroup : categoryGroups) {
+            categoryGroup.calculateCourseCount();
+        }
+        return categoryGroups;
     }
 
     public void deleteCategoryGroup(Long id) {
@@ -46,6 +49,10 @@ public class CategoryGroupService {
     }
 
     public CategoryGroup getCategoryGroupById(Long id) {
-        return categoryGroupRepository.findById(id).orElse(null);
+        CategoryGroup categoryGroup = categoryGroupRepository.findById(id).orElse(null);
+        if (categoryGroup != null) {
+            categoryGroup.calculateCourseCount();
+        }
+        return categoryGroup;
     }
 }

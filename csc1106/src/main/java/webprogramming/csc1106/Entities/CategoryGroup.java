@@ -24,6 +24,9 @@ public class CategoryGroup {
     @OneToMany(mappedBy = "categoryGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
+    @Transient
+    private int courseCount; // Transient field to hold the count of courses
+
     // Constructors
     public CategoryGroup() {}
 
@@ -72,5 +75,17 @@ public class CategoryGroup {
 
     public void setCourseCategories(List<CourseCategory> courseCategories) {
         this.courseCategories = courseCategories;
+    }
+
+    public int getCourseCount() {
+        return courseCount;
+    }
+
+    public void setCourseCount(int courseCount) {
+        this.courseCount = courseCount;
+    }
+
+    public void calculateCourseCount() {
+        this.courseCount = this.courseCategories.size();
     }
 }
