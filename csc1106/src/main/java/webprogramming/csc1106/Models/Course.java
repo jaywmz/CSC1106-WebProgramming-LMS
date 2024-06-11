@@ -1,80 +1,120 @@
 package webprogramming.csc1106.Models;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
 
+import webprogramming.csc1106.Entities.CourseCategoriesEntity;
+
+// JBDC
 public class Course {
-    private int courseId;
-    private String courseName;
-    private String courseDescription;
-    private String courseInstructor;
-    private String courseLevel;
-    private String coursePrice;
-    private String courseDuration;
-    private String courseImageUrl;
+    private int id;
+    private String name;
+    private String description;
+    private BigDecimal price;
+    private int duration;
+    private String image_url;
+    private String instructor;
+    private Timestamp created_at;
+    private Timestamp updated_at;
+    private int category_id;
 
     // Add other fields as needed
 
+    public Course() {
+    }
+
+    public Course(String name, String description, BigDecimal price, int duration, String image_url, String instructor, Timestamp created_at, Timestamp updated_at, int category_id) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.image_url = image_url;
+        this.instructor = instructor;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        // this.category_id = category
+    }
+
     // Getters and setters for all fields
-    public int getCourseId() {
-        return courseId;
+    public int getId() {
+        return id;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    // Auto increment (no need to set)
+    // public void setId(int id) {
+    //     this.id = id;
+    // }
+
+    public String getName() {
+        return name;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public String getDescription() {
+        return description;
     }
 
-    public String getCourseDescription() {
-        return courseDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setCourseDescription(String courseDescription) {
-        this.courseDescription = courseDescription;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public String getCourseInstructor() {
-        return courseInstructor;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public void setCourseInstructor(String courseInstructor) {
-        this.courseInstructor = courseInstructor;
+    public int getDuration() {
+        return duration;
     }
 
-    public String getCourseLevel() {
-        return courseLevel;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
-    public void setCourseLevel(String courseLevel) {
-        this.courseLevel = courseLevel;
+    public String getImage_url() {
+        return image_url;
     }
 
-    public String getCoursePrice() {
-        return coursePrice;
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
-    public void setCoursePrice(String coursePrice) {
-        this.coursePrice = coursePrice;
+    public String getInstructor() {
+        return instructor;
     }
 
-    public String getCourseDuration() {
-        return courseDuration;
+    public void setInstructor(String instructor) {
+        this.instructor = instructor;
     }
 
-    public void setCourseDuration(String courseDuration) {
-        this.courseDuration = courseDuration;
+    public Timestamp getCreated_at() {
+        return created_at;
     }
 
-    public String getCourseImageUrl() {
-        return courseImageUrl;
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
     }
 
-    public void setCourseImageUrl(String courseImageUrl) {
-        this.courseImageUrl = courseImageUrl;
+    public Timestamp getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Timestamp updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public int getCategory_id() {
+        return category_id;
+    }
+
+    public void setCategory_id(int category_id) {
+        this.category_id = category_id;
     }
 
     // Add other getters and setters as needed
