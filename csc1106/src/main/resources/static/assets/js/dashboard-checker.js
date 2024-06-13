@@ -290,6 +290,12 @@ async function redirectUserToCorrectDashboard(){
         coverPage(false);
     }
 
+    // General Dashboard Sidebar Items Refresh
+    else {
+        userSigned();
+        if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
+        else await refreshDashboardSideBarItems();
+    }
     // What need to be done as general
     // currently nothing to need to be done after
 
