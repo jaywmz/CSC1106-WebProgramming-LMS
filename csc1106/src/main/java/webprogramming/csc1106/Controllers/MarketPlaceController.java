@@ -46,23 +46,10 @@ public class MarketPlaceController {
         return "Marketplace/market";
     }
     
-
-
     @GetMapping("/checkout")
     public String redirectToCheckout() {
         return "Marketplace/checkout";
     }
 
-    @GetMapping("/IT_Software")
-    public String redirectToITandSoftware() {
-        return "Marketplace/IT_Software";
-    }
-
-    @GetMapping("/business")
-    public String redirectToBusiness(Model model) {
-        long totalCourses = courseService.getTotalCourses();
-        model.addAttribute("totalCourses", totalCourses);
-        return "Marketplace/business";
-    }
     
 }
