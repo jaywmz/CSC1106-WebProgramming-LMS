@@ -1,5 +1,7 @@
 package webprogramming.csc1106.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,9 +22,11 @@ public class Section {
 
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonBackReference
     private UploadCourse course;
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Lesson> lessons = new ArrayList<>();
 
     // Constructors

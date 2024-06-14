@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class CategoryGroup {
     private String coverImageUrl;
 
     @OneToMany(mappedBy = "categoryGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
     @Transient

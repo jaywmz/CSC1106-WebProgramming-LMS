@@ -3,6 +3,7 @@ package webprogramming.csc1106.Controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,12 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Controller
 public class MarketplaceUploadController {
+
+    private static final Logger logger = Logger.getLogger(MarketplaceUploadController.class.getName());
 
     @Autowired
     private UploadCourseService courseService;
@@ -52,10 +56,11 @@ public class MarketplaceUploadController {
             courseService.processCourseUpload(course, coverImage, selectedCategory);
             redirectAttributes.addFlashAttribute("successMessage", "Course uploaded successfully.");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Failed to upload the file: " + e.getMessage());
             model.addAttribute("errorMessage", "Failed to upload the file. Please try again.");
             return "Marketplace/upload";
         } catch (RuntimeException e) {
+            logger.severe("Runtime exception: " + e.getMessage());
             model.addAttribute("errorMessage", e.getMessage());
             return "Marketplace/upload";
         }
@@ -106,8 +111,10 @@ public class MarketplaceUploadController {
             courseService.processCourseUpdate(course, coverImage, selectedCategory);
             redirectAttributes.addFlashAttribute("successMessage", "Course updated successfully.");
         } catch (IOException e) {
+            logger.severe("Failed to update the file: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to update the file. Please try again.");
         } catch (RuntimeException e) {
+            logger.severe("Runtime exception: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/courses/edit?courseId=" + course.getId();
@@ -119,6 +126,7 @@ public class MarketplaceUploadController {
             courseService.deleteCourse(courseId);
             redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully.");
         } catch (Exception e) {
+            logger.severe("Failed to delete the course: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete the course. Please try again.");
         }
         return "redirect:/coursesupload";
@@ -137,4 +145,29 @@ public class MarketplaceUploadController {
         }
         return "Marketplace/category-page"; // Ensure this matches your Thymeleaf template name
     }
+
+    @GetMapping("/category/{id}/courses")
+    @ResponseBody
+    public ResponseEntity<List<UploadCourse>> getCoursesByCategory(
+            @PathVariable("id") Long categoryId,
+            @RequestParam(value = "sortBy", required = false) String sortBy) {
+        logger.info("Fetching courses with categoryId: " + categoryId + ", sortBy: " + sortBy);
+        try {
+            List<UploadCourse> courses = courseService.getFilteredAndSortedCourses(categoryId, sortBy);
+            return ResponseEntity.ok(courses);
+        } catch (Exception e) {
+            logger.severe("Error fetching courses: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    
+@PostMapping("/cart/add")
+@ResponseBody
+public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
+    // Add your logic to add the course to the cart
+    return ResponseEntity.ok("Course added to cart successfully.");
+}
+
+
 }

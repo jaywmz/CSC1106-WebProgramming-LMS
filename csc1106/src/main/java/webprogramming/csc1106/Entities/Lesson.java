@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Lesson {
     private Section section;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<FileResource> files = new ArrayList<>();
 
     @Transient

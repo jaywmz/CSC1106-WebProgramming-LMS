@@ -10,12 +10,12 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class UploadCourseService {
@@ -279,9 +279,8 @@ public class UploadCourseService {
         }
         return courses;
     }
-
-    public List<UploadCourse> getFilteredAndSortedCourses(Long category, String sortBy) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate"); // Default sort
+    public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "price"); // Default sort by price descending
 
         if ("price-low-high".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "price");
@@ -291,12 +290,12 @@ public class UploadCourseService {
             sort = Sort.by(Sort.Direction.DESC, "averageRating");
         }
 
-        if (category != null) {
-            return courseRepository.findByCourseCategories_CategoryGroup_Id(category, sort);
-        } else {
-            return courseRepository.findAll(sort);
-        }
+        List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
+        return courses;
     }
+    
+
+    
 
     private void calculateRating(UploadCourse course) {
         List<Rating> ratings = ratingRepository.findByCourse(course);

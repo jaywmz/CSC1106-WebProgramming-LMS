@@ -1,9 +1,12 @@
 package webprogramming.csc1106.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Services.UploadCourseService;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Controller
+@RequestMapping("/market")
 public class MarketPlaceController {
 
     @Autowired
@@ -23,33 +27,38 @@ public class MarketPlaceController {
 
     private static final Logger logger = Logger.getLogger(MarketPlaceController.class.getName());
 
-    @GetMapping("/market")
+    @GetMapping
     public String showMarketPlacePage(Model model) {
-        long totalCourses = courseService.getTotalCourses();
-        List<UploadCourse> courses = courseService.getAllCourses();
-        List<CategoryGroup> categories = categoryGroupService.getAllCategoryGroups();
-
-        model.addAttribute("totalCourses", totalCourses);
-        model.addAttribute("courses", courses);
-        model.addAttribute("categories", categories);
-
-        // Log the courses and categories
-        logger.info("Total courses: " + totalCourses);
-        for (UploadCourse course : courses) {
-            logger.info("Course: " + course.getTitle());
-        }
-        logger.info("Total categories: " + categories.size());
-        for (CategoryGroup category : categories) {
-            logger.info("Category: " + category.getName());
-        }
-
         return "Marketplace/market";
     }
-    
+
+
+    @GetMapping("/categories")
+    @ResponseBody
+    public ResponseEntity<List<CategoryGroup>> getCategories() {
+        try {
+            List<CategoryGroup> categories = categoryGroupService.getAllCategoryGroups();
+            return ResponseEntity.ok(categories);
+        } catch (Exception e) {
+            logger.severe("Error fetching categories: " + e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @GetMapping("/totalCourses")
+    @ResponseBody
+    public ResponseEntity<Long> getTotalCourses() {
+        try {
+            long totalCourses = courseService.getTotalCourses();
+            return ResponseEntity.ok(totalCourses);
+        } catch (Exception e) {
+            logger.severe("Error    ing total courses: " + e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
     @GetMapping("/checkout")
     public String redirectToCheckout() {
         return "Marketplace/checkout";
     }
-
-    
 }

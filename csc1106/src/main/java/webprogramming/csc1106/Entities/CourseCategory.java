@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,10 +13,12 @@ public class CourseCategory {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
+    @JsonBackReference
     private UploadCourse course;
 
     @ManyToOne
     @JoinColumn(name = "category_group_id", nullable = false)
+    @JsonBackReference
     private CategoryGroup categoryGroup;
 
     // Constructors

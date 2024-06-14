@@ -11,7 +11,7 @@
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
     <!-- Vendor CSS Files -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
@@ -21,6 +21,8 @@
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
     <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* General styles */
         body {
@@ -216,76 +218,85 @@
     <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
-    <script src="assets/js/dashboard-checker.js"></script>
+
     <script>
-        $(document).ready(function() {
-            // Add event listeners for filter and sort changes
-            $('#filter-category').change(function() {
-                loadCourses();
-            });
-            $('#sort-by').change(function() {
-                loadCourses();
-            });
-
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sort-by').addEventListener('change', loadCourses);
+    
             function loadCourses() {
-                var category = $('#filter-category').val();
-                var sortBy = $('#sort-by').val();
+                var sortBy = document.getElementById('sort-by').value;
                 var categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
-
-                $.ajax({
-                    url: `/category/${categoryId}`,
-                    type: 'GET',
-                    data: { category: category, sortBy: sortBy },
-                    success: function(response) {
-                        var coursesList = $('#courses-list');
-                        coursesList.empty();
-                        response.forEach(function(course) {
-                            var courseHtml = `
-                                <div class="col-md-4 mb-4">
-                                    <div class="card card-custom">
-                                        <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
-                                        <div class="card-body">
-                                            <h5 class="card-title">${course.title}</h5>
-                                            <p class="card-text">${course.description}</p>
-                                            <div class="course-rating">
-                                                <span class="star">&#9733;</span>
-                                                <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
-                                            </div>
-                                            <p class="card-price"><strong>$${course.price}</strong></p>
-                                            <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
+    
+                fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        let coursesContainer = document.getElementById('courses-list');
+                        coursesContainer.innerHTML = ''; // Clear existing courses
+    
+                        data.forEach(course => {
+                            let courseElement = document.createElement('div');
+                            courseElement.classList.add('col-md-4', 'mb-4');
+                            courseElement.innerHTML = `
+                                <div class="card card-custom">
+                                    <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${course.title}</h5>
+                                        <p class="card-text">${course.description}</p>
+                                        <div class="course-rating">
+                                            <span class="star">&#9733;</span>
+                                            <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
                                         </div>
+                                        <p class="card-price"><strong>$${course.price}</strong></p>
+                                        <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                                     </div>
-                                </div>`;
-                            coursesList.append(courseHtml);
+                                </div>
+                            `;
+                            coursesContainer.appendChild(courseElement);
                         });
-                    },
-                    error: function(xhr, status, error) {
+                    })
+                    .catch(error => {
                         console.error('Failed to load courses:', error);
-                    }
-                });
+                    });
             }
-
+    
             // Initial load
             loadCourses();
 
             // Handle add to cart
-            $(document).on('click', '.add-to-cart', function() {
-                var courseId = $(this).data('course-id');
-                if (confirm('Are you sure you want to add this course to the cart?')) {
-                    $.ajax({
-                        url: '/cart/add',
-                        type: 'POST',
-                        data: { courseId: courseId },
-                        success: function(response) {
-                            alert('Course added to cart successfully.');
-                        },
-                        error: function(xhr, status, error) {
-                            alert('Failed to add course to cart. Please try again.');
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('add-to-cart')) {
+                    const courseId = event.target.getAttribute('data-course-id');
+                    if (confirm('Are you sure you want to add this course to the cart?')) {
+                        fetch('/cart/add', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({ courseId: courseId })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
                         }
-                    });
-                }
-            });
-        });
-    </script>        
+                        return response.text();
+                    })
+                    .then(data => {
+                    alert(data);
+                    })
+                    .catch(error => {
+                    alert('Failed to add course to cart. Please try again.');
+                    console.error('Error:', error);
+                });
+            }
+        }
+    });
+});
+    </script>
+    
 </body>
 </html>
