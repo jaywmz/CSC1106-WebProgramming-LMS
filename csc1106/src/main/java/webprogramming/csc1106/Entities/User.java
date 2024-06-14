@@ -27,19 +27,19 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Integer userID;
+    private int userId;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Roles role;
 
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
 
     @Column(name = "user_password", nullable = false)
     private String userPassword;
 
-    @Column(name = "user_email", nullable = false)
+    @Column(name = "user_email", nullable = false, unique = true)
     private String userEmail;
 
     @Column(name = "joined_date", nullable = false)
@@ -71,7 +71,7 @@ public class User {
 
     // Parameterized constructor
     public User(Integer userID, Roles role, String userName, String userPassword, String userEmail, Date joinedDate, Time joinedTime, BigDecimal userBalance, Timestamp lastLogin, String loginCookie) {
-        this.userID = userID;
+        this.userId = userID;
         this.role = role;
         this.userName = userName;
         this.userPassword = userPassword;
@@ -85,11 +85,11 @@ public class User {
 
     // Getters and setters
     public Integer getUserID() {
-        return userID;
+        return userId;
     }
 
     public void setUserID(Integer userID) {
-        this.userID = userID;
+        this.userId = userID;
     }
 
     public Roles getRole() {

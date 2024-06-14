@@ -11,6 +11,7 @@ signOutButton.addEventListener('click', function(){
 document.addEventListener('DOMContentLoaded', async function(){
 
     await redirectUserToCorrectDashboard();
+    await dashboardRefreshItems();
 
 });
 
@@ -125,7 +126,8 @@ async function userSigned(){
             document.getElementById('loggedInUsername').innerText = UserName;
         }
     } catch (error) {
-        console.error(error);
+        console.log("Error in userSigned() function, ignore if needed")
+        console.log(error);
     }
     
 }
@@ -180,7 +182,8 @@ async function refreshDashboardSideBarItems(){
 
         sidebarNav.innerHTML = itemsFullString;
     } catch (error) {
-        console.error(error);
+        console.log("Error in refreshDashboardSideBarItems() function, ignore if needed");
+        console.log(error);
     }
     
 }
@@ -223,7 +226,8 @@ async function refreshDashboardSideBarItemsLocally(){
         }
         sidebarNav.innerHTML = itemsFullString;
     } catch (error) {
-        console.error(error);
+        console.log("Error in refreshDashboardSideBarItemsLocally() function, ignore if needed")
+        console.log(error);
     }
 }
 
@@ -241,12 +245,7 @@ async function redirectUserToCorrectDashboard(){
         // Check for Partner Role
         else if(user.role.roleName === 'Partner') return window.location.href = '/partner';
         // Student & Professor Role Confirmed
-        else {
-            userSigned();
-            if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
-            else await refreshDashboardSideBarItems();
-            coverPage(false);
-        }
+        else return console.log("Welcome to Dashboard");
     }
 
     // Log Out Redirect
@@ -270,11 +269,8 @@ async function redirectUserToCorrectDashboard(){
         if(user.role.roleName === 'Partner') return window.location.href = '/partner';
         // Check for Student & Professor Role
         if(user.role.roleName !== 'Staff') return window.location.href = '/dashboard';
-
-        // Admin Role Confirmed
-        // Continue what need to be done in Admin Dashboard
-        userSigned();
-        coverPage(false);
+        
+        console.log("Welcome to Admin Dashboard");
     }
 
     // Partner Dashboard Redirect
@@ -283,33 +279,42 @@ async function redirectUserToCorrectDashboard(){
         if(user.role.roleName === 'Staff') return window.location.href = '/admin';
         // Check for Student & Professor Role
         if(user.role.roleName !== 'Partner') return window.location.href = '/dashboard';
-        
-        // Partner Role Confirmed
-        // Continue what need to be done in Partner Dashboard
-        userSigned();
-        coverPage(false);
+
+        console.log("Welcome to Partner Dashboard");
     }
 
-    // General Dashboard Sidebar Items Refresh
-    else {
-        userSigned();
-        if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
-        else await refreshDashboardSideBarItems();
-    }
     // What need to be done as general
     // currently nothing to need to be done after
 
 }
 
 async function coverPage(boolean){
-    if(boolean === true){
-        document.getElementById('whitecoverfullscreen').style.display = 'none';
-        document.querySelector('iframe[title="loading"]').style.display = 'block';
-        return;
+
+    try {
+        if(!document.getElementById('whitecoverfullscreen') && !document.querySelector('iframe[title="loading"]')) return;
+
+        if(boolean === true){
+            document.getElementById('whitecoverfullscreen').style.display = 'none';
+            document.querySelector('iframe[title="loading"]').style.display = 'block';
+            return;
+        }
+        else{
+            document.getElementById('whitecoverfullscreen').style.display = 'none';
+            document.querySelector('iframe[title="loading"]').style.display = 'none';
+            return;
+        }
+    } catch (error) {
+        console.log("Error in coverPage() function, ignore if needed")
+        console.log(error);
     }
-    else{
-        document.getElementById('whitecoverfullscreen').style.display = 'none';
-        document.querySelector('iframe[title="loading"]').style.display = 'none';
-        return;
-    }
+    
+}
+
+async function dashboardRefreshItems(){
+    await userSigned()
+    
+    if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
+    else await refreshDashboardSideBarItems();
+
+    await coverPage(false);
 }
