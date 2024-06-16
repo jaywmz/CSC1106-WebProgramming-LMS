@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Partnership Listing</title>
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Optional theme -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #dbe9f5; /* Light blue to smoke */
+            font-family: 'Open Sans', sans-serif; /* Add Open Sans font */
+        }
+        h1 {
+            font-size: 2rem; /* Adjust the font size if needed */
+            margin-bottom: 20px; /* Add some spacing */
+            font-family: 'Open Sans', sans-serif; /* Add Open Sans font */
+            color: #00008b; /* Use dark blue color */
+            text-align: center; /* Align title to the center */
+        }
+        .container {
+            margin-top: 20px; /* Add margin space on top */
+        }
+        table {
+            background-color: white;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    
+    <script>
+        function approvePartner(partnerId) {
+            fetch(`/partnership/approve/${partnerId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to reflect changes
+                    window.location.reload();
+                } else {
+                    alert('Failed to approve partner');
+                }
+            });
+        }
+        
+        function rejectPartner(partnerId) {
+            fetch(`/partnership/reject/${partnerId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to reflect changes
+                    window.location.reload();
+                } else {
+                    alert('Failed to reject partner');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Partnership Listing</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Partner ID</th>
+                    <th>Company Name</th>
+                    <th>Partner Email</th>
+                    <th>Approval Reason</th>
+                    <th>Validity End</th>
+                    <th>Partner Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="partner : ${partners}">
+                    <td th:text="${partner.partnerId}"></td>
+                    <td th:text="${partner.companyName}"></td>
+                    <td th:text="${partner.partnerEmail}"></td>
+                    <td th:text="${partner.approvalReason}"></td>
+                    <td th:text="${partner.validityEnd}"></td>
+                    <td th:text="${partner.partnerStatus}"></td>
+                    <td>
+                        <button class="btn btn-primary" th:if="${partner.partnerStatus == 'Pending'}" th:attr="onclick=|approvePartner(${partner.partnerId})|">Approve</button>
+                        <button class="btn btn-danger" th:if="${partner.partnerStatus == 'Pending'}" th:attr="onclick=|rejectPartner(${partner.partnerId})|">Reject</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and jQuery (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
