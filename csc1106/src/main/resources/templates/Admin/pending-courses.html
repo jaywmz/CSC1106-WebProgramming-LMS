@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Courses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Pending Courses</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Instructor</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="course : ${pendingCourses}">
+                    <td th:text="${course.title}"></td>
+                    <td th:text="${course.lecturer}"></td>
+                    <td th:text="${course.price}"></td>
+                    <td>
+                        <form th:action="@{/courses/{courseId}/approve(courseId=${course.id})}" method="post">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form th:action="@{/courses/{courseId}/reject(courseId=${course.id})}" method="post">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

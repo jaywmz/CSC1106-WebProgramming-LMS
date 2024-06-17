@@ -49,6 +49,9 @@ public class UploadCourse {
     @Transient
     private int reviewCount;
 
+    @Column(name = "is_approved")
+    private boolean isApproved;
+
     // Constructors
     public UploadCourse() {}
 
@@ -58,6 +61,14 @@ public class UploadCourse {
         this.lecturer = lecturer;
         this.price = price;
         this.coverImageUrl = coverImageUrl;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
     }
 
     // Getters and setters

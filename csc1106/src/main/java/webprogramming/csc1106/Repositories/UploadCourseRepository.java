@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface UploadCourseRepository extends JpaRepository<UploadCourse, Long> {
     List<UploadCourse> findByCourseCategories_CategoryGroup_Id(Long categoryId, Sort sort);
+    List<UploadCourse> findByIsApprovedFalse();
+    List<UploadCourse> findByIsApprovedTrue();
+    List<UploadCourse> findByCourseCategories_CategoryGroup_IdAndIsApprovedTrue(Long categoryId);
 }

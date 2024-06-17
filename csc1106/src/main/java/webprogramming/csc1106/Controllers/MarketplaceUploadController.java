@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+
 @Controller
 public class MarketplaceUploadController {
 
@@ -32,9 +33,9 @@ public class MarketplaceUploadController {
     @GetMapping("/coursesupload")
     public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
         if (categoryId != null) {
-            model.addAttribute("courses", courseService.getCoursesByCategoryId(categoryId));
+            model.addAttribute("courses", courseService.getApprovedCoursesByCategoryId(categoryId));
         } else {
-            model.addAttribute("courses", courseService.getAllCourses());
+            model.addAttribute("courses", courseService.getApprovedCourses());
         }
         return "Marketplace/coursesupload";
     }
@@ -53,6 +54,7 @@ public class MarketplaceUploadController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
+            course.setApproved(false);
             courseService.processCourseUpload(course, coverImage, selectedCategory);
             redirectAttributes.addFlashAttribute("successMessage", "Course uploaded successfully.");
         } catch (IOException e) {
@@ -66,6 +68,34 @@ public class MarketplaceUploadController {
         }
         return "redirect:/coursesupload";
     }
+
+    @GetMapping("/pending-courses")
+    public String showPendingCourses(Model model) {
+        List<UploadCourse> pendingCourses = courseService.getPendingCourses();
+        model.addAttribute("pendingCourses", pendingCourses);
+        return "/Admin/pending-courses"; 
+    }
+
+    @PostMapping("/courses/{courseId}/approve")
+    public String approveCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
+        UploadCourse course = courseService.getCourseById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+        course.setApproved(true);
+        courseService.updateCourse(course);
+        redirectAttributes.addFlashAttribute("successMessage", "Course approved successfully.");
+        return "redirect:/pending-courses";
+    }
+    
+    @PostMapping("/courses/{courseId}/reject")
+    public String rejectCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
+        UploadCourse course = courseService.getCourseById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+        course.setApproved(false);
+        courseService.updateCourse(course);
+        redirectAttributes.addFlashAttribute("successMessage", "Course rejected successfully.");
+        return "redirect:/pending-courses";
+    }
+    
 
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {

@@ -203,6 +203,18 @@ public class UploadCourseService {
         }
     }
 
+    public List<UploadCourse> getPendingCourses() {
+        return courseRepository.findByIsApprovedFalse();
+    }
+
+    public List<UploadCourse> getApprovedCourses() {
+        return courseRepository.findByIsApprovedTrue();
+    }
+
+    public List<UploadCourse> getApprovedCoursesByCategoryId(Long categoryId) {
+        return courseRepository.findByCourseCategories_CategoryGroup_IdAndIsApprovedTrue(categoryId);
+    }
+
     public void processCourseUpdate(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
         if (!existingCourseOpt.isPresent()) {
