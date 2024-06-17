@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -24,6 +25,9 @@ public class PartnerCertificate {
 
     @Column(name = "issue_date")
     private LocalDateTime issueDate;
+
+    @Column(name = "blob_url")
+    private String blobUrl;
 
     @OneToOne(mappedBy = "certificate")
     private PartnerPublish partnerPublish;
@@ -61,6 +65,15 @@ public class PartnerCertificate {
     public void setIssueDate(LocalDateTime issueDate) {
         this.issueDate = issueDate;
     }
+
+    public String getBlobUrl() {
+        return blobUrl;
+    }
+
+    public void setBlobUrl(String blobUrl) {
+        this.blobUrl = blobUrl;
+    }
+
 
     public PartnerPublish getPartnerPublish() {
         return partnerPublish;

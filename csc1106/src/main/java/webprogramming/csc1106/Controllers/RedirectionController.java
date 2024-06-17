@@ -69,4 +69,9 @@ public class RedirectionController {
         return "Partnership/partnerDashboard";
     }
 
+    @GetMapping("/cart")
+    public String cart() {
+        return "Course/cart";
+    }
+
 }

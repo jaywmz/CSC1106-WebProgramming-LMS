@@ -29,56 +29,6 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
-  <style>
-    #newThreadBtn {
-      float: right; 
-      margin-top: 12px; 
-    }
-
-    .card-title {
-      font-size: 1.3rem;
-    }
-
-    .table {
-      table-layout: fixed;
-      font-size: 1.1rem;
-    }
-
-    thead {
-      font-family: Poppins;
-    }
-
-    #threadTitle {
-      text-overflow: ellipsis; 
-      overflow: hidden; 
-      white-space: nowrap;
-    }
-
-    #timeCol {
-      width: 50px;
-    }
-
-    td a {
-      display: block;
-      padding: 12px 12px 12px 8px;
-    }
-
-    a:hover {
-      color: #4154f1;
-    }
-
-    #posterName{
-      font-size: smaller;
-      margin: 12px 8px 5px 0px;
-    }
-
-    #postDetails {
-      margin: 0px 0px 5px 0px;
-      font-size: smaller;
-      padding: 0px 8px 0px 8px;
-    }
-  </style>
-
   <!-- =======================================================
   * Template Name: LearnZenith
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -164,83 +114,43 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1></h1>
+      <h1 th:text="${category_name}"/>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item"><a href="/community">Community</a></li>
-          <li class="breadcrumb-item active">Search</li>
+          <li class="breadcrumb-item active">Students</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
 
     <section class="section">
-      <div class="row align-items-center justify-content-center">
-          <div class="form-floating mb-3" style="width: 40%;">
-              <form method="GET" action="/community/search">
-                  <div class="input-group">
-                      <input type="text" class="form-control" id="floatingInput" placeholder="Search Community" name="key" th:value="${search_term}">
-                      <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
-                          <i class="bi bi-search"></i>
-                      </button>
-                  </div>
-              </form>
-          </div>
+      <div>
+        <h1>Announcements</h1>
+        <p>Find out the latest announcements from LearnZenith!</p>
       </div>
 
-      <div class="card">
-          <div class="card-body">
-              <h5 class="card-title" th:text="'Search results for \'' + ${search_term} + '\''"></h5>
-              <table class="table table-hover">
-                  <thead>
-                      <tr>
-                        <th scope="col" style="width:50%">Posts</th>
-                      </tr>
-                    </thead>
-                    <!-- TODO: add a "No results" message if no posts -->
-                    <tbody th:each="post: ${posts}">
-                      <tr>
-                        <td style="padding: 0px;">
-                          <div style="display: flex;">
-                            <div style="flex: 1;">
-                                <a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a>
-                                <p th:text="${post.content}" id="postDetails"></p> 
-                            </div>
-                            <div style="flex: 1; text-align: right;">
-                                <p th:text="${post.posterName}" id="posterName"></p>
-                                <p th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}" id="postDetails"></p>
-                                <p th:text="'in ' + ${post.getCategory().getName()} + ' category'" id="postDetails"></p>  
-                            </div>
-                        </div>
-                        </td>
-                      </tr>
-                    </tbody>
-              </table>
-          </div>
-          
-          <div class="card-body" th:if="${not #lists.isEmpty(posts)}">
-              <!-- Disabled and active states -->
-              <nav aria-label="...">
-                  <ul class="pagination justify-content-center">
-                      <li th:class="${currentPage == 1} ? 'disabled' : 'page-item'">
-                          <a class="page-link" th:href="@{'/community/search?key=' + ${search_term} + '&page=' + ${currentPage-1}}" tabindex="-1" aria-disabled="true">Previous</a>
-                      </li>
-                      <li class="page-item" 
-                        th:each="pageNum : ${#numbers.sequence(currentPage > 1 ? currentPage - 1 : currentPage, currentPage < totalPage ? currentPage + 1 : currentPage)}" 
-                        th:class="${pageNum == currentPage} ? 'active' : ''">
-                          <a class="page-link" th:href="@{'/community/search?key=' + ${search_term} + '&page=' + ${pageNum}}" th:text="${pageNum}"></a>
-                      </li>
-                      <li th:class="${currentPage == totalPage || totalPage == 0} ? 'disabled' : 'page-item'">
-                          <a class="page-link" th:href="@{'/community/search?key=' + ${search_term} + '&page=' + ${currentPage+1}}">Next</a>
-                      </li>
-                  </ul>
-              </nav>
-              <!-- End Disabled and active states -->
+      <div class="row">
+        <div class="card-group mb-4 gap-4">
+          <!-- General Card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/announcements/1">News</a></h5>
+                <p class="card-text">Find out the latest news about LearnZenith!</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+            </div>
           </div>
 
-      </div>
+          <!-- IT & Software Card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><a href="/community/announcements/2">Events</a></h5>
+                <p class="card-text">Find out the latest events happening at LearnZenith!</p>
+              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+            </div>  
+          </div>
 
-  </section>
+    </section>
 
   </main><!-- End #main -->
 

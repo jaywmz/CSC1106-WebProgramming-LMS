@@ -33,7 +33,7 @@ public class CourseSubscriptionEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private CourseEntity course;
+    private UploadCourse course;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -57,7 +57,7 @@ public class CourseSubscriptionEntity {
     public CourseSubscriptionEntity() {
     }
 
-    public CourseSubscriptionEntity(String id, CourseEntity course, User user, String subscriptionStatus) {
+    public CourseSubscriptionEntity(String id, UploadCourse course, User user, String subscriptionStatus) {
         this.id = id;
         this.course = course;
         this.user = user;
@@ -72,11 +72,11 @@ public class CourseSubscriptionEntity {
         this.id = id;
     }
 
-    public CourseEntity getCourse() {
+    public UploadCourse getCourse() {
         return course;
     }
 
-    public void setCourse(CourseEntity course) {
+    public void setCourse(UploadCourse course) {
         this.course = course;
     }
 

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import webprogramming.csc1106.Entities.UploadCourse;
 
 
 @Service
@@ -39,6 +40,12 @@ public class UploadCourseService {
 
     @Autowired
     private CourseCategoryRepository courseCategoryRepository;
+
+    @Autowired
+    private PartnerCertificateRepository partnerCertificateRepository;
+
+    @Autowired
+    private PartnerPublishRepository partnerPublishRepository;
 
     @Autowired
     private RatingRepository ratingRepository;
@@ -174,6 +181,7 @@ public class UploadCourseService {
             coverImageUrl = generateSasUrl(coverImageUrl);
             course.setCoverImageUrl(coverImageUrl);
         }
+
         addCourse(course);
 
         CategoryGroup categoryGroup = getCategoryById(selectedCategory)
@@ -320,5 +328,54 @@ public class UploadCourseService {
             course.setAverageRating(0.0);
             course.setReviewCount(0);
         }
+    }
+
+    public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String contentType = coverImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
+            }
+            String coverImageUrl = uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+            coverImageUrl = generateSasUrl(coverImageUrl);
+            course.setCoverImageUrl(coverImageUrl);
+        }
+
+        UploadCourse savedCourse = addCourse(course);
+
+        CategoryGroup categoryGroup = getCategoryById(selectedCategory)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        CourseCategory courseCategory = new CourseCategory(course, categoryGroup);
+        addCourseCategory(courseCategory);
+        course.getCourseCategories().add(courseCategory);
+
+        for (Section section : course.getSections()) {
+            section.setCourse(course);
+            addSection(section);
+
+            for (Lesson lesson : section.getLessons()) {
+                lesson.setSection(section);
+                addLesson(lesson);
+
+                MultipartFile lessonFile = lesson.getFile();
+                if (lessonFile != null && !lessonFile.isEmpty()) {
+                    String fileUrl = uploadToAzureBlob(lessonFile.getInputStream(), lessonFile.getOriginalFilename());
+                    fileUrl = generateSasUrl(fileUrl);
+                    FileResource fileResource = new FileResource(lessonFile.getOriginalFilename(), fileUrl);
+                    fileResource.setLesson(lesson);
+                    addFileResource(fileResource);
+                    lesson.getFiles().add(fileResource);
+                }
+            }
+        }
+        return savedCourse; 
+    }
+
+    public PartnerCertificate addPartnerCertificate(PartnerCertificate certificate) {
+        return partnerCertificateRepository.save(certificate);
+    }
+
+    public PartnerPublish addPartnerPublish(PartnerPublish publish) {
+        return partnerPublishRepository.save(publish);
     }
 }

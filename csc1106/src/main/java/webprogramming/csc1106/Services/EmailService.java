@@ -11,13 +11,19 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendApprovalEmail(String toEmail, String companyName) {
+    public void sendApprovalEmail(String toEmail, String companyName, String username, String password) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("learnzenith7@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Partnership Approval Notification");
-            message.setText("Dear " + companyName + ",\n\nYour partnership application has been approved. Welcome aboard!\n\nBest regards,\nWeb Programming Team");
+            message.setText("Dear " + companyName + ",\n\n" +
+                    "Your partnership application has been approved. Welcome aboard!\n\n" +
+                    "Here are your login credentials:\n" +
+                    "Username: " + username + "\n" +
+                    "Password: " + password + "\n\n" +
+                    "Best regards,\n" +
+                    "Web Programming Team");
 
             mailSender.send(message);
         } catch (Exception e) {
@@ -34,7 +40,10 @@ public class EmailService {
             message.setFrom("learnzenith7@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Partnership Rejection Notification");
-            message.setText("Dear " + companyName + ",\n\nWe regret to inform you that your partnership application has been rejected. Thank you for your interest.\n\nBest regards,\nWeb Programming Team");
+            message.setText("Dear " + companyName + ",\n\n" +
+                    "We regret to inform you that your partnership application has been rejected. Thank you for your interest.\n\n" +
+                    "Best regards,\n" +
+                    "Web Programming Team");
 
             mailSender.send(message);
         } catch (Exception e) {
@@ -44,6 +53,5 @@ public class EmailService {
             throw new RuntimeException("Failed to send rejection email", e);
         }
     }
-
-
 }
+

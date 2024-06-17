@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.HttpStatus;
+
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.PostRepo;
@@ -28,26 +32,6 @@ public class CommunityController {
         model.addAttribute("posts", posts);
         model.addAttribute("currentPage", page);
 
-        List<Object[]> categoryCounts = postRepo.findCategoryCounts();
-
-        Long totalAnnouncements = 0L;
-        Long totalStudents = 0L;
-        Long totalInstructors = 0L;
-
-        for (int i = 0; i < categoryCounts.size(); i++) {
-            if("announcements".equals(categoryCounts.get(i)[1])){
-                totalAnnouncements += (Long) categoryCounts.get(i)[2];
-            } else if("students".equals(categoryCounts.get(i)[1])){
-                totalStudents += (Long) categoryCounts.get(i)[2];
-            } else if("instructors".equals(categoryCounts.get(i)[1])){
-                totalInstructors += (Long) categoryCounts.get(i)[2];
-            }
-        }
-
-            model.addAttribute("announcementsCount", String.valueOf(totalAnnouncements));
-            model.addAttribute("studentsCount", String.valueOf(totalStudents));
-            model.addAttribute("instructorsCount", String.valueOf(totalInstructors));
-
         return "Community/community-home";
     }
     
@@ -60,5 +44,32 @@ public class CommunityController {
         model.addAttribute("search_term", key);
         model.addAttribute("totalPage", queriedPosts.getTotalPages());
         return "Community/community-search";
+    }
+
+    @SuppressWarnings("null")
+    @PostMapping("/community-get-post-count")
+    public ResponseEntity<List> getPostsCount(){
+        try{
+
+            List<Object[]> categoryCounts = postRepo.findCategoryCounts();
+            
+            Long totalAnnouncements = 0L;
+            Long totalStudents = 0L;
+            Long totalInstructors = 0L;
+            
+            for (int i = 0; i < categoryCounts.size(); i++) {
+                if("announcements".equals(categoryCounts.get(i)[1])){
+                    totalAnnouncements += (Long) categoryCounts.get(i)[2];
+                } else if("students".equals(categoryCounts.get(i)[1])){
+                    totalStudents += (Long) categoryCounts.get(i)[2];
+                } else if("instructors".equals(categoryCounts.get(i)[1])){
+                    totalInstructors += (Long) categoryCounts.get(i)[2];
+                }
+            }
+            
+            return new ResponseEntity<>(List.of(totalAnnouncements, totalStudents, totalInstructors), HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 }
