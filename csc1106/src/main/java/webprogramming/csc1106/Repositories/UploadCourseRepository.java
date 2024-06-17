@@ -10,4 +10,7 @@ public interface UploadCourseRepository extends JpaRepository<UploadCourse, Long
     List<UploadCourse> findByIsApprovedFalse();
     List<UploadCourse> findByIsApprovedTrue();
     List<UploadCourse> findByCourseCategories_CategoryGroup_IdAndIsApprovedTrue(Long categoryId);
+
+    // Get specific course by course id
+    UploadCourse findById(int id);
 }

@@ -11,6 +11,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,15 +33,11 @@ public class CourseSubscriptionEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private UploadCourse course;
+    @Column(name = "course_id", nullable = false)
+    private long courseId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private int userId;
 
     @Column(name = "subscription_date", nullable = false)
     @CreationTimestamp
@@ -57,10 +56,10 @@ public class CourseSubscriptionEntity {
     public CourseSubscriptionEntity() {
     }
 
-    public CourseSubscriptionEntity(String id, UploadCourse course, User user, String subscriptionStatus) {
+    public CourseSubscriptionEntity(String id, long courseId, int userId, String subscriptionStatus) {
         this.id = id;
-        this.course = course;
-        this.user = user;
+        this.courseId = courseId;
+        this.userId = userId;
         this.subscriptionStatus = subscriptionStatus;
     }
 
@@ -72,20 +71,20 @@ public class CourseSubscriptionEntity {
         this.id = id;
     }
 
-    public UploadCourse getCourse() {
-        return course;
+    public long getCourseId() {
+        return courseId;
     }
 
-    public void setCourse(UploadCourse course) {
-        this.course = course;
+    public void setCourseId(long courseId) {
+        this.courseId = courseId;
     }
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public Timestamp getSubscriptionDate() {

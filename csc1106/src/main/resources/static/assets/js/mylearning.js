@@ -11,7 +11,7 @@ let courseSubscription;
 
 document.addEventListener('DOMContentLoaded', async function(){
     const courses = await getCourse();
-    const courseSubscription = await getCourseSubscriptionByUserId(1);
+    const courseSubscription = await getCourseSubscriptionByUserId(4);
 
     console.log(courses);
     console.log(courseSubscription);
@@ -20,20 +20,20 @@ document.addEventListener('DOMContentLoaded', async function(){
 });
 
 async function getCourse(){
-    const response = await fetch('/courses');
-    const data = await response.json();
-    if (data.error) {
+    const response = await fetch('/course/subscription/all');
+    if (response.status != 200) {
         return [];
     }
+    const data = await response.json();
     return data;
 }
 
 async function getCourseSubscriptionByUserId(id){
-    const response = await fetch(`/courses/subscription/user/${id}`);
-    const data = await response.json();
-    if (data.error) {
+    const response = await fetch(`/course/subscription/user/${id}`);
+    if (response.status != 200) {
         return [];
     }
+    const data = await response.json();
     return data;
 }
 

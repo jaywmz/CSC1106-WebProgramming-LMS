@@ -7,25 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import webprogramming.csc1106.Entities.CourseSubscriptionEntity;
+import webprogramming.csc1106.Entities.User;
 
 public interface CourseSubscriptionRepo extends JpaRepository<CourseSubscriptionEntity, String>{
     
-    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.id = :id")
-    CourseSubscriptionEntity findByCourseSubscriptionId(@Param("id") int id);
+    // GET by user
+    List<CourseSubscriptionEntity> findByUserId(int userId);
 
-    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.user.userId = :userId")
-    List<CourseSubscriptionEntity> findByUserId(@Param("userId") int userId);
-
-    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.course.id = :courseId")
-    List<CourseSubscriptionEntity> findByCourseId(@Param("courseId") int courseId);
-
-    // find by course id and user id
-    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.course.id = :courseId AND c.user.userId = :userId")
-    CourseSubscriptionEntity findByCourseIdAndUserId(@Param("courseId") int courseId, @Param("userId") int userId);
-
-    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.subscriptionStatus = :subscriptionStatus")
-    List<CourseSubscriptionEntity> findBySubscriptionStatus(@Param("subscriptionStatus") String subscriptionStatus);
-
+    // GET all
     @Query("SELECT c FROM CourseSubscriptionEntity c")
-    List<CourseSubscriptionEntity> getAllCourseSubscriptions();
+    List<CourseSubscriptionEntity> findAll();
 }

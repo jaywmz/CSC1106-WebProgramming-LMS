@@ -11,6 +11,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,15 +32,11 @@ public class CartItemEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private UploadCourse uploadCourse;
+    @Column(name = "course_id", nullable = false)
+    private long courseId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private int userId;
 
     @Column(name = "added_at", nullable = false)
     @CreationTimestamp
@@ -47,10 +45,10 @@ public class CartItemEntity {
     public CartItemEntity() {
     }
 
-    public CartItemEntity(String id, UploadCourse uploadCourse, User user) {
+    public CartItemEntity(String id, long courseId, int userId) {
         this.id = id;
-        this.uploadCourse = uploadCourse;
-        this.user = user;
+        this.courseId = courseId;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -61,20 +59,20 @@ public class CartItemEntity {
         this.id = id;
     }
 
-    public UploadCourse getUploadCourse() {
-        return uploadCourse;
+    public long getCourseId() {
+        return courseId;
     }
 
-    public void setUploadCourse(UploadCourse uploadCourse) {
-        this.uploadCourse = uploadCourse;
+    public void setCourseId(long courseId) {
+        this.courseId = courseId;
+    }
+    
+    public int getUserId() {
+        return userId;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public Timestamp getAddedAt() {
