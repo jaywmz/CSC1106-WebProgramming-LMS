@@ -160,7 +160,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
               <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
-              <p class="card-text" th:text="${announcementsCount} + ' Posts'"></p>
+               <p class="card-text" id="announcementsCount"></p>
             </div>
           </div><!-- Announcements Card -->
 
@@ -169,7 +169,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/students">Students</a></h5>
               <p class="card-text">Ask questions, share knowledge, and connect with other students.</p>
-              <p class="card-text" th:text="${studentsCount} + ' Posts'"></p>
+              <p class="card-text" id="studentsCount"></p>
             </div>  
           </div><!-- Questions Card -->
 
@@ -178,7 +178,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/instructors">Instructors</a></h5>
               <p class="card-text">Ask questions, share knowledge, and connect with other instructors.</p>
-              <p class="card-text" th:text="${instructorsCount} + ' Posts'"></p>
+              <p class="card-text" id="instructorsCount"></p>
             </div>
           </div><!-- Questions Card -->
         </div>
@@ -201,14 +201,6 @@
                     </tr>
                   </thead>
                   <tbody>
-                      <tr>
-                          <th scope="row">
-                              <a href="/community/guides">Guides?</a>
-                              <p class="fs-6 fw-normal">Check out guides made by the community.</p>
-                          </th>
-                          <td>xxx</td>
-                          <td>xxx</td>
-                      </tr>
                       <tr>
                           <th scope="row">
                               <a href="/community/offtopic">Off-Topic</a>
@@ -280,6 +272,7 @@
   <!-- Template Main JS File -->
   <script src="/assets/js/dashboard-main.js"></script>
   <script src="/assets/js/dashboard-checker.js"></script>
+  <script src="/assets/js/community.js"></script>
 </body>
 
 </html>

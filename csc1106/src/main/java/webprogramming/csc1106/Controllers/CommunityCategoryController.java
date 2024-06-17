@@ -34,15 +34,7 @@ public class CommunityCategoryController {
 
     @GetMapping("/community/announcements")
     public String getAnnouncements(Model model) {
-        CommunityCategory category = categoryRepo.findByName("News");
-        List<Post> posts = category.getPosts();
-
-        model.addAttribute("user_group", "announcements");
-        model.addAttribute("category_name", "News");
-        model.addAttribute("category_id", category.getId());
-        model.addAttribute("posts", posts);
-
-        return "Community/community-category";
+        return "Community/community-announce";
     }
 
     @GetMapping("/community/students")
