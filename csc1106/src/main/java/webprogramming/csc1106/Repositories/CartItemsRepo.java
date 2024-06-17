@@ -16,7 +16,7 @@ public interface CartItemsRepo extends JpaRepository<CartItemEntity, String>{
         @Query("SELECT c FROM CartItemEntity c WHERE c.user.userId = :userId")
         List<CartItemEntity> findByUserId(@Param("userId") int userId);
     
-        @Query("SELECT c FROM CartItemEntity c WHERE c.course.id = :courseId")
+        @Query("SELECT c FROM CartItemEntity c WHERE c.uploadCourse.id = :courseId")
         List<CartItemEntity> findByCourseId(@Param("courseId") int courseId);
     
         @Query("SELECT c FROM CartItemEntity c")

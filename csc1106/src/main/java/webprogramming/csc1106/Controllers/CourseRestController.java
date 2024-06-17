@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List; // Import the List class
 import java.util.ArrayList;
 
-// import webprogramming.csc1106.Services.CourseService;
-// import webprogramming.csc1106.Models.Course;
-
 import webprogramming.csc1106.Entities.CourseEntity;
 import webprogramming.csc1106.Entities.CourseCategoriesEntity;
 import webprogramming.csc1106.Entities.CourseSubscriptionEntity;

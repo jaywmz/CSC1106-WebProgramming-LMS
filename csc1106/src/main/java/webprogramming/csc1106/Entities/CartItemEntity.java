@@ -33,7 +33,7 @@ public class CartItemEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private CourseEntity course;
+    private UploadCourse uploadCourse;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -47,9 +47,9 @@ public class CartItemEntity {
     public CartItemEntity() {
     }
 
-    public CartItemEntity(String id, CourseEntity course, User user) {
+    public CartItemEntity(String id, UploadCourse uploadCourse, User user) {
         this.id = id;
-        this.course = course;
+        this.uploadCourse = uploadCourse;
         this.user = user;
     }
 
@@ -61,12 +61,12 @@ public class CartItemEntity {
         this.id = id;
     }
 
-    public CourseEntity getCourse() {
-        return course;
+    public UploadCourse getUploadCourse() {
+        return uploadCourse;
     }
 
-    public void setCourse(CourseEntity course) {
-        this.course = course;
+    public void setUploadCourse(UploadCourse uploadCourse) {
+        this.uploadCourse = uploadCourse;
     }
 
     public User getUser() {
