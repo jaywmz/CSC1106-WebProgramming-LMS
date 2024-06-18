@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 import webprogramming.csc1106.Entities.CartItemEntity;
 
 public interface CartItemsRepo extends JpaRepository<CartItemEntity, String>{
+
+        @Query("SELECT c FROM CartItemEntity c WHERE c.userId = :userId")
+        List<CartItemEntity> getCartItemsByUserId(@Param("userId") int userId);
         
         @Query("SELECT c FROM CartItemEntity c")
         List<CartItemEntity> getAllCartItems();

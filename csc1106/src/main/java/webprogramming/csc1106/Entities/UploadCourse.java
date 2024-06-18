@@ -17,6 +17,7 @@ public class UploadCourse {
     private String title;
 
     @Column(name = "description", nullable = false)
+    @Lob
     private String description;
 
     @Column(name = "lecturer", nullable = false)

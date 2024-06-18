@@ -35,6 +35,12 @@ public class CartItemEntity {
     @Column(name = "course_id", nullable = false)
     private long courseId;
 
+    @Column(name = "course_name", nullable = false)
+    private String courseName;
+
+    @Column(name = "course_price", nullable = false)
+    private BigDecimal coursePrice;
+
     @Column(name = "user_id", nullable = false)
     private int userId;
 
@@ -65,6 +71,22 @@ public class CartItemEntity {
 
     public void setCourseId(long courseId) {
         this.courseId = courseId;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public BigDecimal getCoursePrice() {
+        return coursePrice;
+    }
+
+    public void setCoursePrice(BigDecimal coursePrice) {
+        this.coursePrice = coursePrice;
     }
     
     public int getUserId() {

@@ -25,10 +25,12 @@ document.querySelector('#login-form').addEventListener('submit', async function(
     if(rememberMe === 'true') {
         setCookie('lrnznth_User_Cookie', thisUser.loginCookie, 365);
         setCookie('lrnznth_User_Name', thisUser.userName, 1);
+        setCookie('lrnznth_User_ID', thisUser.userID, 1)
     }
     else{
         setCookie('lrnznth_User_Cookie', thisUser.loginCookie, 1);
         setCookie('lrnznth_User_Name', thisUser.userName, 1);
+        setCookie('lrnznth_User_ID', thisUser.userID, 1)
     }
     
     // Redirect user to respective dashboard

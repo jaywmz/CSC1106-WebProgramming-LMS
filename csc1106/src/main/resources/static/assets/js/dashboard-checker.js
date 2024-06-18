@@ -107,6 +107,7 @@ async function userSigned(){
         // Get Cookies
         const UserCookie = getCookie('lrnznth_User_Cookie');
         const UserName = getCookie('lrnznth_User_Name');
+        const UserId = getCookie('lrnznth_User_ID');
 
         //If UserCookie does not exist, delete Name Cookie and redirect to login page
         if(!UserCookie){
@@ -115,10 +116,11 @@ async function userSigned(){
         } 
         
         // If UserCookie exists but UserName does not, check cookie and set Name Cookie
-        if(UserCookie && !UserName){
-            const responseText = await checkCookieReturnName(UserCookie);
+        if(!UserName || !UserId){
+            const user = await checkCookieProMax(UserCookie);
             // User Name Cookie is set to 1 day as we need to check cookie again day by day (Security Reasons)
-            if(responseText) setCookie('lrnznth_User_Name', responseText, 1); 
+            setCookie('lrnznth_User_Name', user.userName, 1);
+            setCookie('lrnznth_User_ID', user.userID, 1); 
         }
 
         // Since we have both UserCookie and UserName, we can set the username in the dashboard

@@ -1,5 +1,7 @@
 package webprogramming.csc1106.Controllers;
 
+import org.springframework.ui.Model;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,6 +74,15 @@ public class RedirectionController {
     @GetMapping("/cart")
     public String cart() {
         return "Course/cart";
+    }
+
+    @GetMapping("/coursepage")
+    public String getCoursePage(@RequestParam("id") String courseId, Model model) {
+        
+        // Add the courseId to the model
+        model.addAttribute("courseId", courseId);
+
+        return "Course/coursepage"; 
     }
 
 }

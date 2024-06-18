@@ -9,6 +9,8 @@ let checkoutBtn = document.querySelector("#checkout-button");
 let cartTable;
 let targetCartItem;
 
+let userId = getCookie('lrnznth_User_ID');
+
 document.addEventListener('DOMContentLoaded', async function () {
     await refreshCartTable();
 });
@@ -50,6 +52,21 @@ async function refreshCartTable(){
         await cartTable.destroy();
         await document.querySelector("#cartTable").remove();
     }catch(e){}
+
+    let cartItems = await getCartItemsByUserId(userId);
+    if(cartItems.length == 0){
+        displayEmptyCartMessage(true);
+        cartFooter.style.display = "none";
+    }
+
+    displayEmptyCartMessage(false);
+    cartFooter.style.display = "block";
+
+    // Create table
+    await createCartTable();
+
+    let totalPrice = 0;
+    /////// TO BE CONTINUE BY CHENG!!!!!!!
     
     await createCartTable();
 }
@@ -61,4 +78,13 @@ function displayEmptyCartMessage(boolean){
     } else {
         emptyCartMessage.style.display = "none";
     }
+}
+
+async function getCartItemsByUserId(id){
+    const response = await fetch(`/cartitems/user/${id}`);
+    if (response.status != 200) {
+        return [];
+    }
+    const data = await response.json();
+    return data;
 }

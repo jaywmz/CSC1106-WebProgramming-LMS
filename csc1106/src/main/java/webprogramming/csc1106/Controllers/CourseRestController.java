@@ -47,7 +47,11 @@ public class CourseRestController {
         this.userRepository = userRepository;
     }
 
-    // This section will handle the course category
+
+    // ===========================================================//
+    //        Connection to the Marketplace Team Work             //
+    // ===========================================================//
+
     // Get course category by course id
     @GetMapping("/coursecategory/course/{id}")
     public ResponseEntity<CategoryGroup> getCourseCategoryByCourseId(@PathVariable("id") int id) {
@@ -61,7 +65,7 @@ public class CourseRestController {
 
     }
 
-
+    // Get the details of the course
     @GetMapping("/course/details/{id}")
     public ResponseEntity<UploadCourse> getCourseDetails(@PathVariable("id") int id) {
         // Get the course details by course id
@@ -73,7 +77,12 @@ public class CourseRestController {
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
-    //This Section will handle the course subscription by user
+
+
+    // ===========================================================//
+    //               Course Subscription REST API                 //
+    // ===========================================================//
+
     // Get all course subscription
     @GetMapping("/course/subscription/all")
     public ResponseEntity<List<CourseSubscriptionEntity>> getAllCourseSubscription() {
@@ -93,4 +102,20 @@ public class CourseRestController {
         }
         return new ResponseEntity<>(courseSubscription, HttpStatus.OK);
     }
-}
+
+
+    // ===========================================================//
+    //                  Cart Items REST API                       //
+    // ===========================================================//
+
+    // Get all cart items by user id
+    @GetMapping("/cartitems/user/{id}")
+    public ResponseEntity<List<CartItemEntity>> getCartItemsByUserId(@PathVariable("id") int id) {
+        List<CartItemEntity> cartItems = cartItemsRepo.getCartItemsByUserId(id);
+        if (cartItems.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(cartItems, HttpStatus.OK);
+    }
+    
+}   

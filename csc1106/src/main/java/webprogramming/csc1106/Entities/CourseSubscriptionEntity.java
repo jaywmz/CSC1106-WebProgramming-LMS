@@ -22,6 +22,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -35,6 +36,19 @@ public class CourseSubscriptionEntity {
 
     @Column(name = "course_id", nullable = false)
     private long courseId;
+
+    @Column(name = "course_name", nullable = false)
+    private String courseName;
+
+    @Column(name = "course_instructor", nullable = false)
+    private String courseInstructor;
+
+    @Column(name = "course_cover_image_url", nullable = true)
+    private String courseCoverImageUrl;
+
+    @Column(name= "course_description", nullable = true)
+    @Lob
+    private String courseDescription;
 
     @Column(name = "user_id", nullable = false)
     private int userId;
@@ -77,6 +91,38 @@ public class CourseSubscriptionEntity {
 
     public void setCourseId(long courseId) {
         this.courseId = courseId;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseInstructor() {
+        return courseInstructor;
+    }
+
+    public void setCourseInstructor(String courseInstructor) {
+        this.courseInstructor = courseInstructor;
+    }
+
+    public String getCourseCoverImageUrl() {
+        return courseCoverImageUrl;
+    }
+
+    public void setCourseCoverImageUrl(String courseCoverImageUrl) {
+        this.courseCoverImageUrl = courseCoverImageUrl;
+    }
+
+    public String getCourseDescription() {
+        return courseDescription;
+    }
+
+    public void setCourseDescription(String courseDescription) {
+        this.courseDescription = courseDescription;
     }
 
     public int getUserId() {
