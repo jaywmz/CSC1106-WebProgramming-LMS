@@ -28,6 +28,7 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/dashboard-style.css" rel="stylesheet">
+  <link href="assets/css/loading.css" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: LearnZenith
@@ -136,10 +137,11 @@
                 </div>
                 <div id="cart-table-div"></div>
                 
-                <div id="cart-footer" style="display: flex; justify-content: space-between;">
-                  <div id="total-price" style="font-size: 18px; font-weight: bold; color: #333;">Total Price: <span id="total-price-tag" style="color: #00008B;font-size: 25px;">--.--<span></div>
-                  <button id="checkout-button" class="btn btn-primary">Checkout</button>
+                <div id="cart-footer" style="overflow: auto;">
+                  <div id="total-price" style="float: left; font-size: 18px; font-weight: bold; color: #333;">Total Price: <span id="total-price-tag" style="color: #00008B;font-size: 25px;">--.--<span></div>
+                  <button id="checkout-button" style="float: right; display: none;" class="btn btn-primary">Checkout</button>
                 </div>
+
               </br>
             </div>   
           </div>
@@ -152,57 +154,37 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Edit Membership</h5>
+            <h5 class="modal-title" id="cart-modal-title"></h5>
           </div>
-          <div class="modal-body">
-            <form>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="membershipId" class="col-form-label small">Customer ID:</label>
-                            <input type="text" class="form-control form-control-sm" id="modal-customerId" disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="col-form-label small">Name:</label>
-                            <input type="text" class="form-control form-control-sm" id="modal-name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="col-form-label small">Email:</label>
-                            <input type="email" class="form-control form-control-sm" id="modal-email">
-                        </div>
-                        <div class="mb-3">
-                          <label for="phone" class="col-form-label">Phone:</label>
-                          <input type="tel" class="form-control form-control-sm" id="modal-phone">
-                        </div>
-                    </div>
-                    <!-- Add the rest of your form fields in a similar manner here -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="membership" class="col-form-label small">Membership:</label>
-                            <select class="form-select form-select-sm" id="model-membership">
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="country" class="col-form-label small">Country:</label>
-                            <input type="text" class="form-control form-control-sm" id="modal-country">
-                        </div>
-                        <div class="mb-3">
-                          <label for="address" class="col-form-label small">Address:</label>
-                          <textarea class="form-control form-control-sm" id="modal-address" rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </form>
+          <div class="modal-body" id="cart-modal-body">
+            
           </div>
           <div class="modal-footer">
-            <button id="modalclosebutton" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button id="modaldeletebutton" type="button" class="btn btn-danger">Delete</button>
-            <button id="modalsavebutton" type="button" class="btn btn-primary">Save changes</button>
-            <button id="modaladdbutton" type="button" class="btn btn-primary">Add Membership</button>
-        </div>
+            <button id="modalclosebutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="modaldeletebutton" type="button" class="btn btn-danger">Remove from Cart</button>
       </div>
     </div>
   </main><!-- End #main -->
+
+  <!-- ======= Loading Div ======= -->
+  <div class="loadingDiv" id="loading-div-hidden" style="display: none;">
+    <div class="scene">
+      <div class="cube-wrapper">
+        <div class="cube">
+          <div class="cube-faces">
+            <div class="cube-face shadow"></div>
+            <div class="cube-face bottom"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face back"></div>
+            <div class="cube-face front"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="loading-text" id="loading-text">Loading...</div>
+  </div>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

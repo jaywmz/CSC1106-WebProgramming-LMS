@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List; // Import the List class
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 
 import webprogramming.csc1106.Entities.CourseSubscriptionEntity;
@@ -118,4 +122,68 @@ public class CourseRestController {
         return new ResponseEntity<>(cartItems, HttpStatus.OK);
     }
     
+    // Delete Cart Item by cart id
+    @GetMapping("/cartitems/delete/{id}")
+    public ResponseEntity<String> deleteCartItem(@PathVariable("id") String id) {
+        cartItemsRepo.deleteCartItemById(id);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    }
+
+    // Get User Balance
+    @GetMapping("/users/balance/{id}")
+    public ResponseEntity<BigDecimal> getUserBalance(@PathVariable("id") int id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(user.getUserBalance(), HttpStatus.OK);
+    }
+
+    // Update User Balance
+    @GetMapping("/users/balance/deduct/{id}")
+    public ResponseEntity<String> updateUserBalance(@PathVariable("id") int id, @RequestParam("balance") BigDecimal balance) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        BigDecimal currentBalance = user.getUserBalance();
+        if (currentBalance.compareTo(balance) < 0) {
+            return new ResponseEntity<>("Insufficient balance", HttpStatus.BAD_REQUEST);
+        }
+        balance = currentBalance.subtract(balance);
+        user.setUserBalance(balance);
+        userRepository.save(user);
+        return new ResponseEntity<>("Updated", HttpStatus.OK);
+    }
+
+    @GetMapping("/coursesubscriptions/add/{userId}/{courseId}")
+    public ResponseEntity<String> addCourseSubscription(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
+        
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        UploadCourse course = uploadCourseRepository.findById((long) courseId).orElse(null);
+
+        if (course == null) {
+            return new ResponseEntity<>("Course not found", HttpStatus.NOT_FOUND);
+        }
+
+        CourseSubscriptionEntity courseSub = new CourseSubscriptionEntity();
+        courseSub.setUserId(userId);
+        courseSub.setCourseId(courseId);
+        courseSub.setCourseName(course.getTitle());
+        courseSub.setCourseInstructor(course.getLecturer());
+        courseSub.setCourseCoverImageUrl(course.getCoverImageUrl());
+        courseSub.setCourseDescription(course.getDescription());
+        courseSub.setRecentlyUpdated(null);
+        courseSub.setCompletedDate(null);
+        courseSub.setSubscriptionDate(Timestamp.from(Instant.now()));
+        courseSub.setSubscriptionStatus("ongoing");
+        
+        courseSubscriptionRepo.save(courseSub);
+
+        return ResponseEntity.ok("Added");
+    }
 }   

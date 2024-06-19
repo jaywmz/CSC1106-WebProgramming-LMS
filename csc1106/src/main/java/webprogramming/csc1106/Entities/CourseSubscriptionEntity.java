@@ -68,13 +68,21 @@ public class CourseSubscriptionEntity {
     private Timestamp recentlyUpdated;
 
     public CourseSubscriptionEntity() {
+        this.id = generateRandomId(10);
     }
 
-    public CourseSubscriptionEntity(String id, long courseId, int userId, String subscriptionStatus) {
-        this.id = id;
+    public CourseSubscriptionEntity(long courseId, String courseName, String courseInstructor, String courseCoverImageUrl, String courseDescription, int userId, Timestamp subscriptionDate, String subscriptionStatus, Timestamp completedDate, Timestamp recentlyUpdated) {
+        this.id = generateRandomId(10);
         this.courseId = courseId;
+        this.courseName = courseName;
+        this.courseInstructor = courseInstructor;
+        this.courseCoverImageUrl = courseCoverImageUrl;
+        this.courseDescription = courseDescription;
         this.userId = userId;
+        this.subscriptionDate = subscriptionDate;
         this.subscriptionStatus = subscriptionStatus;
+        this.completedDate = completedDate;
+        this.recentlyUpdated = recentlyUpdated;
     }
 
     public String getId() {

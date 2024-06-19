@@ -38,6 +38,12 @@ public class CartItemEntity {
     @Column(name = "course_name", nullable = false)
     private String courseName;
 
+    @Column(name = "course_instructor", nullable = false)
+    private String courseInstructor;
+
+    @Column(name = "course_category", nullable = false)
+    private String courseCategory;
+
     @Column(name = "course_price", nullable = false)
     private BigDecimal coursePrice;
 
@@ -79,6 +85,22 @@ public class CartItemEntity {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public String getCourseInstructor() {
+        return courseInstructor;
+    }
+
+    public void setCourseInstructor(String courseInstructor) {
+        this.courseInstructor = courseInstructor;
+    }
+
+    public String getCourseCategory() {
+        return courseCategory;
+    }
+
+    public void setCourseCategory(String courseCategory) {
+        this.courseCategory = courseCategory;
     }
 
     public BigDecimal getCoursePrice() {

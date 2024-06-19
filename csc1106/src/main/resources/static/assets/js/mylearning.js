@@ -6,8 +6,6 @@ let ongoingCourseTag = document.querySelector("#ongoing-course-tag");
 let completedCourseTag = document.querySelector("#completed-course-tag");
 
 let courseTable;
-let targetCourse;
-let courseSubscription;
 
 let userId = getCookie('lrnznth_User_ID');
 
@@ -86,7 +84,7 @@ async function refreshCourseTable(){
     let tableBody = document.querySelector("#courseTable tbody");
     Array.from(tableBody.children).forEach((row, index) => {
         row.addEventListener('click', async function(){
-            console.log("Row clicked: ", courseSubscription[index]);
+            // console.log("Row clicked: ", courseSubscription[index]);
             await displayCourseModal(courseSubscription[index]);
         });
     });

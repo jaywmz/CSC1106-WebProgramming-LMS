@@ -199,7 +199,7 @@ async function refreshDashboardSideBarItemsLocally(){
         let itemsCount = getCookie('lrnznth_Dashboard_Items_Count');
         for(let i = 0; i < itemsCount; i++){
             let item = JSON.parse(getCookie(`lrnznth_Dashboard_Item_${i}`));
-            console.log(item)
+            // console.log(item)
             if(currentUrl.endsWith(item.urlRedirection)){
                 itemsFullString += `
                 <li class="nav-item">
