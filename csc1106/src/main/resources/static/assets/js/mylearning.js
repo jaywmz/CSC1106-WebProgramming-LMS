@@ -32,7 +32,7 @@ async function createCourseTable(){
     let tr = document.createElement('tr');
 
     // Note: ID is the subscription Id 
-    ['ID', 'Course Name', 'Instructor', "Status"].forEach(item =>{
+    ['No.', 'Category', 'Course Name', 'Instructor', "Status"].forEach(item =>{
         let th = document.createElement('th');
         th.textContent = item;
         tr.appendChild(th);
@@ -69,9 +69,12 @@ async function refreshCourseTable(){
     displayEmptyCourseMessage(false);
     await createCourseTable();
 
+    let itemNo = 0;
+
     courseSubscription.forEach(subscription=>{
         let row = [
-            subscription.courseId,
+            ++itemNo,
+            subscription.courseCategory,
             subscription.courseName,
             subscription.courseInstructor,
             subscription.subscriptionStatus

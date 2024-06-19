@@ -55,12 +55,17 @@ public class CartItemEntity {
     private Timestamp addedAt;
 
     public CartItemEntity() {
+        this.id = generateRandomId(10);
     }
 
-    public CartItemEntity(String id, long courseId, int userId) {
-        this.id = id;
+    public CartItemEntity(long courseId, int userId, String courseName, String courseInstructor, String courseCategory, BigDecimal coursePrice) {
+        this.id = generateRandomId(10);
         this.courseId = courseId;
         this.userId = userId;
+        this.courseName = courseName;
+        this.courseInstructor = courseInstructor;
+        this.courseCategory = courseCategory;
+        this.coursePrice = coursePrice;
     }
 
     public String getId() {

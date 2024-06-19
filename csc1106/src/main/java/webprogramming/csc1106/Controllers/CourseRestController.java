@@ -156,6 +156,7 @@ public class CourseRestController {
         return new ResponseEntity<>("Updated", HttpStatus.OK);
     }
 
+    // Add courseSubscription after payment
     @GetMapping("/coursesubscriptions/add/{userId}/{courseId}")
     public ResponseEntity<String> addCourseSubscription(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
         
@@ -170,6 +171,7 @@ public class CourseRestController {
             return new ResponseEntity<>("Course not found", HttpStatus.NOT_FOUND);
         }
 
+        CourseCategory category = courseCategoryRepository.findByCourseId((long) courseId);
         CourseSubscriptionEntity courseSub = new CourseSubscriptionEntity();
         courseSub.setUserId(userId);
         courseSub.setCourseId(courseId);
@@ -181,9 +183,27 @@ public class CourseRestController {
         courseSub.setCompletedDate(null);
         courseSub.setSubscriptionDate(Timestamp.from(Instant.now()));
         courseSub.setSubscriptionStatus("ongoing");
+        courseSub.setCourseCategory(category.getCategoryGroup().getName());
         
         courseSubscriptionRepo.save(courseSub);
 
         return ResponseEntity.ok("Added");
     }
+
+
+
+    // ===========================================================//
+    //                  Add to Cart REST API                      //
+    // ===========================================================//
+
+    // Check the courseSubscription to see if the user had subscribed to the course
+    @GetMapping("/coursesubscriptions/check/{userId}/{courseId}")
+    public ResponseEntity<String> checkCourseSubscription(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
+        CourseSubscriptionEntity courseSubscription = courseSubscriptionRepo.findByCourseIdAndUserId(courseId, userId);
+        if (courseSubscription == null) {
+            return new ResponseEntity<>("Not subscribed", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Subscribed", HttpStatus.OK);
+    }
+
 }   

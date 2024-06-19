@@ -50,6 +50,9 @@ public class CourseSubscriptionEntity {
     @Lob
     private String courseDescription;
 
+    @Column(name= "course_category", nullable = false)
+    private String courseCategory;
+
     @Column(name = "user_id", nullable = false)
     private int userId;
 
@@ -71,7 +74,7 @@ public class CourseSubscriptionEntity {
         this.id = generateRandomId(10);
     }
 
-    public CourseSubscriptionEntity(long courseId, String courseName, String courseInstructor, String courseCoverImageUrl, String courseDescription, int userId, Timestamp subscriptionDate, String subscriptionStatus, Timestamp completedDate, Timestamp recentlyUpdated) {
+    public CourseSubscriptionEntity(long courseId, String courseName, String courseInstructor, String courseCoverImageUrl, String courseDescription, int userId, Timestamp subscriptionDate, String subscriptionStatus, Timestamp completedDate, Timestamp recentlyUpdated, String courseCategory) {
         this.id = generateRandomId(10);
         this.courseId = courseId;
         this.courseName = courseName;
@@ -83,6 +86,7 @@ public class CourseSubscriptionEntity {
         this.subscriptionStatus = subscriptionStatus;
         this.completedDate = completedDate;
         this.recentlyUpdated = recentlyUpdated;
+        this.courseCategory = courseCategory;
     }
 
     public String getId() {
@@ -171,6 +175,14 @@ public class CourseSubscriptionEntity {
 
     public void setRecentlyUpdated(Timestamp recentlyUpdated) {
         this.recentlyUpdated = recentlyUpdated;
+    }
+
+    public String getCourseCategory() {
+        return courseCategory;
+    }
+
+    public void setCourseCategory(String courseCategory) {
+        this.courseCategory = courseCategory;
     }
 
     //Generate a random ID with a specific length

@@ -17,4 +17,8 @@ public interface CourseSubscriptionRepo extends JpaRepository<CourseSubscription
     // GET all
     @Query("SELECT c FROM CourseSubscriptionEntity c")
     List<CourseSubscriptionEntity> findAll();
+
+    // Get by course id and user id
+    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.courseId = :courseId AND c.userId = :userId")
+    CourseSubscriptionEntity findByCourseIdAndUserId(@Param("courseId") long courseId, @Param("userId") int userId);
 }
