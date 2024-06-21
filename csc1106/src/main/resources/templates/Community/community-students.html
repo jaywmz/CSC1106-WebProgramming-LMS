@@ -137,7 +137,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/students/4">General</a></h5>
               <p class="card-text">Ask any questions about LearnZenith!</p>
-              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+              <p class="card-text" id="generalCount"></p>
             </div>
           </div>
 
@@ -146,7 +146,7 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/students/5">IT & Software</a></h5>
               <p class="card-text">Ask questions regarding IT & Software</p>
-              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+              <p class="card-text" id="itSoftwareCount"></p>
             </div>  
           </div>
         
@@ -155,16 +155,16 @@
             <div class="card-body">
               <h5 class="card-title"><a href="/community/students/6">Business</a></h5>
               <p class="card-text">Ask questions regarding Business</p>
-              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+              <p class="card-text" id="businessCount"></p>
             </div>
           </div>
         
           <!-- Finance & Accounting Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/students/7">FInance & Accounting</a></h5>
+              <h5 class="card-title"><a href="/community/students/7">Finance & Accounting</a></h5>
               <p class="card-text">Ask questions regarding Finance & Accounting</p>
-              <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
+              <p class="card-text" id="financeCount"></p>
             </div>
           </div>
         </div>
@@ -192,7 +192,7 @@
                         <a href="/community/students/3">Introductions</a>
                         <p class="fs-6 fw-normal">Introduce yourself to the LearnZenith community.</p>
                     </th>
-                    <td th:text="${IntroductionsCount != null ? IntroductionsCount : 0}"></td>
+                    <td><p class="card-text" id="introductionsCount"></p></td>
                     <td>xxx</td>
                 </tr>
                 <tr>
@@ -200,7 +200,7 @@
                       <a href="/community/students/8">Careers</a>
                       <p class="fs-6 fw-normal">Discuss career opportunities and job openings.</p>
                   </th>
-                  <td th:text="${CareersCount != null ? CareerssCount : 0}"></td>
+                  <td><p class="card-text" id="careersCount"></p></td>
                   <td>xxx</td>
               </tr>
               </tbody>
@@ -210,8 +210,25 @@
 
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">All Students posts</h5>
-
+          <h5 class="card-title">Recent Students posts</h5>
+          <table class="table table-hover">
+            <thead>
+                <tr>
+                  <th scope="col" style="width:50%">Title</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Poster</th>
+                  <th scope="col">Posted at</th>
+                </tr>
+              </thead>
+              <tbody th:each="post: ${posts}">
+                <tr>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                </tr>
+              </tbody>
+        </table>
         </div>
       </div>
 
@@ -248,6 +265,7 @@
   <!-- Template Main JS File -->
   <script src="/assets/js/dashboard-main.js"></script>
   <script src="/assets/js/dashboard-checker.js"></script>
+  <script src="/assets/js/community.js"></script>
 </body>
 
 </html>

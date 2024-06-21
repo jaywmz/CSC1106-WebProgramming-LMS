@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Controllers;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.CategoryRepo;
+import webprogramming.csc1106.Repositories.PostRepo;
 
 import org.springframework.ui.Model;
 
@@ -18,6 +20,8 @@ public class CommunityCategoryController {
 
     @Autowired
     private CategoryRepo categoryRepo;
+    @Autowired
+    private PostRepo postRepo;
 
     @GetMapping("/community/{user_group}/{category_id}")
     public String getCategoryPosts(@PathVariable String user_group, @PathVariable String category_id, Model model) {
@@ -39,6 +43,10 @@ public class CommunityCategoryController {
 
     @GetMapping("/community/students")
     public String getStudents(Model model) {
+        List<Integer> categoryIds = Arrays.asList(3, 4, 5, 6, 7, 8);
+        List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
+
+        model.addAttribute("posts", posts);
         return "Community/community-students";
     }
 

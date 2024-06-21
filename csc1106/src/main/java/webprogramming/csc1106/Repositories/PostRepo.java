@@ -11,9 +11,16 @@ public interface PostRepo extends JpaRepository<Post, Integer>{
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
     List<Post> findTop5ByOrderByTimestampDesc();
     Post findByPostID(long id);
+    List<Post> findTop5ByCategoryIdInOrderByTimestampDesc(List<Integer> categoryIds);
     
     @Query(value = "SELECT c.id, c.description, COUNT(p.category_id) FROM community_category c \r\n" + //
                 "LEFT JOIN post p ON c.id = p.category_id \r\n" + //
                 "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCounts();
+
+    @Query(value = "SELECT c.id, c.description, COUNT(p.category_id) FROM community_category c \r\n" + 
+        "LEFT JOIN post p ON c.id = p.category_id \r\n" + 
+        "WHERE c.description = 'students' \r\n" + 
+        "GROUP BY c.id;", nativeQuery = true)
+    List<Object[]> findCategoryCountsStudents();
 }   

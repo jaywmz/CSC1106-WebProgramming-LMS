@@ -26,11 +26,10 @@ public class CommunityController {
     private PostRepo postRepo;
     
     @GetMapping("/community")
-    public String getCommunityHome(@RequestParam(defaultValue = "1") int page, Model model) {
+    public String getCommunityHome(Model model) {
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
 
         model.addAttribute("posts", posts);
-        model.addAttribute("currentPage", page);
 
         return "Community/community-home";
     }
@@ -56,6 +55,7 @@ public class CommunityController {
             Long totalAnnouncements = 0L;
             Long totalStudents = 0L;
             Long totalInstructors = 0L;
+            Long totalOffTopic = 0L;
             
             for (int i = 0; i < categoryCounts.size(); i++) {
                 if("announcements".equals(categoryCounts.get(i)[1])){
@@ -64,10 +64,37 @@ public class CommunityController {
                     totalStudents += (Long) categoryCounts.get(i)[2];
                 } else if("instructors".equals(categoryCounts.get(i)[1])){
                     totalInstructors += (Long) categoryCounts.get(i)[2];
+                } else {
+                    totalOffTopic += (Long) categoryCounts.get(i)[2];
                 }
             }
             
-            return new ResponseEntity<>(List.of(totalAnnouncements, totalStudents, totalInstructors), HttpStatus.OK);
+            return new ResponseEntity<>(List.of(
+                totalAnnouncements, totalStudents, totalInstructors, totalOffTopic
+                ), HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @SuppressWarnings("null")
+    @PostMapping("/community-get-post-count-students")
+    public ResponseEntity<List> getPostsCountStudents(){
+        try{
+
+            List<Object[]> categoryCounts = postRepo.findCategoryCountsStudents();
+            
+            Long totalGeneral = (Long) categoryCounts.get(0)[2];
+            Long totalItSoftware = (Long) categoryCounts.get(1)[2];
+            Long totalBusiness = (Long) categoryCounts.get(2)[2];
+            Long totalFinance = (Long) categoryCounts.get(3)[2];
+            Long totalIntroductions = (Long) categoryCounts.get(4)[2];
+            Long totalCareers = (Long) categoryCounts.get(5)[2];
+            
+            
+            return new ResponseEntity<>(List.of(
+                totalGeneral, totalItSoftware, totalBusiness, totalFinance, totalIntroductions, totalCareers
+                ), HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
