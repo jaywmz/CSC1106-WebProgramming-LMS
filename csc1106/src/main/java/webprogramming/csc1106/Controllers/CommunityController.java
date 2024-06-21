@@ -69,10 +69,21 @@ public class CommunityController {
                 }
             }
             
+            Object lastOffTopic = 0;
+
+            if(totalOffTopic > 0){
+                lastOffTopic = categoryCounts.get(10)[3];
+            }
+            
             return new ResponseEntity<>(List.of(
-                totalAnnouncements, totalStudents, totalInstructors, totalOffTopic
+                totalAnnouncements, 
+                totalStudents, 
+                totalInstructors, 
+                totalOffTopic, 
+                lastOffTopic
                 ), HttpStatus.OK);
         }catch(Exception e){
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
@@ -84,16 +95,33 @@ public class CommunityController {
 
             List<Object[]> categoryCounts = postRepo.findCategoryCountsStudents();
             
-            Long totalGeneral = (Long) categoryCounts.get(0)[2];
-            Long totalItSoftware = (Long) categoryCounts.get(1)[2];
-            Long totalBusiness = (Long) categoryCounts.get(2)[2];
-            Long totalFinance = (Long) categoryCounts.get(3)[2];
-            Long totalIntroductions = (Long) categoryCounts.get(4)[2];
+            Long totalGeneral = (Long) categoryCounts.get(1)[2];
+            Long totalItSoftware = (Long) categoryCounts.get(2)[2];
+            Long totalBusiness = (Long) categoryCounts.get(3)[2];
+            Long totalFinance = (Long) categoryCounts.get(4)[2];
+            Long totalIntroductions = (Long) categoryCounts.get(0)[2];
             Long totalCareers = (Long) categoryCounts.get(5)[2];
-            
-            
+
+            Object lastIntro = 0;
+            Object lastCareers = 0;
+
+            if(totalIntroductions > 0){
+                lastIntro = categoryCounts.get(0)[3];
+            }
+
+            if(totalCareers > 0){
+                lastCareers = categoryCounts.get(5)[3];
+            }
+
             return new ResponseEntity<>(List.of(
-                totalGeneral, totalItSoftware, totalBusiness, totalFinance, totalIntroductions, totalCareers
+                totalGeneral, 
+                totalItSoftware, 
+                totalBusiness, 
+                totalFinance, 
+                totalIntroductions, 
+                totalCareers,
+                lastIntro,
+                lastCareers
                 ), HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

@@ -26,6 +26,25 @@ async function getPostCountHome(){
         document.getElementById('studentsCount').textContent = data[1] + " Posts";
         document.getElementById('instructorsCount').textContent = data[2] + " Posts";
         document.getElementById('offTopicCount').textContent = data[3];
+
+        console.log(data[4]);
+
+        if(data[4] != 0){
+            const dateStr = data[4];
+            const dateObj = new Date(dateStr);
+            const formattedDate = dateObj.toLocaleDateString('en-GB', {
+                day: '2-digit', // dd
+                month: 'short' // MMM
+            }) + ' ' + dateObj.toLocaleTimeString('en-GB', {
+                hour: '2-digit', // hh
+                minute: '2-digit', // mm
+                hour12: true // a
+            });
+            document.getElementById('lastOffTopic').textContent = formattedDate;
+        }else{
+            document.getElementById('lastOffTopic').textContent = "No posts yet";
+        }
+
     } catch (error) {
         console.error('There was a problem with the fetch operation: ' + error.message);
     }
@@ -50,6 +69,39 @@ async function getPostCountStudents(){
         document.getElementById('financeCount').textContent = data[3] + " Posts";
         document.getElementById('introductionsCount').textContent = data[4];
         document.getElementById('careersCount').textContent = data[5];
+        
+        if(data[6] != 0){
+            const dateStr = data[6];
+            const dateObj = new Date(dateStr);
+            const formattedDate = dateObj.toLocaleDateString('en-GB', {
+                day: '2-digit', // dd
+                month: 'short' // MMM
+            }) + ' ' + dateObj.toLocaleTimeString('en-GB', {
+                hour: '2-digit', // hh
+                minute: '2-digit', // mm
+                hour12: true // a
+            });
+            document.getElementById('lastIntroduction').textContent = formattedDate;
+        }else{
+            document.getElementById('lastIntroduction').textContent = "No posts yet";
+        }
+
+        if(data[7] != 0){
+            const dateStr = data[7];
+            const dateObj = new Date(dateStr);
+            const formattedDate = dateObj.toLocaleDateString('en-GB', {
+                day: '2-digit', // dd
+                month: 'short' // MMM
+            }) + ' ' + dateObj.toLocaleTimeString('en-GB', {
+                hour: '2-digit', // hh
+                minute: '2-digit', // mm
+                hour12: true // a
+            });
+            document.getElementById('lastCareers').textContent = formattedDate;
+        }else{
+            document.getElementById('lastCareers').textContent = "No posts yet";
+        }
+
     } catch (error) {
         console.error('There was a problem with the fetch operation: ' + error.message);
     }
