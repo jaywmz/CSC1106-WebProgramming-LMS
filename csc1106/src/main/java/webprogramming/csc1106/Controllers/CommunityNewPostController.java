@@ -19,6 +19,7 @@ import webprogramming.csc1106.Services.AzureBlobService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class CommunityNewPostController {
@@ -50,7 +51,7 @@ public class CommunityNewPostController {
     }
 
     @PostMapping("/community/new-post")
-    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_Name") String username, @ModelAttribute Post newPost) {
+    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_Name") String username, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
         // set post timestamp
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
@@ -86,6 +87,8 @@ public class CommunityNewPostController {
             return "Community/new-post";
         }
         
+        redirectAttributes.addFlashAttribute("successMessage", "Post created successfully!");
+
         if(Integer.parseInt(category_id) <= 2){
             return "redirect:/community/announcements";
         }else if(Integer.parseInt(category_id) <= 8){
