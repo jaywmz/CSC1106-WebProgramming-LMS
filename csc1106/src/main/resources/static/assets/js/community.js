@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', async function(){
         await getPostCountHome();
     }else if(window.location.pathname === '/community/students'){
         await getPostCountStudents();
+    }else if(window.location.pathname === '/community/instructors'){
+        await getPostCountInstructors();
     };
 });
 
@@ -48,6 +50,26 @@ async function getPostCountStudents(){
         document.getElementById('financeCount').textContent = data[3] + " Posts";
         document.getElementById('introductionsCount').textContent = data[4];
         document.getElementById('careersCount').textContent = data[5];
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
+}
+
+async function getPostCountInstructors(){
+    try{
+        const response = await fetch('/community-get-post-count-instructors', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        document.getElementById('courseHelpCount').textContent = data[0] + " Posts";
+        document.getElementById('teachingCount').textContent = data[1] + " Posts";
     } catch (error) {
         console.error('There was a problem with the fetch operation: ' + error.message);
     }

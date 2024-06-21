@@ -45,7 +45,7 @@ public class CommunityController {
         return "Community/community-search";
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
     public ResponseEntity<List> getPostsCount(){
         try{
@@ -77,7 +77,7 @@ public class CommunityController {
         }
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count-students")
     public ResponseEntity<List> getPostsCountStudents(){
         try{
@@ -94,6 +94,25 @@ public class CommunityController {
             
             return new ResponseEntity<>(List.of(
                 totalGeneral, totalItSoftware, totalBusiness, totalFinance, totalIntroductions, totalCareers
+                ), HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @SuppressWarnings({ "null", "rawtypes" })
+    @PostMapping("/community-get-post-count-instructors")
+    public ResponseEntity<List> getPostsCountinstructors(){
+        try{
+
+            List<Object[]> categoryCounts = postRepo.findCategoryCountsInstructors();
+            
+            Long totalCourseHelp = (Long) categoryCounts.get(0)[2];
+            Long totalTeaching = (Long) categoryCounts.get(1)[2];
+            
+            
+            return new ResponseEntity<>(List.of(
+                totalCourseHelp, totalTeaching
                 ), HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
