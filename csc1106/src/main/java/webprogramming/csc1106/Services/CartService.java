@@ -29,15 +29,29 @@ public class CartService {
         });
     }
 
-    public void addCourseToCart(UploadCourse course) {
+    public String addCourseToCart(UploadCourse course) {
+        // Check if the course already exists in the cart
         Cart cart = getCart();
-        CartItem item = new CartItem();
-        item.setCourse(course);
-        item.setCart(cart);
-        item.setPrice(course.getPrice()); // Set the price field
-        cart.addItem(item);
-        cartItemRepository.save(item);
-        cartRepository.save(cart);
+        Optional<CartItem> existingItem = cart.getItems().stream()
+                .filter(item -> item.getCourse().getId().equals(course.getId()))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            // Course already in cart, return a message
+            return "Course '" + course.getTitle() + "' is already in your cart.";
+        } else {
+            // Add new item to cart
+            CartItem newItem = new CartItem();
+            newItem.setCourse(course);
+            newItem.setCart(cart);
+            newItem.setPrice(course.getPrice()); // Set the price field
+            newItem.setLecturer(course.getLecturer()); // Set the lecturer field from UploadCourse
+
+            cart.addItem(newItem);
+            cartItemRepository.save(newItem);
+            cartRepository.save(cart);
+            return "Course '" + course.getTitle() + "' added to your cart successfully.";
+        }
     }
 
     public void removeCourseFromCart(Long courseId) {

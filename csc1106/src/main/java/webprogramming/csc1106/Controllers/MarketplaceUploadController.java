@@ -196,18 +196,20 @@ public class MarketplaceUploadController {
     @PostMapping("/cart/add")
     @ResponseBody
     public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
-        logger.info("Add to cart called with courseId: " + courseId);
-        Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
-        if (courseOptional.isPresent()) {
-            UploadCourse course = courseOptional.get();
-            cartService.addCourseToCart(course);
-            logger.info("Course added to cart successfully: " + course.getTitle());
-            return ResponseEntity.ok("Course added to cart successfully.");
-        } else {
-            logger.warning("Course not found for courseId: " + courseId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
+        try {
+            Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
+            if (courseOptional.isPresent()) {
+                UploadCourse course = courseOptional.get();
+                String resultMessage = cartService.addCourseToCart(course); // Use the updated method in CartService
+                return ResponseEntity.ok(resultMessage);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add course to cart. Please try again.");
         }
     }
+
     @GetMapping("/cart")
     public String viewCart(Model model) {
         Cart cart = cartService.getCart();
@@ -215,4 +217,16 @@ public class MarketplaceUploadController {
         return "Marketplace/cart"; // Ensure this matches your Thymeleaf template name
     }
 
+    @PostMapping("/cart/remove")
+    public ResponseEntity<String> removeFromCart(@RequestParam Long courseId) {
+        logger.info("Remove from cart called with courseId: " + courseId);
+        try {
+            cartService.removeCourseFromCart(courseId);
+            logger.info("Course removed from cart successfully: " + courseId);
+            return ResponseEntity.ok("Course removed from cart successfully.");
+        } catch (Exception e) {
+            logger.severe("Failed to remove course from cart: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove course from cart. Please try again.");
+        }
+    }
 }
