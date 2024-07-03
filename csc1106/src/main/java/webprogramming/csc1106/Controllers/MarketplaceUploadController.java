@@ -233,7 +233,7 @@ public class MarketplaceUploadController {
             logger.info("Item: " + item.toString());
         }
         model.addAttribute("cart", cart);
-        return "Marketplace/cart";
+        return "Course/cart1";
     }
 
     // API to remove a course from the cart
