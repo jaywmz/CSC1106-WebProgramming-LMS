@@ -199,13 +199,13 @@ public class MarketplaceUploadController {
         try {
             Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
             if (courseOptional.isPresent()) {
-                UploadCourse course = courseOptional.get();
-                String resultMessage = cartService.addCourseToCart(course); // Use the updated method in CartService
-                return ResponseEntity.ok(resultMessage);
+                cartService.addCourseToCart(courseId); // Use the updated method in CartService
+                return ResponseEntity.ok("Course added to cart successfully.");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
             }
         } catch (Exception e) {
+            logger.severe("Failed to add course to cart: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add course to cart. Please try again.");
         }
     }

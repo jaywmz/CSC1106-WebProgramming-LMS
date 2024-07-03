@@ -21,7 +21,7 @@ public class CartItem {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    // Transient field to hold the lecturer/instructor name
+    // Transient field to hold the lecturer name
     @Transient
     private String lecturer;
 

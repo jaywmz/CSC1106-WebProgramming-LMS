@@ -8,9 +8,12 @@ import webprogramming.csc1106.Repositories.CartRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class CartService {
+
+    private static final Logger logger = Logger.getLogger(CartService.class.getName());
 
     @Autowired
     private CartRepository cartRepository;
@@ -29,29 +32,23 @@ public class CartService {
         });
     }
 
-    public String addCourseToCart(UploadCourse course) {
-        // Check if the course already exists in the cart
+    public void addCourseToCart(Long courseId) {
+        UploadCourse course = uploadCourseRepository.findById(courseId)
+                .orElseThrow(() -> {
+                    logger.severe("Invalid course Id: " + courseId);
+                    return new IllegalArgumentException("Invalid course Id: " + courseId);
+                });
+
         Cart cart = getCart();
-        Optional<CartItem> existingItem = cart.getItems().stream()
-                .filter(item -> item.getCourse().getId().equals(course.getId()))
-                .findFirst();
+        CartItem item = new CartItem();
+        item.setCourse(course);
+        item.setCart(cart);
+        item.setPrice(course.getPrice()); // Set the price field
+        item.setLecturer(course.getLecturer()); // Set the lecturer field from UploadCourse
 
-        if (existingItem.isPresent()) {
-            // Course already in cart, return a message
-            return "Course '" + course.getTitle() + "' is already in your cart.";
-        } else {
-            // Add new item to cart
-            CartItem newItem = new CartItem();
-            newItem.setCourse(course);
-            newItem.setCart(cart);
-            newItem.setPrice(course.getPrice()); // Set the price field
-            newItem.setLecturer(course.getLecturer()); // Set the lecturer field from UploadCourse
-
-            cart.addItem(newItem);
-            cartItemRepository.save(newItem);
-            cartRepository.save(cart);
-            return "Course '" + course.getTitle() + "' added to your cart successfully.";
-        }
+        cart.addItem(item);
+        cartItemRepository.save(item);
+        cartRepository.save(cart);
     }
 
     public void removeCourseFromCart(Long courseId) {

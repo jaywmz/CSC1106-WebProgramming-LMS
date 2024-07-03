@@ -42,7 +42,7 @@
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
                         <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
-                    </a><!-- End Profile Image Icon -->
+                    </a><!-- End Profile Iamge Icon -->
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -72,8 +72,8 @@
         <div class="pagetitle">
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html" th:href="@{/index.html}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/dashboard" th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active">Cart</li>
                 </ol>
             </nav>
@@ -106,12 +106,11 @@
                                                 <td th:text="${item.course.title}">Course Title</td>
                                                 <td th:text="${item.course.lecturer}">Instructor</td>
                                                 <td th:text="${item.price}">Course Price</td>
-                                                <td>
-                                                    <button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button>
-                                                </td>
+                                                <td><button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                    
                                     <div id="cart-footer" style="overflow: auto;">
                                         <button id="checkout-button" style="float: right;" class="btn btn-primary" onclick="checkout()">Checkout</button>
                                     </div>
