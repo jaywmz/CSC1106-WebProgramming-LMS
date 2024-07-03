@@ -1,3 +1,4 @@
+// CartService.java
 package webprogramming.csc1106.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,20 @@ public class CartService {
     private UploadCourseRepository uploadCourseRepository;
 
     public Cart getCart() {
-        // Assuming a single cart for simplicity, you might need to associate with a user
-        return cartRepository.findById(1L).orElseGet(() -> {
+        Cart cart = cartRepository.findById(1L).orElseGet(() -> {
             Cart newCart = new Cart();
             return cartRepository.save(newCart);
         });
+
+        // Populate transient fields
+        for (CartItem item : cart.getItems()) {
+            item.setLecturer(item.getCourse().getLecturer());
+            if (!item.getCourse().getCourseCategories().isEmpty()) {
+                item.setCategoryName(item.getCourse().getCourseCategories().get(0).getCategoryGroup().getName());
+            }
+        }
+
+        return cart;
     }
 
     public void addCourseToCart(Long courseId) {
@@ -43,9 +53,18 @@ public class CartService {
         CartItem item = new CartItem();
         item.setCourse(course);
         item.setCart(cart);
-        item.setPrice(course.getPrice()); // Set the price field
-        item.setLecturer(course.getLecturer()); // Set the lecturer field from UploadCourse
+        item.setPrice(course.getPrice());
+        item.setLecturer(course.getLecturer());
 
+        // Set the category name
+        if (!course.getCourseCategories().isEmpty()) {
+            item.setCategoryName(course.getCourseCategories().get(0).getCategoryGroup().getName());
+            logger.info("Setting category name: " + course.getCourseCategories().get(0).getCategoryGroup().getName());
+        } else {
+            logger.warning("No categories found for course: " + courseId);
+        }
+
+        logger.info("Adding item to cart: " + item.toString());
         cart.addItem(item);
         cartItemRepository.save(item);
         cartRepository.save(cart);
