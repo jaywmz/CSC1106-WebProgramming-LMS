@@ -71,10 +71,10 @@ public class RedirectionController {
         return "Partnership/partnerDashboard";
     }
 
-    @GetMapping("/cart")
-    public String cart() {
-        return "Course/cart";
-    }
+    //@GetMapping("/cart")
+    //public String cart() {
+        //return "Course/cart";
+    //}
 
     @GetMapping("/coursepage")
     public String getCoursePage(@RequestParam("id") String courseId, Model model) {

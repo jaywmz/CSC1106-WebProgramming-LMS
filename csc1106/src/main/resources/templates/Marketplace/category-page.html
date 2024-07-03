@@ -220,13 +220,19 @@
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('sort-by').addEventListener('change', loadCourses);
-    
+        $(document).ready(function() {
+            // Load courses on page load
+            loadCourses();
+
+            // Handle sort change event
+            $('#sort-by').on('change', function() {
+                loadCourses();
+            });
+
             function loadCourses() {
-                var sortBy = document.getElementById('sort-by').value;
-                var categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
-    
+                const sortBy = $('#sort-by').val();
+                const categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
+
                 fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`)
                     .then(response => {
                         if (!response.ok) {
@@ -235,68 +241,62 @@
                         return response.json();
                     })
                     .then(data => {
-                        let coursesContainer = document.getElementById('courses-list');
-                        coursesContainer.innerHTML = ''; // Clear existing courses
-    
+                        const coursesContainer = $('#courses-list');
+                        coursesContainer.empty(); // Clear existing courses
+
                         data.forEach(course => {
-                            let courseElement = document.createElement('div');
-                            courseElement.classList.add('col-md-4', 'mb-4');
-                            courseElement.innerHTML = `
-                                <div class="card card-custom">
-                                    <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${course.title}</h5>
-                                        <p class="card-text">${course.description}</p>
-                                        <div class="course-rating">
-                                            <span class="star">&#9733;</span>
-                                            <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
+                            const courseElement = `
+                                <div class="col-md-4 mb-4">
+                                    <div class="card card-custom">
+                                        <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${course.title}</h5>
+                                            <p class="card-text">${course.description}</p>
+                                            <div class="course-rating">
+                                                <span class="star">&#9733;</span>
+                                                <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
+                                            </div>
+                                            <p class="card-price"><strong>$${course.price}</strong></p>
+                                            <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                                         </div>
-                                        <p class="card-price"><strong>$${course.price}</strong></p>
-                                        <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                                     </div>
                                 </div>
                             `;
-                            coursesContainer.appendChild(courseElement);
+                            coursesContainer.append(courseElement);
                         });
                     })
                     .catch(error => {
                         console.error('Failed to load courses:', error);
                     });
             }
-    
-            // Initial load
-            loadCourses();
 
-            // Handle add to cart
-            document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('add-to-cart')) {
-                    const courseId = event.target.getAttribute('data-course-id');
-                    if (confirm('Are you sure you want to add this course to the cart?')) {
-                        fetch('/cart/add', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: new URLSearchParams({ courseId: courseId })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok ' + response.statusText);
+            // Handle add to cart click event
+            $(document).on('click', '.add-to-cart', function() {
+                const courseId = $(this).data('course-id');
+                if (confirm('Are you sure you want to add this course to the cart?')) {
+                    fetch('/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({ courseId: courseId })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
                         }
                         return response.text();
                     })
                     .then(data => {
-                    alert(data);
+                        alert(data);
                     })
                     .catch(error => {
-                    alert('Failed to add course to cart. Please try again.');
-                    console.error('Error:', error);
-                });
-            }
-        }
-    });
-});
+                        alert('Failed to add course to cart. Please try again.');
+                        console.error('Error:', error);
+                    });
+                }
+            });
+        });
     </script>
-    
 </body>
 </html>

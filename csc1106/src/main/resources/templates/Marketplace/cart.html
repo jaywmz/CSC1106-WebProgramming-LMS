@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - LearnZenith</title>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
+                <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
+                <span class="d-none d-lg-block">LearnZenith</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+        <nav class="header-nav ms-auto" aria-label="Navigation">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/cart}">Cart</a></li>
+                <li class="nav-item dropdown pe-3 nav-profile">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
+                        <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>Need Help?</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/market}"><i class="bi bi-shop"></i><span>Marketplace</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/community}"><i class="bi bi-people"></i><span>Community</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/my-learning}"><i class="bi bi-book"></i><span>My Learning</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
+        </ul>
+    </aside>
+
+    <main id="main" class="main">
+        <div class="container mt-5">
+            <h2>Shopping Cart</h2>
+            <div th:if="${cart.items.isEmpty()}">
+                <p>Your cart is empty.</p>
+            </div>
+            <div th:unless="${cart.items.isEmpty()}">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cart.items}">
+                            <td th:text="${item.course.title}">Course Title</td>
+                            <td th:text="${item.price}">Course Price</td> <!-- Use item.price instead of item.course.price -->
+                            <td><button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" onclick="checkout()">Checkout</button>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </footer>
+
+    <script>
+        function removeFromCart(button) {
+            const courseId = button.getAttribute('data-course-id');
+            fetch('/cart/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ courseId: courseId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert(data);
+                location.reload();
+            })
+            .catch(error => {
+                alert('Failed to remove course from cart. Please try again.');
+                console.error('Error:', error);
+            });
+        }
+
+        function checkout() {
+            alert('Proceeding to checkout...');
+            // Implement checkout functionality
+        }
+    </script>
+</body>
+</html>
