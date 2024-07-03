@@ -33,6 +33,7 @@ public class MarketplaceUploadController {
     @Autowired
     private CartService cartService;
 
+    // Displays the page with courses
     @GetMapping("/coursesupload")
     public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
         if (categoryId != null) {
@@ -43,6 +44,7 @@ public class MarketplaceUploadController {
         return "Marketplace/coursesupload";
     }
 
+    // Displays the page for uploading a course
     @GetMapping("/upload")
     public String showUploadPage(Model model) {
         model.addAttribute("course", new UploadCourse());
@@ -50,6 +52,7 @@ public class MarketplaceUploadController {
         return "Marketplace/upload";
     }
 
+    // Handles the course upload
     @PostMapping("/upload")
     public String uploadCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
@@ -72,6 +75,7 @@ public class MarketplaceUploadController {
         return "redirect:/coursesupload";
     }
 
+    // Displays the page with pending courses for approval
     @GetMapping("/pending-courses")
     public String showPendingCourses(Model model) {
         List<UploadCourse> pendingCourses = courseService.getPendingCourses();
@@ -79,6 +83,7 @@ public class MarketplaceUploadController {
         return "/Admin/pending-courses"; 
     }
 
+    // Handles course approval
     @PostMapping("/courses/{courseId}/approve")
     public String approveCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
         UploadCourse course = courseService.getCourseById(courseId)
@@ -89,6 +94,7 @@ public class MarketplaceUploadController {
         return "redirect:/pending-courses";
     }
     
+    // Handles course rejection
     @PostMapping("/courses/{courseId}/reject")
     public String rejectCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
         UploadCourse course = courseService.getCourseById(courseId)
@@ -99,6 +105,7 @@ public class MarketplaceUploadController {
         return "redirect:/pending-courses";
     }
 
+    // Serves files associated with courses
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {
         FileResource fileResource = courseService.getFileResourceById(fileId)
@@ -114,6 +121,7 @@ public class MarketplaceUploadController {
                 .body(new InputStreamResource(fileInputStream));
     }
 
+    // Determines the MIME type for the file
     private MediaType getMediaTypeForFileName(String fileName) {
         String mimeType = URLConnection.guessContentTypeFromName(fileName);
         if (mimeType == null) {
@@ -122,6 +130,7 @@ public class MarketplaceUploadController {
         return MediaType.parseMediaType(mimeType);
     }
 
+    // Displays the page for editing a course
     @GetMapping("/courses/edit")
     public String showEditPage(@RequestParam("courseId") Long courseId, Model model) {
         Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
@@ -134,6 +143,7 @@ public class MarketplaceUploadController {
         }
     }
 
+    // Handles updating a course
     @PostMapping("/courses/update")
     public String updateCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
@@ -152,6 +162,7 @@ public class MarketplaceUploadController {
         return "redirect:/courses/edit?courseId=" + course.getId();
     }
 
+    // Handles deleting a course
     @PostMapping("/courses/delete")
     public String deleteCourse(@RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
         try {
@@ -164,6 +175,7 @@ public class MarketplaceUploadController {
         return "redirect:/coursesupload";
     }
 
+    // Displays the category page with courses in that category
     @GetMapping("/category/{id}")
     public String getCategoryPage(@PathVariable("id") Long id, Model model) {
         Optional<CategoryGroup> category = courseService.getCategoryById(id);
@@ -178,6 +190,7 @@ public class MarketplaceUploadController {
         return "Marketplace/category-page"; // Ensure this matches your Thymeleaf template name
     }
 
+    // API to fetch courses by category with sorting options
     @GetMapping("/category/{id}/courses")
     @ResponseBody
     public ResponseEntity<List<UploadCourse>> getCoursesByCategory(
@@ -193,6 +206,7 @@ public class MarketplaceUploadController {
         }
     }
 
+    // API to add a course to the cart
     @PostMapping("/cart/add")
     @ResponseBody
     public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
@@ -210,19 +224,19 @@ public class MarketplaceUploadController {
         }
     }
 
+    // Displays the cart page
     @GetMapping("/cart")
-public String viewCart(Model model) {
-    Cart cart = cartService.getCart();
-    logger.info("Cart items: " + cart.getItems());
-    for (CartItem item : cart.getItems()) {
-        logger.info("Item: " + item.toString());
+    public String viewCart(Model model) {
+        Cart cart = cartService.getCart();
+        logger.info("Cart items: " + cart.getItems());
+        for (CartItem item : cart.getItems()) {
+            logger.info("Item: " + item.toString());
+        }
+        model.addAttribute("cart", cart);
+        return "Marketplace/cart";
     }
-    model.addAttribute("cart", cart);
-    return "Marketplace/cart";
-}
 
-    
-
+    // API to remove a course from the cart
     @PostMapping("/cart/remove")
     public ResponseEntity<String> removeFromCart(@RequestParam Long courseId) {
         logger.info("Remove from cart called with courseId: " + courseId);
