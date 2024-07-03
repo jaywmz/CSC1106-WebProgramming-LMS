@@ -2,43 +2,40 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 
-// CartItem.java
+// Entity class representing an item in the shopping cart
 @Entity
 @Table(name = "cart_item")
 public class CartItem {
+
+    // Primary key of the CartItem table
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
+    // Many-to-one relationship with the UploadCourse entity
+    // Each CartItem is associated with one UploadCourse
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private UploadCourse course;
 
+    // Many-to-one relationship with the Cart entity
+    // Each CartItem is associated with one Cart
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    @Column(name = "price", nullable = false)
-    private Double price; // Storing the price separately ensures the price at the time of adding to cart is recorded, allowing for price changes in the future without affecting the cart items.
-
-    @Transient
-    private String lecturer; // Transient field for the lecturer's name, not stored in the database.
-
-    @Transient
-    private String categoryName; // Transient field for the category name, not stored in the database.
-
-    // Constructors
+    // Default constructor
     public CartItem() {
     }
 
-    public CartItem(UploadCourse course, Cart cart, Double price) {
+    // Parameterized constructor to initialize a CartItem with a course and a cart
+    public CartItem(UploadCourse course, Cart cart) {
         this.course = course;
         this.cart = cart;
-        this.price = price;
     }
 
-    // Getters and setters...
+    // Getter and setter methods for the id field
     public Long getId() {
         return id;
     }
@@ -47,6 +44,7 @@ public class CartItem {
         this.id = id;
     }
 
+    // Getter and setter methods for the course field
     public UploadCourse getCourse() {
         return course;
     }
@@ -55,6 +53,7 @@ public class CartItem {
         this.course = course;
     }
 
+    // Getter and setter methods for the cart field
     public Cart getCart() {
         return cart;
     }
@@ -63,40 +62,14 @@ public class CartItem {
         this.cart = cart;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getLecturer() {
-        return lecturer;
-    }
-
-    public void setLecturer(String lecturer) {
-        this.lecturer = lecturer;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    // Debugging tool to check if the fields are being set correctly
+    // Override the toString method to provide a string representation of the CartItem object
+    // This is useful for debugging purposes to check if the fields are being set correctly
     @Override
     public String toString() {
         return "CartItem{" +
                 "id=" + id +
                 ", course=" + course.getTitle() +
                 ", cart=" + cart.getId() +
-                ", price=" + price +
-                ", lecturer='" + lecturer + '\'' +
-                ", categoryName='" + categoryName + '\'' +
                 '}';
     }
 }
