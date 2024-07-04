@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View All Uploaded Courses</title>
+    <meta name="description" content="View all courses uploaded by partners">
+    <meta name="keywords" content="courses, partners, uploaded courses">
+  
+    <!-- Favicon and Apple Touch Icon -->
+    <link rel="icon" href="assets/img/favicon.png">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Nunito:300,400,600|Poppins:300,400,500,600&display=swap" rel="stylesheet">
+  
+    <!-- Vendor CSS -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  
+    <!-- Custom Styles -->
+    <link href="assets/css/dashboard-style.css" rel="stylesheet">
+    <style>
+      /* Custom Styles for View All Uploaded Courses */
+      body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #f8f9fc;
+        padding-top: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      }
+      .pagetitle {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .card {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid #e3e7f3;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+      .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .table th, .table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e3e7f3;
+      }
+      .table th {
+        background-color: #f8f9fc;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+      }
+      .table td {
+        color: #333;
+      }
+      .table tbody tr:hover {
+        background-color: #f5f5f5;
+      }
+      .empty-message {
+        text-align: center;
+        color: #999;
+        padding: 20px;
+        font-style: italic;
+      }
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
+        }
+        .card {
+          padding: 15px;
+        }
+        .card-title {
+          font-size: 1.2rem;
+        }
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pagetitle">
+            <h1>All Courses Uploaded by Partner</h1>
+        </div>
+        
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Description</th>
+                        <th>Lecturer</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Certificate</th>
+                        <!-- Add more headers as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through courses and display -->
+                    <tr th:each="course : ${courses}">
+                        <td th:text="${course.title}"></td>
+                        <td th:text="${course.description}"></td>
+                        <td th:text="${course.lecturer}"></td>
+                        <td th:text="${course.price}"></td>
+                        <td th:each="courseCategory : ${courseCategories}" th:if="${courseCategory.course.id == course.id}" th:text="${courseCategory.categoryGroup.name}"></td>
+                        <td>
+                            <!-- Iterate through partnerPublishes to find corresponding course -->
+                            <span th:each="partnerPublish : ${partnerPublishes}" th:if="${partnerPublish.course.id == course.id}">
+                                <!-- Display certificate image if available -->
+                                <img th:if="${partnerPublish.certificate != null}" th:src="${partnerPublish.certificate.blobUrl}" alt="Certificate" style="max-width: 100px;">
+                            </span>
+                        </td>
+                            
+                        <!-- Add more columns as needed -->
+                    </tr>
+                    <!-- Show a message if no courses are found -->
+                    <tr th:if="${courses.isEmpty()}">
+                        <td colspan="4" class="empty-message">No courses uploaded yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

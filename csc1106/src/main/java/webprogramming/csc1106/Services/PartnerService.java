@@ -12,9 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import webprogramming.csc1106.Entities.CourseCategory;
 import webprogramming.csc1106.Entities.Partner;
+import webprogramming.csc1106.Entities.PartnerPublish;
 import webprogramming.csc1106.Entities.Roles;
 import webprogramming.csc1106.Entities.User;
+import webprogramming.csc1106.Repositories.CourseCategoryRepository;
+import webprogramming.csc1106.Repositories.PartnerPublishRepository;
 import webprogramming.csc1106.Repositories.PartnerRepository;
 import webprogramming.csc1106.Repositories.RoleRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
@@ -36,6 +40,10 @@ public class PartnerService {
     @Autowired
     private EmailService emailService;
 
+
+    @Autowired
+    private PartnerPublishRepository partnerPublishRepository;
+
     private static final Random random = new Random();
 
     public Partner savePartner(Partner partner) {
@@ -44,6 +52,17 @@ public class PartnerService {
 
     public List<Partner> getAllPartners() {
         return partnerRepository.findAll();
+    }
+
+    public List<PartnerPublish> getPartnerPublishByPartnerId(int partnerId) {
+        return partnerPublishRepository.findByPartnerPartnerId(partnerId);
+    }
+
+    @Autowired
+    private CourseCategoryRepository courseCategoryRepository;
+
+    public List<CourseCategory> getCourseCategoriesByCourseIds(List<Long> courseIds) {
+        return courseCategoryRepository.findByCourseIdIn(courseIds);
     }
 
     public boolean approvePartner(Integer partnerId) {

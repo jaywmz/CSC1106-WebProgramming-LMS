@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import webprogramming.csc1106.Entities.UploadCourse;
 
 
@@ -384,5 +386,17 @@ public class UploadCourseService {
 
     public PartnerPublish addPartnerPublish(PartnerPublish publish) {
         return partnerPublishRepository.save(publish);
+    }
+
+    public List<UploadCourse> getCoursesByPartnerId(Integer partnerId) {
+        List<PartnerPublish> publishes = partnerPublishRepository.findByPartnerPartnerId(partnerId);
+        return publishes.stream()
+                        .map(PartnerPublish::getCourse)
+                        .collect(Collectors.toList());
+    }
+
+     // Method to get PartnerPublish by partnerId
+     public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
+        return partnerPublishRepository.findByPartnerPartnerId(partnerId);
     }
 }
