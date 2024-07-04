@@ -162,6 +162,8 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         String blobUrl1 = azureBlobService.uploadToAzureBlob(coverImage1.getInputStream(), coverImage1.getOriginalFilename());
         String blobUrl2 = azureBlobService.uploadToAzureBlob(coverImage2.getInputStream(), coverImage2.getOriginalFilename());
 
+        blobUrl2 = azureBlobService.generateSasUrl(blobUrl2);
+
         // Create a new PartnerCertificate entity
         PartnerCertificate certificate = new PartnerCertificate();
         certificate.setCertificateName(certificateTitle);
@@ -209,6 +211,8 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
 
 
 }
+
+
 
 
 
