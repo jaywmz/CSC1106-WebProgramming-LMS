@@ -39,7 +39,7 @@
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
                         <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
-                    </a><!-- End Profile Image Icon -->
+                    </a><!-- End Profile Iamge Icon -->
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -63,7 +63,7 @@
             <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
         </ul>
-    </aside><!-- End Sidebar -->
+    </aside><!-- End Sidebar-->
 
     <main id="main" class="main">
         <div class="pagetitle">
@@ -85,29 +85,26 @@
                                 <h4>My Cart</h4>
                             </div>
                             <div class="card-body">
-                                <!-- If the cart is empty, display a message -->
                                 <div th:if="${cart.items.isEmpty()}">
                                     <h4>Your cart is empty.</h4>
                                 </div>
-                                <!-- If the cart is not empty, display the cart items -->
                                 <div th:unless="${cart.items.isEmpty()}">
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Title</th>
                                                 <th>Instructor</th>
-                                                <th>Category</th>
+                                                <th>Category</th>  <!-- Add category column -->
                                                 <th>Price</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Loop through each cart item and display its details -->
                                             <tr th:each="item : ${cart.items}">
                                                 <td th:text="${item.course.title}">Course Title</td>
                                                 <td th:text="${item.course.lecturer}">Instructor</td>
-                                                <td th:text="${item.course.courseCategories[0].categoryGroup.name}">Category</td> <!-- Display category name -->
-                                                <td th:text="${item.course.price}">Course Price</td>
+                                                <td th:text="${item.categoryName}">Category</td> <!-- Display category name -->
+                                                <td th:text="${item.price}">Course Price</td>
                                                 <td><button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button></td>
                                             </tr>
                                         </tbody>
@@ -176,7 +173,6 @@
         }
     </script>
 
-    <!-- Custom Script to remove item from cart -->
     <script>
         function removeFromCart(button) {
             const courseId = button.getAttribute('data-course-id');
