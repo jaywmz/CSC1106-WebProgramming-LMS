@@ -3,7 +3,12 @@ package webprogramming.csc1106.Controllers;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,6 +34,9 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/partnership")
 public class PartnershipController {
 
+     private static final Logger logger = LoggerFactory.getLogger(PartnershipController.class);
+
+
     @Autowired
     private PartnerService partnerService;
 
@@ -42,6 +50,9 @@ public class PartnershipController {
     private PartnerPublishRepository partnerPublishRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private PartnerRepository partnerRepository;
 
     @Autowired
@@ -53,6 +64,28 @@ public class PartnershipController {
     public String showPartnershipPage() {
         return "Partnership/partnership";
     }
+
+    @GetMapping("/partner/viewAllCourses")
+    public String viewAllCourses(@RequestParam("userId") int userId, Model model) {
+        User user = userRepository.findById(userId).get();
+        Partner partner = partnerRepository.findByUser(user);
+        // Fetch courses uploaded by the partner based on userId
+        List<UploadCourse> courses = uploadCourseService.getCoursesByPartnerId(partner.getPartnerId());
+
+         // Fetch PartnerPublish entities associated with the partner
+         List<PartnerPublish> partnerPublishes = partnerService.getPartnerPublishByPartnerId(partner.getPartnerId());
+
+         // Pass courses and partnerPublishes to the view
+         model.addAttribute("courses", courses);
+         model.addAttribute("partnerPublishes", partnerPublishes);
+
+         List<Long> courseIds = courses.stream().map(UploadCourse::getId).collect(Collectors.toList());
+    List<CourseCategory> courseCategories = partnerService.getCourseCategoriesByCourseIds(courseIds);
+    model.addAttribute("courseCategories", courseCategories);
+
+        return "Partnership/viewAllCourses"; 
+    }
+
 
     @PostMapping("/submit")
     @ResponseBody
@@ -122,8 +155,9 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
                            @RequestParam("coverImage1") MultipartFile coverImage1,
                            @RequestParam("coverImage2") MultipartFile coverImage2,
                            @RequestParam("category") Long categoryId,
-                           @RequestParam("certificateTitle") String certificateTitle) {
+                           @RequestParam("certificateTitle") String certificateTitle,@RequestParam("userId") int userId) {
     try {
+        logger.info("Attempting to upload course for user ID: " + userId);
         // Upload file to Azure Blob Storage and get Blob URL
         String blobUrl1 = azureBlobService.uploadToAzureBlob(coverImage1.getInputStream(), coverImage1.getOriginalFilename());
         String blobUrl2 = azureBlobService.uploadToAzureBlob(coverImage2.getInputStream(), coverImage2.getOriginalFilename());
@@ -148,9 +182,16 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         // Set associations for the saved entities
         publish.setCourse(savedCourse); // Set the upload course association
 
-        // Set the partner association (temporary assumption: partner ID is 1)
-        Partner partner = partnerRepository.findById(1).orElseThrow(() -> new RuntimeException("Partner with ID 1 not found"));
-        publish.setPartner(partner);
+        //User user = userRepository.findByLoginCookie(userId);
+
+        logger.info("Attempting get user " + userId);
+
+        Partner partner = partnerRepository.findByUserUserId(userId);
+            if (partner == null) {
+                throw new RuntimeException("Partner not found for user ID " + userId);
+            }
+            publish.setPartner(partner);
+       
 
         // Set the certificate association
         publish.setCertificate(certificate);
@@ -158,7 +199,7 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         // Save the PartnerPublish entity
         uploadCourseService.addPartnerPublish(publish);
 
-        return "redirect:/partnership/partner/uploadCourse"; // Redirect to the upload page again
+        return "redirect:/partner"; 
     } catch (IOException e) {
         e.printStackTrace();
         // Handle the exception appropriately
@@ -168,4 +209,6 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
 
 
 }
+
+
 
