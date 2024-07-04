@@ -21,21 +21,8 @@ public class CartItem {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    // Transient field to hold the lecturer/instructor name
-    @Transient
-    private String lecturer;
+    public CartItem() {}
 
-    // Constructors
-    public CartItem() {
-    }
-
-    public CartItem(UploadCourse course, Cart cart, Double price) {
-        this.course = course;
-        this.cart = cart;
-        this.price = price;
-    }
-
-    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -66,13 +53,5 @@ public class CartItem {
 
     public void setPrice(Double price) {
         this.price = price;
-    }
-
-    public String getLecturer() {
-        return lecturer;
-    }
-
-    public void setLecturer(String lecturer) {
-        this.lecturer = lecturer;
     }
 }

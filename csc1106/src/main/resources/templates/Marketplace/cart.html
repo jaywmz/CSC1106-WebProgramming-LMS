@@ -1,30 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart - LearnZenith</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-    <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon" th:href="@{/assets/img/favicon.png}">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
-    <!-- Google Fonts -->
-    <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
-    <!-- Vendor CSS Files -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}">
-    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.snow.css}">
-    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
-    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
-    <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
-    <link href="assets/css/loading.css" rel="stylesheet" th:href="@{/assets/css/loading.css}">
 </head>
 <body>
-    <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
             <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
@@ -32,7 +14,7 @@
                 <span class="d-none d-lg-block">LearnZenith</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
-        </div><!-- End Logo -->
+        </div>
         <nav class="header-nav ms-auto" aria-label="Navigation">
             <ul class="d-flex align-items-center">
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
@@ -42,20 +24,19 @@
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
                         <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
-                    </a><!-- End Profile Image Icon -->
+                    </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>Need Help?</span></a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
-                    </ul><!-- End Profile Dropdown Items -->
-                </li><!-- End Profile Nav -->
+                    </ul>
+                </li>
             </ul>
-        </nav><!-- End Icons Navigation -->
-    </header><!-- End Header -->
+        </nav>
+    </header>
 
-    <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
             <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
@@ -66,96 +47,45 @@
             <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
         </ul>
-    </aside><!-- End Sidebar-->
+    </aside>
 
     <main id="main" class="main">
-        <div class="pagetitle">
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html" th:href="@{/index.html}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/dashboard" th:href="@{/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Cart</li>
-                </ol>
-            </nav>
-        </div><!-- End Page Title -->
-
-        <section class="section dashboard">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>My Cart</h4>
-                            </div>
-                            <div class="card-body">
-                                <div th:if="${cart.items.isEmpty()}">
-                                    <h4>Your cart is empty.</h4>
-                                </div>
-                                <div th:unless="${cart.items.isEmpty()}">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Instructor</th>
-                                                <th>Price</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr th:each="item : ${cart.items}">
-                                                <td th:text="${item.course.title}">Course Title</td>
-                                                <td th:text="${item.course.lecturer}">Instructor</td>
-                                                <td th:text="${item.price}">Course Price</td>
-                                                <td>
-                                                    <button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div id="cart-footer" style="overflow: auto;">
-                                        <button id="checkout-button" style="float: right;" class="btn btn-primary" onclick="checkout()">Checkout</button>
-                                    </div>
-                                </div>
-                            </div>   
-                        </div>
-                    </div>
-                </div>
+        <div class="container mt-5">
+            <h2>Shopping Cart</h2>
+            <div th:if="${cart.items.isEmpty()}">
+                <p>Your cart is empty.</p>
             </div>
-        </section>
-    </main><!-- End #main -->
-
-    <!-- ======= Loading Div ======= -->
-    <div class="loadingDiv" id="loading-div-hidden" style="display: none;">
-        <div class="scene">
-            <div class="cube-wrapper">
-                <div class="cube">
-                    <div class="cube-faces">
-                        <div class="cube-face shadow"></div>
-                        <div class="cube-face bottom"></div>
-                        <div class="cube-face top"></div>
-                        <div class="cube-face left"></div>
-                        <div class="cube-face right"></div>
-                        <div class="cube-face back"></div>
-                        <div class="cube-face front"></div>
-                    </div>
-                </div>
+            <div th:unless="${cart.items.isEmpty()}">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cart.items}">
+                            <td th:text="${item.course.title}">Course Title</td>
+                            <td th:text="${item.price}">Course Price</td> <!-- Use item.price instead of item.course.price -->
+                            <td><button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" onclick="checkout()">Checkout</button>
             </div>
         </div>
-        <div class="loading-text" id="loading-text">Loading...</div>
-    </div>
+    </main>
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </footer>
 
-    <!-- Vendor JS Files -->
-    <script src="assets/vendor/apexcharts/apexcharts.min.js" th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-    <script src="assets/vendor/chart.js/chart.umd.js" th:src="@{/assets/vendor/chart.js/chart.umd.js}"></script>
-    <script src="assets/vendor/echarts/echarts.min.js" th:src="@{/assets/vendor/echarts/echarts.min.js}"></script>
-    <script src="assets/vendor/quill/quill.js" th:src="@{/assets/vendor/quill/quill.js}"></script>
-    <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
-    <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
-    <!-- Template Main JS File -->
-    <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script>
         function removeFromCart(button) {
             const courseId = button.getAttribute('data-course-id');
