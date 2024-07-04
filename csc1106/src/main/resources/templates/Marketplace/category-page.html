@@ -112,13 +112,13 @@
                 <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
                 <span class="d-none d-lg-block">LearnZenith</span>
             </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
+            
         </div>
         <nav class="header-nav ms-auto" aria-label="Navigation">
             <ul class="d-flex align-items-center">
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/checkout}">Cart</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/cart}">Cart</a></li>
                 <li class="nav-item dropdown pe-3 nav-profile">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
@@ -135,18 +135,6 @@
             </ul>
         </nav>
     </header>
-
-    <aside id="sidebar" class="sidebar">
-        <ul class="sidebar-nav" id="sidebar-nav">
-            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/market}"><i class="bi bi-shop"></i><span>Marketplace</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/community}"><i class="bi bi-people"></i><span>Community</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/my-learning}"><i class="bi bi-book"></i><span>My Learning</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
-        </ul>
-    </aside>
 
     <main id="main" class="main">
         <div class="pagetitle">
@@ -177,34 +165,13 @@
                     </select>
                 </div>
                 <div class="row" id="courses-list">
-                    <div class="col-md-4 mb-4" th:each="course : ${courses}">
-                        <div class="card card-custom">
-                            <img th:src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
-                            <div class="card-body">
-                                <h5 class="card-title" th:text="${course.title}">Course Title</h5>
-                                <p class="card-text" th:text="${course.description}">Course Description</p>
-                                <div class="course-rating">
-                                    <span class="star">&#9733;</span>
-                                    <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'">4.5 (602 reviews)</span>
-                                </div>
-                                <p class="card-price" th:text="'$' + ${course.price}">Course Price</p>
-                                <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Courses will be loaded here -->
                 </div>
             </div>
         </section>
     </main>
 
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-        </div>
-    </footer>
+    
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -216,86 +183,112 @@
     <script src="assets/vendor/quill/quill.js" th:src="@{/assets/vendor/quill/quill.js}"></script>
     <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
     <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
+    
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById('sort-by').addEventListener('change', loadCourses);
-    
-            function loadCourses() {
-                var sortBy = document.getElementById('sort-by').value;
-                var categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
-    
-                fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        let coursesContainer = document.getElementById('courses-list');
-                        coursesContainer.innerHTML = ''; // Clear existing courses
-    
-                        data.forEach(course => {
-                            let courseElement = document.createElement('div');
-                            courseElement.classList.add('col-md-4', 'mb-4');
-                            courseElement.innerHTML = `
-                                <div class="card card-custom">
-                                    <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${course.title}</h5>
-                                        <p class="card-text">${course.description}</p>
-                                        <div class="course-rating">
-                                            <span class="star">&#9733;</span>
-                                            <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
-                                        </div>
-                                        <p class="card-price"><strong>$${course.price}</strong></p>
-                                        <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
+            
+            async function loadCourses() {
+                try{
+                    var sortBy = document.getElementById('sort-by').value;
+                    var categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
+        
+                    const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`)
+                    const data = await response.json();
+
+                    let coursesContainer = document.getElementById('courses-list');
+                    coursesContainer.innerHTML = ''; // Clear existing courses
+
+                    data.forEach(course => {
+                        let courseElement = document.createElement('div');
+                        courseElement.classList.add('col-md-4', 'mb-4');
+                        courseElement.innerHTML = `
+                            <div class="card card-custom">
+                                <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
+                                <div class="card-body">
+                                    <h5 class="card-title">${course.title}</h5>
+                                    <p class="card-text">${course.description}</p>
+                                    <div class="course-rating">
+                                        <span class="star">&#9733;</span>
+                                        <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
                                     </div>
+                                    <p class="card-price"><strong>$${course.price}</strong></p>
+                                    <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                                 </div>
-                            `;
-                            coursesContainer.appendChild(courseElement);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Failed to load courses:', error);
+                            </div>
+                        `;
+                        coursesContainer.appendChild(courseElement);
                     });
+                }catch(e){
+                    console.error(e);
+                }    
+                
+                
+                // Handle add to cart
+                document.addEventListener('click', async function(event) {
+                    if (event.target.classList.contains('add-to-cart')) {
+                        const courseId = await event.target.getAttribute('data-course-id');
+                        let userId = getCookie('lrnznth_User_ID');
+                        
+                        if (!userId) {
+                            alert('Please login to add courses to cart');
+                            return;
+                        }
+
+                        // Check if user is already subscribed to the course
+                        const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
+                        const subscriptionCheckData = await subscriptionCheck.text();
+
+                        if(subscriptionCheckData === 'Subscribed'){
+                            alert('You have already subscribed to this course');
+                            return;
+                        }
+
+                        // Check if the course is already in user's cart
+                        const cartCheck = await fetch(`/cartitems/check/${userId}/${courseId}`);
+                        const cartCheckData = await cartCheck.text();
+                        if(cartCheckData === 'In cart'){
+                            alert('Course is already in your cart');
+                            return;
+                        }
+
+                        // Add course to cart
+                        const addResponse = await fetch(`/cartitems/add/${userId}/${courseId}`);
+                        if (addResponse.status != 200) {
+                            return alert("Failed to add course to cart");
+                        }
+                        const addData = await addResponse.text();
+                        if (addData === "Added"){
+                            alert("Course added to cart");
+                        } else {
+                            alert("Failed to add course to cart");
+                        }
+                    }
+                });
             }
     
             // Initial load
             loadCourses();
 
-            // Handle add to cart
-            document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('add-to-cart')) {
-                    const courseId = event.target.getAttribute('data-course-id');
-                    if (confirm('Are you sure you want to add this course to the cart?')) {
-                        fetch('/cart/add', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: new URLSearchParams({ courseId: courseId })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok ' + response.statusText);
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                    alert(data);
-                    })
-                    .catch(error => {
-                    alert('Failed to add course to cart. Please try again.');
-                    console.error('Error:', error);
-                });
+            
+        });
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0;i < ca.length;i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) {
+                    let cookieValue = c.substring(nameEQ.length,c.length);
+                    return decodeURIComponent(cookieValue);
+                }
             }
+            return null;
         }
-    });
-});
     </script>
     
 </body>

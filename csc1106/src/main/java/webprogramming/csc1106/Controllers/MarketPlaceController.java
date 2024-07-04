@@ -57,6 +57,18 @@ public class MarketPlaceController {
         }
     }
 
+    @GetMapping("/totalApprovedCourses")
+    @ResponseBody
+    public ResponseEntity<Long> getTotalApprovedCourses() {
+        try {
+            long totalApprovedCourses = courseService.getAllApprovedCourses().size();
+            return ResponseEntity.ok(totalApprovedCourses);
+        } catch (Exception e) {
+            logger.severe("Error fetching total approved courses: " + e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
     @GetMapping("/checkout")
     public String redirectToCheckout() {
         return "Marketplace/checkout";

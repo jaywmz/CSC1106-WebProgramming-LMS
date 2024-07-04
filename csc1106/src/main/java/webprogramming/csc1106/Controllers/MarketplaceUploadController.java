@@ -20,6 +20,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -183,7 +184,11 @@ public class MarketplaceUploadController {
             @RequestParam(value = "sortBy", required = false) String sortBy) {
         logger.info("Fetching courses with categoryId: " + categoryId + ", sortBy: " + sortBy);
         try {
-            List<UploadCourse> courses = courseService.getFilteredAndSortedCourses(categoryId, sortBy);
+            List<UploadCourse> courses = courseService.getFilteredAndSortedCourses(categoryId, sortBy)
+                    .stream() //Convert the list to a stream
+                    .filter(UploadCourse::isApproved) //Filter out unapproved courses
+                    .collect(Collectors.toList()); //Collect the stream back to a list
+
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
             logger.severe("Error fetching courses: " + e.getMessage());

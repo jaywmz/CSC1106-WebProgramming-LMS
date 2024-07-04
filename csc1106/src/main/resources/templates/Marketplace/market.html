@@ -131,7 +131,7 @@
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetch('/market/totalCourses')
+            fetch('/market/totalApprovedCourses')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('totalCourses').innerText = data;
@@ -154,7 +154,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">${category.name}</h5>
                                         <p class="card-text">${category.description}</p>
-                                        <p class="card-text">Courses: ${category.courseCount}</p>
+                                        <!-- <p class="card-text">Courses: ${category.courseCount}</p> -->
                                     </div>
                                 </div>
                             </a>

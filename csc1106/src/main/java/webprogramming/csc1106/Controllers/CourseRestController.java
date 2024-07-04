@@ -122,6 +122,16 @@ public class CourseRestController {
         return new ResponseEntity<>(cartItems, HttpStatus.OK);
     }
     
+    // Check if the course is already in cart
+    @GetMapping("/cartitems/check/{userId}/{courseId}")
+    public ResponseEntity<String> checkCartItem(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
+        CartItemEntity cartItem = cartItemsRepo.getCartItemByUserIdAndCourseId(userId, courseId);
+        if (cartItem == null) {
+            return new ResponseEntity<>("Not in cart", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("In cart", HttpStatus.OK);
+    }
+
     // Delete Cart Item by cart id
     @GetMapping("/cartitems/delete/{id}")
     public ResponseEntity<String> deleteCartItem(@PathVariable("id") String id) {
@@ -190,6 +200,33 @@ public class CourseRestController {
         return ResponseEntity.ok("Added");
     }
 
+    // Add to cart
+    @GetMapping("/cartitems/add/{userId}/{courseId}")
+    public ResponseEntity<String> addToCart(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        UploadCourse course = uploadCourseRepository.findById((long) courseId).orElse(null);
+
+        if (course == null) {
+            return new ResponseEntity<>("Course not found", HttpStatus.NOT_FOUND);
+        }
+
+        CartItemEntity cartItem = new CartItemEntity();
+        cartItem.setUserId(userId);
+        cartItem.setCourseId(courseId);
+        cartItem.setCourseName(course.getTitle());
+        cartItem.setCourseInstructor(course.getLecturer());
+        cartItem.setCourseCategory(courseCategoryRepository.findByCourseId((long) courseId).getCategoryGroup().getName());
+        cartItem.setCoursePrice(BigDecimal.valueOf(course.getPrice()));
+        cartItem.setAddedAt(Timestamp.from(Instant.now()));
+
+        cartItemsRepo.save(cartItem);
+
+        return ResponseEntity.ok("Added");
+    }
 
 
     // ===========================================================//

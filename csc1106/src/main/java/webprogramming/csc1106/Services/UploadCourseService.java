@@ -59,6 +59,13 @@ public class UploadCourseService {
         return courses;
     }
 
+    // get all course but filter out those not approved
+    public List<UploadCourse> getAllApprovedCourses() {
+        List<UploadCourse> courses = courseRepository.findByIsApprovedTrue();
+        courses.forEach(this::calculateRating);
+        return courses;
+    }
+
     public Optional<UploadCourse> getCourseById(Long id) {
         Optional<UploadCourse> course = courseRepository.findById(id);
         course.ifPresent(this::calculateRating);
