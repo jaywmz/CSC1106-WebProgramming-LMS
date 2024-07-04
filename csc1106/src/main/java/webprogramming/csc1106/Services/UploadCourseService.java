@@ -399,4 +399,8 @@ public class UploadCourseService {
      public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
         return partnerPublishRepository.findByPartnerPartnerId(partnerId);
     }
+
+     public List<CourseCategory> getCourseCategoriesByCourseIds(List<Long> courseIds) {
+        return courseCategoryRepository.findByCourseIdIn(courseIds);
+    }
 }
