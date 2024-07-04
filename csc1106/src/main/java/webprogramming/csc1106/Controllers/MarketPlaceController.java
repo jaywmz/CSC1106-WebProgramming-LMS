@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Services.UploadCourseService;
 import webprogramming.csc1106.Services.CategoryGroupService;

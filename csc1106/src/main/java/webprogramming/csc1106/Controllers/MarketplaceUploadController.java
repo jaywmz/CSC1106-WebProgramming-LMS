@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Services.UploadCourseService;
-import webprogramming.csc1106.Services.CartService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+
 @Controller
 public class MarketplaceUploadController {
 
@@ -29,9 +29,6 @@ public class MarketplaceUploadController {
 
     @Autowired
     private UploadCourseService courseService;
-
-    @Autowired
-    private CartService cartService;
 
     @GetMapping("/coursesupload")
     public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
@@ -98,6 +95,7 @@ public class MarketplaceUploadController {
         redirectAttributes.addFlashAttribute("successMessage", "Course rejected successfully.");
         return "redirect:/pending-courses";
     }
+    
 
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {
@@ -193,26 +191,13 @@ public class MarketplaceUploadController {
         }
     }
 
-    @PostMapping("/cart/add")
-    @ResponseBody
-    public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
-        logger.info("Add to cart called with courseId: " + courseId);
-        Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
-        if (courseOptional.isPresent()) {
-            UploadCourse course = courseOptional.get();
-            cartService.addCourseToCart(course);
-            logger.info("Course added to cart successfully: " + course.getTitle());
-            return ResponseEntity.ok("Course added to cart successfully.");
-        } else {
-            logger.warning("Course not found for courseId: " + courseId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
-        }
-    }
-    @GetMapping("/cart")
-    public String viewCart(Model model) {
-        Cart cart = cartService.getCart();
-        model.addAttribute("cart", cart);
-        return "Marketplace/cart"; // Ensure this matches your Thymeleaf template name
-    }
+    
+@PostMapping("/cart/add")
+@ResponseBody
+public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
+    // Add your logic to add the course to the cart
+    return ResponseEntity.ok("Course added to cart successfully.");
+}
+
 
 }
