@@ -219,24 +219,6 @@
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
 
-    <!-- Custom Script for Username -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const userName = getCookie('lrnznth_User_Name');
-            if (userName) {
-                document.getElementById('loggedInUsername').textContent = userName;
-            } else {
-                document.getElementById('loggedInUsername').textContent = 'Guest';
-            }
-        });
-
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-    </script>
-
     <script>
         $(document).ready(function() {
             // Load courses on page load
