@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-
 @Controller
 public class MarketplaceUploadController {
 
@@ -31,6 +30,7 @@ public class MarketplaceUploadController {
     @Autowired
     private UploadCourseService courseService;
 
+    // Displays the courses upload page, filtered by category if specified
     @GetMapping("/coursesupload")
     public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
         if (categoryId != null) {
@@ -41,6 +41,7 @@ public class MarketplaceUploadController {
         return "Marketplace/coursesupload";
     }
 
+    // Displays the upload course page with a new course object and list of categories
     @GetMapping("/upload")
     public String showUploadPage(Model model) {
         model.addAttribute("course", new UploadCourse());
@@ -48,6 +49,7 @@ public class MarketplaceUploadController {
         return "Marketplace/upload";
     }
 
+    // Handles the course upload form submission
     @PostMapping("/upload")
     public String uploadCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
@@ -55,7 +57,7 @@ public class MarketplaceUploadController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
-            course.setApproved(false);
+            course.setApproved(false);  // Set course as not approved initially
             courseService.processCourseUpload(course, coverImage, selectedCategory);
             redirectAttributes.addFlashAttribute("successMessage", "Course uploaded successfully.");
         } catch (IOException e) {
@@ -70,6 +72,7 @@ public class MarketplaceUploadController {
         return "redirect:/coursesupload";
     }
 
+    // Displays the page with the list of pending courses for approval
     @GetMapping("/pending-courses")
     public String showPendingCourses(Model model) {
         List<UploadCourse> pendingCourses = courseService.getPendingCourses();
@@ -77,6 +80,7 @@ public class MarketplaceUploadController {
         return "/Admin/pending-courses"; 
     }
 
+    // Approves a specific course by setting its approved status to true
     @PostMapping("/courses/{courseId}/approve")
     public String approveCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
         UploadCourse course = courseService.getCourseById(courseId)
@@ -87,6 +91,7 @@ public class MarketplaceUploadController {
         return "redirect:/pending-courses";
     }
     
+    // Rejects a specific course by setting its approved status to false
     @PostMapping("/courses/{courseId}/reject")
     public String rejectCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
         UploadCourse course = courseService.getCourseById(courseId)
@@ -97,7 +102,7 @@ public class MarketplaceUploadController {
         return "redirect:/pending-courses";
     }
     
-
+    // Serves a file for download or inline display based on the disposition
     @GetMapping("/serveFile")
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("fileId") Long fileId, @RequestParam("disposition") String disposition) throws IOException {
         FileResource fileResource = courseService.getFileResourceById(fileId)
@@ -113,6 +118,7 @@ public class MarketplaceUploadController {
                 .body(new InputStreamResource(fileInputStream));
     }
 
+    // Determines the media type for a file based on its name
     private MediaType getMediaTypeForFileName(String fileName) {
         String mimeType = URLConnection.guessContentTypeFromName(fileName);
         if (mimeType == null) {
@@ -121,6 +127,7 @@ public class MarketplaceUploadController {
         return MediaType.parseMediaType(mimeType);
     }
 
+    // Displays the edit course page with the course details and categories
     @GetMapping("/courses/edit")
     public String showEditPage(@RequestParam("courseId") Long courseId, Model model) {
         Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
@@ -133,6 +140,7 @@ public class MarketplaceUploadController {
         }
     }
 
+    // Handles the course update form submission
     @PostMapping("/courses/update")
     public String updateCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
@@ -151,6 +159,7 @@ public class MarketplaceUploadController {
         return "redirect:/courses/edit?courseId=" + course.getId();
     }
 
+    // Deletes a specific course by its ID
     @PostMapping("/courses/delete")
     public String deleteCourse(@RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
         try {
@@ -163,6 +172,7 @@ public class MarketplaceUploadController {
         return "redirect:/coursesupload";
     }
 
+    // Displays the category page with the category details and its courses
     @GetMapping("/category/{id}")
     public String getCategoryPage(@PathVariable("id") Long id, Model model) {
         Optional<CategoryGroup> category = courseService.getCategoryById(id);
@@ -177,6 +187,7 @@ public class MarketplaceUploadController {
         return "Marketplace/category-page"; // Ensure this matches your Thymeleaf template name
     }
 
+    // API endpoint to get courses by category ID with optional sorting
     @GetMapping("/category/{id}/courses")
     @ResponseBody
     public ResponseEntity<List<UploadCourse>> getCoursesByCategory(
@@ -185,9 +196,9 @@ public class MarketplaceUploadController {
         logger.info("Fetching courses with categoryId: " + categoryId + ", sortBy: " + sortBy);
         try {
             List<UploadCourse> courses = courseService.getFilteredAndSortedCourses(categoryId, sortBy)
-                    .stream() //Convert the list to a stream
-                    .filter(UploadCourse::isApproved) //Filter out unapproved courses
-                    .collect(Collectors.toList()); //Collect the stream back to a list
+                    .stream() // Convert the list to a stream
+                    .filter(UploadCourse::isApproved) // Filter out unapproved courses
+                    .collect(Collectors.toList()); // Collect the stream back to a list
 
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
@@ -196,13 +207,11 @@ public class MarketplaceUploadController {
         }
     }
 
-    
-@PostMapping("/cart/add")
-@ResponseBody
-public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
-    // Add your logic to add the course to the cart
-    return ResponseEntity.ok("Course added to cart successfully.");
-}
-
-
+    // API endpoint to add a course to the cart
+    @PostMapping("/cart/add")
+    @ResponseBody
+    public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
+        // Add your logic to add the course to the cart
+        return ResponseEntity.ok("Course added to cart successfully.");
+    }
 }
