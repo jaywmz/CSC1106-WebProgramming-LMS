@@ -12,4 +12,5 @@ public interface CourseCategoryRepository extends JpaRepository<CourseCategory, 
     List<CourseCategory> findByCourse(UploadCourse course);
     CourseCategory findByCourseId(Long courseId);
     List<CourseCategory> findByCategoryGroupId(Long categoryGroupId);
+    List<CourseCategory> findByCourseIdIn(List<Long> courseIds);
 }
