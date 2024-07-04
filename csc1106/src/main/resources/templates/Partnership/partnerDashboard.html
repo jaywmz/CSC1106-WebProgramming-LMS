@@ -169,6 +169,11 @@
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
+
+      <a href="/partnership/partner/uploadCourse" class="btn btn-primary">Upload Course</a>
+      <a href="#" id="viewAllCoursesBtn" class="btn btn-primary">View All Uploaded Courses</a>
+
+    </table>
       
 
 
@@ -193,6 +198,36 @@
   <!-- Template Main JS File -->
   <script src="assets/js/dashboard-main.js"></script>
   <script src="assets/js/dashboard-checker.js"></script>
+  <script>
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1, c.length);
+            }
+            if (c.indexOf(nameEQ) === 0) {
+                let cookieValue = c.substring(nameEQ.length, c.length);
+                return decodeURIComponent(cookieValue);
+            }
+        }
+        return null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const userIdString = getCookie('lrnznth_User_ID');
+        if (userIdString) {
+            const userId = parseInt(userIdString, 10);
+            document.getElementById('viewAllCoursesBtn').addEventListener('click', function(event) {
+                event.preventDefault();
+                window.location.href = '/partnership/partner/viewAllCourses?userId=' + userId;
+            });
+        }
+    });
+</script>
+
+
 </body>
 
 </html>
