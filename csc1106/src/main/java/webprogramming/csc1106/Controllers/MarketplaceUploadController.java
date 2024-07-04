@@ -211,17 +211,11 @@ public class MarketplaceUploadController {
     }
 
     @GetMapping("/cart")
-public String viewCart(Model model) {
-    Cart cart = cartService.getCart();
-    logger.info("Cart items: " + cart.getItems());
-    for (CartItem item : cart.getItems()) {
-        logger.info("Item: " + item.toString());
+    public String viewCart(Model model) {
+        Cart cart = cartService.getCart();
+        model.addAttribute("cart", cart);
+        return "Marketplace/cart"; // Ensure this matches your Thymeleaf template name
     }
-    model.addAttribute("cart", cart);
-    return "Marketplace/cart";
-}
-
-    
 
     @PostMapping("/cart/remove")
     public ResponseEntity<String> removeFromCart(@RequestParam Long courseId) {

@@ -94,7 +94,6 @@
                                             <tr>
                                                 <th>Title</th>
                                                 <th>Instructor</th>
-                                                <th>Category</th>  <!-- Add category column -->
                                                 <th>Price</th>
                                                 <th>Action</th>
                                             </tr>
@@ -103,7 +102,6 @@
                                             <tr th:each="item : ${cart.items}">
                                                 <td th:text="${item.course.title}">Course Title</td>
                                                 <td th:text="${item.course.lecturer}">Instructor</td>
-                                                <td th:text="${item.categoryName}">Category</td> <!-- Display category name -->
                                                 <td th:text="${item.price}">Course Price</td>
                                                 <td><button class="btn btn-danger" th:data-course-id="${item.course.id}" onclick="removeFromCart(this)">Remove</button></td>
                                             </tr>

@@ -2,7 +2,6 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 
-// CartItem.java
 @Entity
 @Table(name = "cart_item")
 public class CartItem {
@@ -20,13 +19,11 @@ public class CartItem {
     private Cart cart;
 
     @Column(name = "price", nullable = false)
-    private Double price; // Storing the price separately ensures the price at the time of adding to cart is recorded, allowing for price changes in the future without affecting the cart items.
+    private Double price;
 
+    // Transient field to hold the lecturer name
     @Transient
-    private String lecturer; // Transient field for the lecturer's name, not stored in the database.
-
-    @Transient
-    private String categoryName; // Transient field for the category name, not stored in the database.
+    private String lecturer;
 
     // Constructors
     public CartItem() {
@@ -38,7 +35,7 @@ public class CartItem {
         this.price = price;
     }
 
-    // Getters and setters...
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -77,26 +74,5 @@ public class CartItem {
 
     public void setLecturer(String lecturer) {
         this.lecturer = lecturer;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    // Debugging tool to check if the fields are being set correctly
-    @Override
-    public String toString() {
-        return "CartItem{" +
-                "id=" + id +
-                ", course=" + course.getTitle() +
-                ", cart=" + cart.getId() +
-                ", price=" + price +
-                ", lecturer='" + lecturer + '\'' +
-                ", categoryName='" + categoryName + '\'' +
-                '}';
     }
 }
