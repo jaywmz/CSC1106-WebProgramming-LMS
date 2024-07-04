@@ -34,7 +34,7 @@
         padding-top: 20px;
       }
       .container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
         background-color: #fff;
@@ -86,6 +86,15 @@
         padding: 20px;
         font-style: italic;
       }
+      .image-container {
+        max-width: 100px;
+        max-height: 100px;
+        overflow: hidden;
+      }
+      .image-container img {
+        width: 100%;
+        height: auto;
+      }
       @media (max-width: 768px) {
         .container {
           padding: 15px;
@@ -111,6 +120,7 @@
                     <tr>
                         <th>Course Name</th>
                         <th>Description</th>
+                        <th>Cover Image</th>
                         <th>Lecturer</th>
                         <th>Price</th>
                         <th>Category</th>
@@ -123,6 +133,11 @@
                     <tr th:each="course : ${courses}">
                         <td th:text="${course.title}"></td>
                         <td th:text="${course.description}"></td>
+                        <td>
+                          <div class="image-container">
+                            <img th:src="${course.coverImageUrl}" alt="Cover Image">
+                          </div>
+                        </td>
                         <td th:text="${course.lecturer}"></td>
                         <td th:text="${course.price}"></td>
                         <td th:each="courseCategory : ${courseCategories}" th:if="${courseCategory.course.id == course.id}" th:text="${courseCategory.categoryGroup.name}"></td>
@@ -130,7 +145,9 @@
                             <!-- Iterate through partnerPublishes to find corresponding course -->
                             <span th:each="partnerPublish : ${partnerPublishes}" th:if="${partnerPublish.course.id == course.id}">
                                 <!-- Display certificate image if available -->
-                                <img th:if="${partnerPublish.certificate != null}" th:src="${partnerPublish.certificate.blobUrl}" alt="Certificate" style="max-width: 100px;">
+                                <div class="image-container">
+                                    <img th:if="${partnerPublish.certificate != null}" th:src="${partnerPublish.certificate.blobUrl}" alt="Certificate">
+                                </div>
                             </span>
                         </td>
                             
@@ -138,7 +155,7 @@
                     </tr>
                     <!-- Show a message if no courses are found -->
                     <tr th:if="${courses.isEmpty()}">
-                        <td colspan="4" class="empty-message">No courses uploaded yet.</td>
+                        <td colspan="7" class="empty-message">No courses uploaded yet.</td>
                     </tr>
                 </tbody>
             </table>
@@ -146,3 +163,4 @@
     </div>
 </body>
 </html>
+
