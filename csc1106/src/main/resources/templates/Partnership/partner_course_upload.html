@@ -20,8 +20,30 @@
             margin-bottom: 30px;
         }
     </style>
-</head>
+    <script>
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) {
+                    let cookieValue = c.substring(nameEQ.length, c.length);
+                    return decodeURIComponent(cookieValue);
+                }
+            }
+            return null;
+        }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const userIdString = getCookie('lrnznth_User_ID');
+    if (userIdString) {
+        const userId = parseInt(userIdString, 10); 
+        document.getElementById('userId').value = userId;
+    }
+        });
+    </script>
+</head>
 <body>
     <div class="container">
         <h1 class="form-title">Upload Course</h1>
@@ -53,8 +75,6 @@
                 <label for="certificateTitle">Certificate Title</label>
                 <input type="text" class="form-control" id="certificateTitle" name="certificateTitle" placeholder="Certificate Title" required>
             </div>
-            
-
             <div class="form-group">
                 <label for="coverImage2">Certificate File</label>
                 <input type="file" class="form-control-file" id="coverImage2" name="coverImage2" accept="image/*" required>
@@ -68,6 +88,10 @@
                 </select>
             </div>
 
+            <!-- Hidden Input for userId -->
+            <input type="hidden" id="userId" name="userId">
+            
+            <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Upload Course</button>
         </form>
     </div>
