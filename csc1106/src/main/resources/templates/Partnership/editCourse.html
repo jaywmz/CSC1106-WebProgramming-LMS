@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Course</title>
+    <!-- Add necessary CSS and JS -->
+
+    <script>
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) {
+                    let cookieValue = c.substring(nameEQ.length, c.length);
+                    return decodeURIComponent(cookieValue);
+                }
+            }
+            return null;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userIdString = getCookie('lrnznth_User_ID');
+    if (userIdString) {
+        const userId = parseInt(userIdString, 10); 
+        document.getElementById('userId').value = userId;
+    }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Course</h1>
+        <form th:action="@{/partnership/partner/editCourse}" th:object="${course}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" th:field="*{title}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" th:field="*{description}" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="lecturer">Lecturer:</label>
+                <input type="text" id="lecturer" th:field="*{lecturer}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="text" id="price" th:field="*{price}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="selectedCategory">Category</label>
+                <select id="selectedCategory" name="selectedCategory" class="form-control" required>
+                    <option value="" disabled>Select a category</option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="coverImage1">Cover Image 1:</label>
+                <input type="file" id="coverImage1" name="coverImage1" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="coverImage2">Cover Image 2:</label>
+                <input type="file" id="coverImage2" name="coverImage2" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="certificateTitle">Certificate Title:</label>
+                <input type="text" id="certificateTitle" name="certificateTitle" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Update Course</button>
+        </form>
+    </div>
+</body>
+</html>
