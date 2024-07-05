@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import webprogramming.csc1106.Entities.CourseCategory;
 import webprogramming.csc1106.Entities.Partner;
 import webprogramming.csc1106.Entities.PartnerPublish;
 import webprogramming.csc1106.Entities.Roles;
+import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.CourseCategoryRepository;
 import webprogramming.csc1106.Repositories.PartnerPublishRepository;
@@ -132,4 +134,16 @@ public class PartnerService {
         }
         return builder.toString();
     }
+
+    public Partner getPartnerByCourseId(UploadCourse course) {
+        PartnerPublish partnerPublish = partnerPublishRepository.findByCourse(course);
+        return partnerPublish.getPartner();
+    }
+
+    public void deletePartnerPublishByCourse(UploadCourse course) {
+        PartnerPublish partnerPublish = partnerPublishRepository.findByCourse(course);
+        partnerPublishRepository.delete(partnerPublish);
+    }
+
+
 }
