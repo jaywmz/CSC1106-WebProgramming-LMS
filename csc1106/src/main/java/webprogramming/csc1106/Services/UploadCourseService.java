@@ -1,23 +1,41 @@
 package webprogramming.csc1106.Services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
-import webprogramming.csc1106.Entities.*;
-import webprogramming.csc1106.Repositories.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
+import webprogramming.csc1106.Entities.CategoryGroup;
+import webprogramming.csc1106.Entities.CourseCategory;
+import webprogramming.csc1106.Entities.FileResource;
+import webprogramming.csc1106.Entities.Lesson;
+import webprogramming.csc1106.Entities.PartnerCertificate;
+import webprogramming.csc1106.Entities.PartnerPublish;
+import webprogramming.csc1106.Entities.Rating;
+import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Repositories.CategoryGroupRepository;
+import webprogramming.csc1106.Repositories.CourseCategoryRepository;
+import webprogramming.csc1106.Repositories.FileResourceRepository;
+import webprogramming.csc1106.Repositories.LessonRepository;
+import webprogramming.csc1106.Repositories.PartnerCertificateRepository;
+import webprogramming.csc1106.Repositories.PartnerPublishRepository;
+import webprogramming.csc1106.Repositories.RatingRepository;
+import webprogramming.csc1106.Repositories.SectionRepository;
+import webprogramming.csc1106.Repositories.UploadCourseRepository;
 
 
 @Service
@@ -339,7 +357,7 @@ public class UploadCourseService {
         }
     }
 
-    public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
+     public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
             String contentType = coverImage.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
@@ -379,6 +397,65 @@ public class UploadCourseService {
         }
         return savedCourse; 
     }
+
+    public void updateCourse(UploadCourse course, MultipartFile coverImage, Long categoryId,String certificateBlobUrl, String certificateTitle) throws IOException {
+        Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
+        if (!existingCourseOpt.isPresent()) {
+            throw new RuntimeException("Course not found.");
+        }
+
+        UploadCourse existingCourse = existingCourseOpt.get();
+
+        // Update cover image if a new one is provided
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String contentType = coverImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
+            }
+            if (existingCourse.getCoverImageUrl() != null) {
+                deleteBlob(existingCourse.getCoverImageUrl());
+            }
+            String coverImageUrl = uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
+            coverImageUrl = generateSasUrl(coverImageUrl);
+            existingCourse.setCoverImageUrl(coverImageUrl);
+        }
+
+        // Update basic fields
+        existingCourse.setTitle(course.getTitle());
+        existingCourse.setDescription(course.getDescription());
+        existingCourse.setLecturer(course.getLecturer());
+        existingCourse.setPrice(course.getPrice());
+
+        // Update the category
+        clearCourseCategories(existingCourse);
+        CategoryGroup categoryGroup = getCategoryById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        CourseCategory courseCategory = new CourseCategory(existingCourse, categoryGroup);
+        addCourseCategory(courseCategory);
+        existingCourse.getCourseCategories().add(courseCategory);
+
+    // Update the certificate details
+    if (certificateBlobUrl != null && certificateTitle != null) {
+        PartnerPublish partnerpublish = partnerPublishRepository.findByCourse(existingCourse);
+        PartnerCertificate certificate = partnerCertificateRepository.findByPartnerPublish(partnerpublish);
+        certificate.setCertificateName(certificateTitle);
+        certificate.setBlobUrl(certificateBlobUrl); // Set Blob URL
+        certificate.setIssueDate(LocalDateTime.now());
+
+        // Save the updated certificate details
+        addPartnerCertificate(certificate);
+
+        // Update the PartnerPublish entity with the new certificate details
+        PartnerPublish publish = partnerPublishRepository.findByCourse(existingCourse);
+        publish.setCertificate(certificate);
+
+        // Save the updated PartnerPublish entity
+        addPartnerPublish(publish);
+    }
+
+    updateCourse(existingCourse);
+}
+
 
     public PartnerCertificate addPartnerCertificate(PartnerCertificate certificate) {
         return partnerCertificateRepository.save(certificate);
