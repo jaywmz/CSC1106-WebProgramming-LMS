@@ -3,6 +3,7 @@ package webprogramming.csc1106.Controllers;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -208,6 +209,64 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         return "error-page"; // Redirect to an error page or handle differently
     }
 }
+
+@GetMapping("/partner/editCourse/{id}")
+    public String editCourse(@PathVariable("id") Long id, Model model) {
+        Optional<UploadCourse> optionalCourse = uploadCourseService.getCourseById(id);
+        if (optionalCourse.isPresent()) {
+            UploadCourse course = optionalCourse.get();
+            model.addAttribute("course", course);
+            model.addAttribute("categories", uploadCourseService.getAllCategories());
+            return "Partnership/editCourse";
+        } else {
+            // Handle the case where the course is not found
+            return "error-page"; // Redirect to an error page or handle differently
+        }
+    }
+
+    @PostMapping("/partner/editCourse")
+    public String updateCourse(@ModelAttribute UploadCourse course,
+                               @RequestParam("coverImage1") MultipartFile coverImage1,
+                               @RequestParam("coverImage2") MultipartFile coverImage2,
+                               @RequestParam("selectedCategory") Long selectedCategory,
+                               @RequestParam("certificateTitle") String certificateTitle) {
+        try {
+            // Process file uploads and update the course details
+            String blobUrl1 = azureBlobService.uploadToAzureBlob(coverImage1.getInputStream(), coverImage1.getOriginalFilename());
+            String blobUrl2 = azureBlobService.uploadToAzureBlob(coverImage2.getInputStream(), coverImage2.getOriginalFilename());
+
+            blobUrl2 = azureBlobService.generateSasUrl(blobUrl2);
+            
+            // Update the course details
+            uploadCourseService.updateCourse(course, coverImage1, selectedCategory, blobUrl2, certificateTitle);
+            
+         // Fetch PartnerPublish entities associated with the partner
+          Partner partner = partnerService.getPartnerByCourseId(course);
+          User user = partner.getUser();
+
+            return "redirect:/partnership/partner/viewAllCourses?userId=" + user.getUserID(); 
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "error-page";
+        }
+
+        
+    }
+
+    @GetMapping("/partner/deleteCourse/{id}")
+    public String deleteCourse(@PathVariable("id") Long id) {
+
+        // Fetch PartnerPublish entities associated with the partner
+        Optional<UploadCourse> Course = uploadCourseService.getCourseById(id);
+        UploadCourse course = Course.get();
+        Partner partner = partnerService.getPartnerByCourseId(course);
+        User user = partner.getUser();
+        partnerService.deletePartnerPublishByCourse(course);
+        uploadCourseService.deleteCourse(id);
+
+        return "redirect:/partnership/partner/viewAllCourses?userId=" + user.getUserID(); 
+    }
+
 
 
 }
