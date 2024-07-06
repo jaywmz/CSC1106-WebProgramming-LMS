@@ -86,6 +86,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>6.4.8.Final</version>
         </dependency>
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>rest-api-sdk</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

@@ -1,6 +1,7 @@
 package webprogramming.csc1106.Services;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,14 @@ public class UserService {
             builder.append(cookieCharacters.charAt(new Random().nextInt(cookieCharacters.length())));
         }
         return builder.toString();
+    }
+
+    public Optional<User> findById(int userId) {
+        return userRepository.findById(userId);
+    }
+
+    public BigDecimal getUserBalance(int userId) {
+        return userRepository.findById(userId).map(User::getUserBalance).orElse(BigDecimal.ZERO);
     }
 
     // Other service methods...

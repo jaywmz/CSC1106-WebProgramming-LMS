@@ -23,3 +23,8 @@ azure:
     connection-string: DefaultEndpointsProtocol=https;AccountName=learnzenithblob;AccountKey=AImtsIhXXZHqqyeCr/uD/QuCy+JyvYUDwE1feJqoMtBYnsxu48QGVW6j7pAnKwfakT1qNkZqKoA9+ASt0lTZWQ==
     container-name: courseuploads
 
+paypal:
+  client:
+    id: AVEhDw5v_IyqsjdrGzEZzfRBJNN_hg5NyLuZeaC6ReklKVKcb1-SrXBf45k4z_O2pYjN9AZuECBNFw1o
+    secret: EDM5hmy9bQZjfoUp9IcMB-vyvZkFRE1Dx59y-uDe_7OAU3GrME1LlDjLnHllXmI8FTkk94YMfPkJky0H
+  mode: sandbox

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Place - LearnZenith</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
@@ -128,6 +128,13 @@
         .category-cards-container {
             width: 100%;
         }
+
+        /* Modal styles */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -136,7 +143,6 @@
                 .then(data => {
                     document.getElementById('totalCourses').innerText = data;
                 });
-
 
             fetch('/market/categories')
                 .then(response => response.json())
@@ -154,7 +160,6 @@
                                     <div class="card-body">
                                         <h5 class="card-title">${category.name}</h5>
                                         <p class="card-text">${category.description}</p>
-                                        <!-- <p class="card-text">Courses: ${category.courseCount}</p> -->
                                     </div>
                                 </div>
                             </a>
@@ -162,7 +167,42 @@
                         categoriesContainer.appendChild(categoryElement);
                     });
                 });
+
+            function getCookie(name) {
+                let cookieArr = document.cookie.split(";");
+                for (let i = 0; i < cookieArr.length; i++) {
+                    let cookiePair = cookieArr[i].split("=");
+                    if (name == cookiePair[0].trim()) {
+                        return decodeURIComponent(cookiePair[1]);
+                    }
+                }
+                return null;
+            }
+
+            let userId = getCookie("userId");
+            if (userId) {
+                document.getElementById("userId").value = userId;
+
+                fetch(`/user/${userId}/balance`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("currentBalance").innerText = `$${data.balance.toFixed(2)}`;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching balance:', error);
+                    });
+            }
         });
+
+        function redirectToPayPal() {
+            const userId = document.getElementById("userId").value;
+            const amount = document.getElementById("topUpAmount").value;
+            if (amount && !isNaN(amount)) {
+                window.location.href = `/paypal/pay?total=${amount}&userId=${userId}`;
+            } else {
+                alert("Please enter a valid amount.");
+            }
+        }
     </script>
 </head>
 <body>
@@ -178,7 +218,9 @@
             <ul class="d-flex align-items-center">
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/checkout}">Cart</a></li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link nav-link-custom" data-bs-toggle="modal" data-bs-target="#topUpModal">Top Up</a>
+                </li>
                 <li class="nav-item dropdown pe-3 nav-profile">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
@@ -221,7 +263,7 @@
 
         <section id="ongoing-courses" class="section">
             <div class="container">
-                <h2>Ongoing Courses</h2>
+                <h2>Explore Your Active Learning Journey</h2>
                 <p>Total Courses Available: <span id="totalCourses"></span></p>
                 <div id="courses" class="row"></div>
             </div>
@@ -305,5 +347,29 @@
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script src="assets/js/dashboard-checker.js"></script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="topUpAmount">Enter Amount (USD):</label>
+                    <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
+                    <input type="hidden" name="userId" id="userId">
+                    <p>Current Balance: <span id="currentBalance">$0.00</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="redirectToPayPal()">Proceed to PayPal</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
