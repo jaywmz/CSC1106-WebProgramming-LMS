@@ -21,7 +21,6 @@ public class CourseCategory {
     @JsonBackReference
     private CategoryGroup categoryGroup;
 
-    // Constructors
     public CourseCategory() {}
 
     public CourseCategory(UploadCourse course, CategoryGroup categoryGroup) {
@@ -29,7 +28,7 @@ public class CourseCategory {
         this.categoryGroup = categoryGroup;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

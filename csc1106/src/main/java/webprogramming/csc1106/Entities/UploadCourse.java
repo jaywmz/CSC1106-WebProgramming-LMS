@@ -30,6 +30,7 @@ public class UploadCourse {
     private String coverImageUrl;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Section> sections = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -43,7 +44,6 @@ public class UploadCourse {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transactions> transactions = new ArrayList<>();
 
-    // Fields for average rating and review count
     @Transient
     private double averageRating;
 
@@ -53,7 +53,6 @@ public class UploadCourse {
     @Column(name = "is_approved")
     private boolean isApproved;
 
-    // Constructors
     public UploadCourse() {}
 
     public UploadCourse(String title, String description, String lecturer, Double price, String coverImageUrl) {
@@ -64,15 +63,7 @@ public class UploadCourse {
         this.coverImageUrl = coverImageUrl;
     }
 
-    public boolean isApproved() {
-        return isApproved;
-    }
-
-    public void setApproved(boolean approved) {
-        isApproved = approved;
-    }
-
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -167,5 +158,13 @@ public class UploadCourse {
 
     public void setReviewCount(int reviewCount) {
         this.reviewCount = reviewCount;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean isApproved) {
+        this.isApproved = isApproved;
     }
 }

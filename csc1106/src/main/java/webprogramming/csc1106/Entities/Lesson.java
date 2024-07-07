@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ public class Lesson {
 
     @ManyToOne
     @JoinColumn(name = "section_id")
+    @JsonBackReference
     private Section section;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -28,7 +30,6 @@ public class Lesson {
     @Transient
     private MultipartFile file;
 
-    // Constructors
     public Lesson() {}
 
     public Lesson(String title, Section section) {
@@ -36,7 +37,7 @@ public class Lesson {
         this.section = section;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

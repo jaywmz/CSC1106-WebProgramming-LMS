@@ -27,9 +27,8 @@ public class CategoryGroup {
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
     @Transient
-    private int courseCount; // Transient field to hold the count of courses
+    private int courseCount;
 
-    // Constructors
     public CategoryGroup() {}
 
     public CategoryGroup(String name, String description, String coverImageUrl) {
@@ -38,7 +37,7 @@ public class CategoryGroup {
         this.coverImageUrl = coverImageUrl;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

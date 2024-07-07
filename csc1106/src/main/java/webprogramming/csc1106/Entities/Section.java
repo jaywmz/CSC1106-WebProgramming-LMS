@@ -29,7 +29,6 @@ public class Section {
     @JsonManagedReference
     private List<Lesson> lessons = new ArrayList<>();
 
-    // Constructors
     public Section() {}
 
     public Section(String title, String description, UploadCourse course) {
@@ -38,7 +37,7 @@ public class Section {
         this.course = course;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

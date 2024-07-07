@@ -22,7 +22,6 @@ public class FileResource {
     @JsonBackReference
     private Lesson lesson;
 
-    // Constructors
     public FileResource() {}
 
     public FileResource(String fileName, String fileUrl) {
@@ -30,7 +29,7 @@ public class FileResource {
         this.fileUrl = fileUrl;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
