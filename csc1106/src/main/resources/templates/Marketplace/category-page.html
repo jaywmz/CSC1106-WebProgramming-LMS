@@ -103,6 +103,16 @@
         .btn {
             margin-top: auto;
         }
+        /* Loading spinner styles */
+        .spinner-border {
+            display: none;
+            width: 3rem;
+            height: 3rem;
+            border-width: .3em;
+        }
+        .loading .spinner-border {
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -112,7 +122,6 @@
                 <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
                 <span class="d-none d-lg-block">LearnZenith</span>
             </a>
-            
         </div>
         <nav class="header-nav ms-auto" aria-label="Navigation">
             <ul class="d-flex align-items-center">
@@ -165,13 +174,15 @@
                     </select>
                 </div>
                 <div class="row" id="courses-list">
+                    <!-- Loading spinner -->
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                     <!-- Courses will be loaded here -->
                 </div>
             </div>
         </section>
     </main>
-
-    
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -188,19 +199,34 @@
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            document.getElementById('sort-by').addEventListener('change', loadCourses);
-            
+        document.addEventListener('DOMContentLoaded', function() {
+            const sortBySelect = document.getElementById('sort-by');
+            const filterCategorySelect = document.getElementById('filter-category');
+            const coursesContainer = document.getElementById('courses-list');
+            const spinner = document.querySelector('.spinner-border');
+
+            sortBySelect.addEventListener('change', loadCourses);
+            filterCategorySelect.addEventListener('change', loadCourses);
+
             async function loadCourses() {
-                try{
-                    var sortBy = document.getElementById('sort-by').value;
-                    var categoryId = window.location.pathname.split("/").pop(); // Get the category ID from the URL
-        
-                    const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`)
+                try {
+                    var sortBy = sortBySelect.value;
+                    var categoryId = filterCategorySelect.value || window.location.pathname.split("/").pop();
+
+                    // Show the loading spinner
+                    if (spinner) {
+                        spinner.style.display = 'inline-block';
+                    }
+
+                    // Clear the existing courses
+                    coursesContainer.innerHTML = '';
+                    coursesContainer.appendChild(spinner);
+
+                    const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`);
                     const data = await response.json();
 
-                    let coursesContainer = document.getElementById('courses-list');
-                    coursesContainer.innerHTML = ''; // Clear existing courses
+                    // Remove spinner
+                    coursesContainer.innerHTML = '';
 
                     data.forEach(course => {
                         let courseElement = document.createElement('div');
@@ -222,15 +248,25 @@
                         `;
                         coursesContainer.appendChild(courseElement);
                     });
-                }catch(e){
+
+                    // Hide the loading spinner
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                    }
+
+                    // Add event listeners to new Add to Cart buttons
+                    addCartEventListeners();
+                } catch(e) {
                     console.error(e);
-                }    
-                
-                
-                // Handle add to cart
-                document.addEventListener('click', async function(event) {
-                    if (event.target.classList.contains('add-to-cart')) {
-                        const courseId = await event.target.getAttribute('data-course-id');
+                }
+            }
+
+            // Add to Cart event listener
+            function addCartEventListeners() {
+                const addToCartButtons = document.querySelectorAll('.add-to-cart');
+                addToCartButtons.forEach(button => {
+                    button.addEventListener('click', async function(event) {
+                        const courseId = event.target.getAttribute('data-course-id');
                         let userId = getCookie('lrnznth_User_ID');
                         
                         if (!userId) {
@@ -266,20 +302,18 @@
                         } else {
                             alert("Failed to add course to cart");
                         }
-                    }
+                    });
                 });
             }
-    
+
             // Initial load
             loadCourses();
-
-            
         });
 
         function getCookie(name) {
             let nameEQ = name + "=";
             let ca = document.cookie.split(';');
-            for(let i=0;i < ca.length;i++) {
+            for(let i=0; i < ca.length; i++) {
                 let c = ca[i];
                 while (c.charAt(0)==' ') c = c.substring(1,c.length);
                 if (c.indexOf(nameEQ) == 0) {
@@ -290,6 +324,5 @@
             return null;
         }
     </script>
-    
 </body>
 </html>

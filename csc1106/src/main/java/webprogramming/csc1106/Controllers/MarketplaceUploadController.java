@@ -178,12 +178,10 @@ public class MarketplaceUploadController {
         Optional<CategoryGroup> category = courseService.getCategoryById(id);
         if (category.isPresent()) {
             model.addAttribute("category", category.get());
-            List<UploadCourse> courses = courseService.getCoursesByCategoryId(id);
-            model.addAttribute("courses", courses);
         } else {
             model.addAttribute("category", new CategoryGroup());
-            model.addAttribute("courses", List.of());
         }
+        model.addAttribute("categories", courseService.getAllCategories()); // For the filter dropdown
         return "Marketplace/category-page"; // Ensure this matches your Thymeleaf template name
     }
 
