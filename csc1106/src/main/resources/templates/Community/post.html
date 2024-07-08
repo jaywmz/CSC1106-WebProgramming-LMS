@@ -74,7 +74,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="/index.html" class="logo d-flex align-items-center">
         <img src="/assets/img/logo.png" alt="">
         <span class="d-none d-lg-block">LearnZenith</span>
       </a>
@@ -161,9 +161,10 @@
       <div class="row">
         <div class="col-lg-15">
 
-        <!-- Post title and content section -->
+        <!-- Post section -->
         <div class="card">
 
+          <!-- post body -->
           <div class="card-body">
             <h5 class="card-title" th:text="${post.title}"></h5>
             <span th:utext="${post.content}"></span>
@@ -172,23 +173,31 @@
             </div>
           </div>
 
+          <!-- post footer -->
           <div class="card-footer d-flex justify-content-between align-items-center">
             <span th:text="'Posted on ' + ${#dates.format(post.timestamp, 'dd MMM yyyy hh:mm a')} + ' by ' + ${post.posterName}"></span>
             <div class="d-inline-flex gap-2 align-items-center">
-              Likes: <span id="like-count" th:text="${post.likes}"></span>
+              <span id="like-count" th:text="${post.likes}"></span><i class="bi bi-heart-fill me-1"></i>
+
               <!-- like button -->
               <div th:switch="${liked}">
-                <button th:case="false" type="button" class="btn btn-outline-primary" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
+                <button th:case="false" type="button" class="btn btn-outline-primary" id="like-button" onclick="toggleLike(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
                   <i class="bi bi-heart me-1"></i><span> Like</span>
                 </button> 
-                <button th:case="true" type="button" class="btn btn-outline-primary active" id="like-button" onclick="toggleActive(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
+                <button th:case="true" type="button" class="btn btn-outline-primary active" id="like-button" onclick="toggleLike(this, 'Like', 'Liked', 'bi-heart', 'bi-heart-fill')">
                   <i class="bi bi-heart-fill me-1"></i><span> Liked</span>
                 </button> 
               </div>
-              <!-- End like button -->
-              <button type="button" class="btn btn-outline-primary" id="subscribe-button" onclick="toggleActive(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')">
-                <i class="bi bi-bell me-1"></i><span> Subscribe</span>
-              </button>    
+
+              <!-- Subscribe button -->
+              <div th:switch="${subbed}">
+                <button th:case="false" type="button" class="btn btn-outline-primary" id="subscribe-button" onclick="toggleSubscribe(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')">
+                  <i class="bi bi-bell me-1"></i><span> Subscribe</span>
+                </button>
+                <button th:case="true" type="button" class="btn btn-outline-primary active" id="subscribe-button" onclick="toggleSubscribe(this, 'Subscribe', 'Subscribed', 'bi-bell', 'bi-bell-fill')">
+                  <i class="bi bi-bell-fill me-1"></i><span> Subscribed</span>
+                </button>
+              </div>
             </div>          
           </div>
         </div>
@@ -295,7 +304,7 @@
   <!-- Template Main JS File -->
   <script src="/assets/js/dashboard-main.js"></script>
   <script src="/assets/js/dashboard-checker.js"></script>
-  <script src="/assets/js/like-community-post.js"></script>
+  <script src="/assets/js/like-subscribe-post.js"></script>
 </body>
 
 </html>

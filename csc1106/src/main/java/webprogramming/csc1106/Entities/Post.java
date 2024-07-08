@@ -31,6 +31,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Likes> likedBy;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subscription> subscribedBy;
+
     @Column(name = "poster_name", nullable = false)
     private String posterName; // username that posted the thread
 

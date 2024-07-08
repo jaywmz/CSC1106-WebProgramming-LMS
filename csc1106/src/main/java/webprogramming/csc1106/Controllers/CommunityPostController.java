@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Models.LikesID;
+import webprogramming.csc1106.Models.SubscribeID;
 import webprogramming.csc1106.Repositories.*;
 
 @Controller
@@ -26,17 +27,18 @@ public class CommunityPostController {
     private UserRepository userRepo;
     @Autowired
     private LikesRepo likesRepo;
+    @Autowired
+    private SubscriptionsRepo subsRepo;
 
     @GetMapping("/community/{user_group}/{category_id}/{post_id}")
     public String getPost(@PathVariable String category_id, @PathVariable String post_id, @PathVariable String user_group, @CookieValue("lrnznth_User_Name") String username, Model model) {
         // retrieve models
-        Long post_ID = Long.parseLong(post_id);
-        Post post = postRepo.findByPostID(post_ID);
+        Post post = postRepo.findByPostID(Long.parseLong(post_id));
         String category_name = post.getCategory().getName();
         List<PostAttachments> attachments = post.getAttachments();
         User user = userRepo.findByUserName(username);
-        LikesID likesID = new LikesID(user.getUserID(), post.getPostID());
-        Optional<Likes> like = likesRepo.findById(likesID);
+        Optional<Likes> like = likesRepo.findById(new LikesID(user.getUserID(), post.getPostID()));
+        Optional<Subscription> sub = subsRepo.findById(new SubscribeID(user.getUserID(), post.getPostID()));
 
         // extract urls from attachments list
         ArrayList<String> urls = new ArrayList<String>();
@@ -56,13 +58,11 @@ public class CommunityPostController {
         model.addAttribute("user_group", user_group);
         model.addAttribute("newComment", new Comment());
         model.addAttribute("comments", post.getComments().reversed());
-        if (like.isPresent()) {
-            model.addAttribute("liked", true);
-        }
-        else {
-            model.addAttribute("liked", false);
-        }
-
+        if (like.isPresent()) model.addAttribute("liked", true); 
+        else model.addAttribute("liked", false);
+        if (sub.isPresent()) model.addAttribute("subbed", true); 
+        else model.addAttribute("subbed", false);
+        
         return "Community/post";
     }
 
@@ -116,6 +116,49 @@ public class CommunityPostController {
             User user = userRepo.findByUserName(username);
             LikesID likeID = new LikesID(user.getUserID(), unlikedPost.getPostID());
             likesRepo.deleteById(likeID);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/community/{user_group}/{category_id}/{post_id}/subscribe")
+    public ResponseEntity<String> subPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @RequestParam("username") String username) {
+        try{
+            // retrieve post object
+            Post subbedPost = postRepo.findByPostID(Long.parseLong(post_id));
+            
+            // retrieve user object 
+            User user = userRepo.findByUserName(username);
+            
+            // create new subscription object
+            SubscribeID subID = new SubscribeID(user.getUserID(), subbedPost.getPostID());
+            Subscription newSub = new Subscription(subID, user, subbedPost);
+            
+            // save to repo
+            subsRepo.save(newSub);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/community/{user_group}/{category_id}/{post_id}/unsubscribe")
+    public ResponseEntity<String> unsubPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @RequestParam("username") String username) {
+        try{
+            // retrieve post object
+            Post unSubbedPost = postRepo.findByPostID(Long.parseLong(post_id));
+            
+            // retrieve user object by username
+            User user = userRepo.findByUserName(username);
+
+            // make subcription ID, the key to subscription table
+            SubscribeID subID = new SubscribeID(user.getUserID(), unSubbedPost.getPostID());
+
+            // remove subscription from subcription repo by subID
+            subsRepo.deleteById(subID);
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {

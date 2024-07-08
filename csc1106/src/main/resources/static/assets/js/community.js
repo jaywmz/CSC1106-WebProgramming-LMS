@@ -27,7 +27,7 @@ async function getPostCountHome(){
         document.getElementById('instructorsCount').textContent = data[2] + " Posts";
         document.getElementById('offTopicCount').textContent = data[3];
 
-        console.log(data[4]);
+        // console.log(data[4]);
 
         if(data[4] != 0){
             const dateStr = data[4];
