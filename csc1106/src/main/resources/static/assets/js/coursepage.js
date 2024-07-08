@@ -1,43 +1,37 @@
-let featuedImg = document.getElementById('featured-image');
-let smallImgs = document.getElementsByClassName('small-Img');
+const queryParams = new URLSearchParams(window.location.search);
+const courseId = queryParams.get('id');
+const userId = getCookie('lrnznth_User_ID');
 
-smallImgs[0].addEventListener('click', () => {
-    featuedImg.src = smallImgs[0].src;
-    smallImgs[0].classList.add('sm-card')
-    smallImgs[1].classList.remove('sm-card')
-    smallImgs[2].classList.remove('sm-card')
-    smallImgs[3].classList.remove('sm-card')
-    smallImgs[4].classList.remove('sm-card')
-})
-smallImgs[1].addEventListener('click', () => {
-    featuedImg.src = smallImgs[1].src;
-    smallImgs[0].classList.remove('sm-card')
-    smallImgs[1].classList.add('sm-card')
-    smallImgs[2].classList.remove('sm-card')
-    smallImgs[3].classList.remove('sm-card')
-    smallImgs[4].classList.remove('sm-card')
-})
-smallImgs[2].addEventListener('click', () => {
-    featuedImg.src = smallImgs[2].src;
-    smallImgs[0].classList.remove('sm-card')
-    smallImgs[1].classList.remove('sm-card')
-    smallImgs[2].classList.add('sm-card')
-    smallImgs[3].classList.remove('sm-card')
-    smallImgs[4].classList.remove('sm-card')
-})
-smallImgs[3].addEventListener('click', () => {
-    featuedImg.src = smallImgs[3].src;
-    smallImgs[0].classList.remove('sm-card')
-    smallImgs[1].classList.remove('sm-card')
-    smallImgs[2].classList.remove('sm-card')
-    smallImgs[3].classList.add('sm-card')
-    smallImgs[4].classList.remove('sm-card')
-})
-smallImgs[4].addEventListener('click', () => {
-    featuedImg.src = smallImgs[4].src;
-    smallImgs[0].classList.remove('sm-card')
-    smallImgs[1].classList.remove('sm-card')
-    smallImgs[2].classList.remove('sm-card')
-    smallImgs[3].classList.remove('sm-card')
-    smallImgs[4].classList.add('sm-card')
-})
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Course ID: " + courseId);
+    console.log("User ID: " + userId);
+});
+
+function getCookie(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for(let i=0;i < ca.length;i++) {
+        let c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) {
+            let cookieValue = c.substring(nameEQ.length,c.length);
+            return decodeURIComponent(cookieValue);
+        }
+    }
+    return null;
+}
+
+function deleteCookie(name){
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function setCookie(name, value, days){
+    let expires = "";
+    let encodedValue = encodeURIComponent(value);
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (encodedValue || "")  + expires + "; path=/";
+}
