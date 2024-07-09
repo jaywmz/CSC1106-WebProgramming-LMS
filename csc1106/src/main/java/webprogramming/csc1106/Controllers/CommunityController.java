@@ -85,23 +85,30 @@ public class CommunityController {
             Long totalStudents = 0L;
             Long totalInstructors = 0L;
             Long totalOffTopic = 0L;
+            Long totalFeedback = 0L;
             
-            for (int i = 0; i < categoryCounts.size(); i++) {
-                if("announcements".equals(categoryCounts.get(i)[1])){
+            for (int i = 0; i < categoryCounts.size(); i++) 
+            {
+                if("announcements".equals(categoryCounts.get(i)[1])) {
                     totalAnnouncements += (Long) categoryCounts.get(i)[2];
-                } else if("students".equals(categoryCounts.get(i)[1])){
+                } else if("students".equals(categoryCounts.get(i)[1])) {
                     totalStudents += (Long) categoryCounts.get(i)[2];
-                } else if("instructors".equals(categoryCounts.get(i)[1])){
+                } else if("instructors".equals(categoryCounts.get(i)[1])) {
                     totalInstructors += (Long) categoryCounts.get(i)[2];
-                } else {
+                } else if(categoryCounts.get(i)[0].equals(11L)) { // 10 is index of off-topic category
                     totalOffTopic += (Long) categoryCounts.get(i)[2];
+                } else if(categoryCounts.get(i)[0].equals(12L)) { // 11 is index of feedback category 
+                    totalFeedback += (Long) categoryCounts.get(i)[2];
                 }
             }
             
             Object lastOffTopic = 0;
-
             if(totalOffTopic > 0){
                 lastOffTopic = categoryCounts.get(10)[3];
+            }
+            Object lastFeeback = 0;
+            if(totalFeedback > 0){
+                lastFeeback = categoryCounts.get(11)[3];
             }
             
             return new ResponseEntity<>(List.of(
@@ -109,7 +116,9 @@ public class CommunityController {
                 totalStudents, 
                 totalInstructors, 
                 totalOffTopic, 
-                lastOffTopic
+                totalFeedback,
+                lastOffTopic,
+                lastFeeback
                 ), HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e.getMessage());
