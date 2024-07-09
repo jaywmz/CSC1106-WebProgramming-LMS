@@ -386,8 +386,8 @@ async function partnershipIsExpired(){
         setCookie('lrnznth_PartnerShip', 'true', 1); // Set one day cookie as this need to be checked again day by day
         return false;
     }
-    // Since partnership cookie exists, return true
+    // Since partnership cookie exists, return false (partner is not expired)
     else{
-        return true;
+        return false;
     }
 }
