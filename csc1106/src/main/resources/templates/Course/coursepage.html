@@ -1,80 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Details</title>
-    <!-- css -->
-    <link rel="stylesheet" href="assets/css/coursepage.css">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title th:text="${course.title} + ' - LearnZenith'">Course Title - LearnZenith</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/dashboard-style.css" rel="stylesheet">
 </head>
+
 <body>
-    <div class="pagination">
-        <p>Home > Shop > Women > Jacket </p>
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">LearnZenith</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
-    <!-- product section -->
-    <section class="product-container">
-        <!-- left side -->
-        <div class="img-card">
-            <img src="https://github.com/mdalmamunit427/product-details-page-html-css-js/blob/main/img/image-1.png?raw=true" alt="" id="featured-image">
-            <!-- small img -->
-            <div class="small-Card">
-                <img src="https://github.com/mdalmamunit427/product-details-page-html-css-js/blob/main/img/image-1.png?raw=true" alt="" class="small-Img">
-                <img src="https://github.com/mdalmamunit427/product-details-page-html-css-js/blob/main/img/small-img-2.png?raw=true" alt="" class="small-Img">
-                <img src="https://github.com/mdalmamunit427/product-details-page-html-css-js/blob/main/img/small-img-3.png?raw=true" alt="" class="small-Img">
-                <img src="https://github.com/mdalmamunit427/product-details-page-html-css-js/blob/main/img/image-1.png?raw=true" alt="" class="small-Img">
+    <!-- Add your header content here -->
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <!-- Add your sidebar navigation items here -->
+    </ul>
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1 th:text="${course.title}">Course Title</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item">Courses</li>
+          <li class="breadcrumb-item active" th:text="${course.title}">Course Title</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Course Details</h5>
+              <div class="d-flex align-items-center mb-3">
+                <img th:src="${course.coverImageUrl}" alt="Course Cover" class="img-fluid me-3" style="max-width: 200px;">
+                <div>
+                  <h3 th:text="${course.title}">Course Title</h3>
+                  <p>Instructor: <span th:text="${course.lecturer}">Lecturer Name</span></p>
+                  <p>Price: $<span th:text="${course.price}">Price</span></p>
+                </div>
+              </div>
+              <p th:text="${course.description}">Course description</p>
             </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Course Content</h5>
+              <div th:if="${!course.sections.empty}">
+                <div class="accordion" id="courseContent">
+                  <div class="accordion-item" th:each="section, sectionStat : ${course.sections}">
+                    <h2 class="accordion-header" th:id="'heading' + ${sectionStat.index}">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${sectionStat.index}" aria-expanded="false" th:aria-controls="'collapse' + ${sectionStat.index}">
+                        <span th:text="${section.title}">Section Title</span>
+                      </button>
+                    </h2>
+                    <div th:id="'collapse' + ${sectionStat.index}" class="accordion-collapse collapse" th:aria-labelledby="'heading' + ${sectionStat.index}" data-bs-parent="#courseContent">
+                      <div class="accordion-body">
+                        <p th:text="${section.description}">Section Description</p>
+                        <ul class="list-group" th:if="${!section.lessons.empty}">
+                          <li class="list-group-item" th:each="lesson : ${section.lessons}">
+                            <span th:text="${lesson.title}">Lesson Title</span>
+                            <ul th:if="${!lesson.files.empty}">
+                              <li th:each="file : ${lesson.files}">
+                                <a th:href="@{/serveFile(fileId=${file.id}, disposition='attachment')}" th:text="${file.fileName}">File Name</a>
+                              </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- Right side -->
-        <div class="product-info">
-            <h3>LEVI'S® WOMEN'S XL TRUCKER JACKET</h3>
-            <h5>Price: $140 <del>$170</del></h5>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsa accusantium, aspernatur provident beatae corporis veniam atque facilis, consequuntur assumenda, vitae dignissimos iste exercitationem dolor eveniet alias eos ullam nesciunt voluptatum.</p>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore accusamus natus dolorum. Quaerat nulla quod doloremque, officia quis provident amet adipisci unde esse iure delectus, maxime inventore optio fuga nisi?</p>
 
-            <div class="sizes">
-                <p>Size:</p>
-                <select name="Size" id="size" class="size-option">
-                    <option value="xxl">XXL</option>
-                    <option value="xl">XL</option>
-                    <option value="medium">Medium</option>
-                    <option value="small">Small</option>
-                </select>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Course Rating</h5>
+              <div th:if="${!course.ratings.empty}">
+                <p>Average Rating: <span th:text="${course.averageRating}">4.5</span>/5</p>
+                <p>Number of Reviews: <span th:text="${course.reviewCount}">10</span></p>
+                <div th:each="rating : ${course.ratings}" class="mb-3">
+                  <div class="d-flex justify-content-between">
+                    <p>Rating: <span th:text="${rating.score}">5</span>/5</p>
+                    <small th:text="${#dates.format(rating.date, 'dd MMM yyyy')}">01 Jan 2023</small>
+                  </div>
+                  <p th:text="${rating.comment}">Review comment</p>
+                  <hr>
+                </div>
+              </div>
+              <div th:if="${course.ratings.empty}">
+                <p>No ratings yet.</p>
+              </div>
             </div>
+          </div>
 
-            <div class="quantity">
-                <input type="number" value="1" min="1">
-                <button>Add to Cart</button>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Categories</h5>
+              <div th:if="${!course.courseCategories.empty}">
+                <ul class="list-group">
+                  <li class="list-group-item" th:each="category : ${course.courseCategories}">
+                    <span th:text="${category.categoryGroup.name}">Category Name</span>
+                  </li>
+                </ul>
+              </div>
+              <div th:if="${course.courseCategories.empty}">
+                <p>No categories assigned.</p>
+              </div>
             </div>
-
-            <div>
-                <p>Delivery:</p>
-                <p>Free standard shipping on orders over $35 before tax, plus free returns.</p>
-                <div class="delivery">
-                    <p>TYPE</p> <p>HOW LONG</p> <p>HOW MUCH</p>
-                </div>
-                <hr>
-                <div class="delivery">
-                    <p>Standard delivery</p> 
-                    <p>1-4 business days</p> 
-                    <p>$4.50</p>
-                </div>
-                <hr>
-                <div class="delivery">
-                    <p>Express delivery</p> 
-                    <p>1 business day</p> 
-                    <p>$10.00</p>
-                </div>
-                <hr>
-                <div class="delivery">
-                    <p>Pick up in store</p> 
-                    <p>1-3 business days</p> 
-                    <p>Free</p>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </section>
+  </main><!-- End #main -->
 
-    <!-- script tags -->
-    <script src="assets/js/coursepage.js"></script>
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/dashboard-main.js"></script>
 </body>
 </html>
