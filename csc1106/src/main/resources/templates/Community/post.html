@@ -142,6 +142,11 @@
 
   <!-- ======= Main ======= -->
   <main id="main" class="main">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" style="width: 50%" role="alert">
+      <i class="bi bi-check-circle me-1"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
     <div class="pagetitle">
       <h1>Post</h1>

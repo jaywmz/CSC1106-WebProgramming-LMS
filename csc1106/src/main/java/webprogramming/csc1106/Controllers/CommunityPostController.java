@@ -70,7 +70,7 @@ public class CommunityPostController {
     }
 
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/add-comment")
-    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username) {
+    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username, RedirectAttributes redirectAttributes) {
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newComment.setTimestamp(timestamp);
@@ -83,6 +83,9 @@ public class CommunityPostController {
         // postRepo.save(post);
         commentRepo.save(newComment);
         
+        redirectAttributes.addFlashAttribute("successMessage", "Comment added successfully!");
+
+
         return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
     
@@ -170,18 +173,12 @@ public class CommunityPostController {
     }
 
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/update-post")
-    public String updatePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username) {
-        // java.util.Date date = new java.util.Date();
-        // Timestamp timestamp = new Timestamp(date.getTime());
-        // newComment.setTimestamp(timestamp);
-        // newComment.setCommenterName(username);
+    public String updatePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, RedirectAttributes redirectAttributes) {
+        Post originalPost = postRepo.findByPostID(Long.parseLong(post_id));
+        originalPost.setContent(post.getContent());
+        postRepo.save(originalPost);
 
-        // Post post = postRepo.findByPostID(Long.parseLong(post_id));
-        // // post.getComments().add(newComment);
-        // newComment.setPost(post);
-
-        // // postRepo.save(post);
-        // commentRepo.save(newComment);
+        redirectAttributes.addFlashAttribute("successMessage", "Post edited successfully!");
         
         return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
@@ -189,10 +186,6 @@ public class CommunityPostController {
     @PostMapping("/community/{user_group}/{category_id}/delete-post")
     public String deletePost(@PathVariable String user_group, @PathVariable String category_id, @RequestParam("postId") Long postId, RedirectAttributes redirectAttributes) {
 
-        Post post = postRepo.findByPostID(postId);
-
-        attachmentsRepo.deleteByPost(post);
-        commentRepo.deleteByPost(post);
         postRepo.deleteByPostID(postId.intValue());
 
         redirectAttributes.addFlashAttribute("successMessage", "Post deleted successfully!");
