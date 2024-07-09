@@ -21,99 +21,9 @@
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
     <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <link href="assets/css/category-page.css" rel="stylesheet" th:href="@{/assets/css/category-page.css}">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        /* General styles */
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 30px;
-        }
-        .nav-item a {
-            margin-right: 20px;
-            padding: 10px;
-        }
-        .nav-profile {
-            margin-left: auto;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .card-custom {
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card-custom:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .nav-link-custom {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        .card {
-            width: 18rem;
-            height: 30rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .card-img-top {
-            width: 100%;
-            height: 10rem;
-            object-fit: contain;
-            padding: 5px;
-        }
-        .course-rating {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #777;
-        }
-        .course-rating .star {
-            color: #ffbf00;
-            margin-right: 5px;
-        }
-        .course-rating .reviews {
-            margin-left: 5px;
-            font-size: 14px;
-            color: #777;
-        }
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
-        .card-title, .card-text, .course-rating, .card-price, .add-to-cart {
-            margin-bottom: 10px;
-        }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-        .card-price {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        .btn {
-            margin-top: auto;
-        }
-        /* Loading spinner styles */
-        .spinner-border {
-            display: none;
-            width: 3rem;
-            height: 3rem;
-            border-width: .3em;
-        }
-        .loading .spinner-border {
-            display: inline-block;
-        }
-    </style>
 </head>
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -127,7 +37,9 @@
             <ul class="d-flex align-items-center">
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/cart}">Cart</a></li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link nav-link-custom" data-bs-toggle="modal" data-bs-target="#topUpModal">Top Up</a>
+                </li>
                 <li class="nav-item dropdown pe-3 nav-profile">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
@@ -145,6 +57,29 @@
         </nav>
     </header>
 
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link active" th:href="@{/market}"><i class="bi bi-shop"></i><span>Marketplace</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/community}"><i class="bi bi-people shaded-icon"></i><span>Community</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/mylearning}"><i class="bi bi-book"></i><span>My Learning</span></a></li>
+            
+            <!-- User Section Label -->
+            <li class="menu-section">USER</li>
+            
+            <li class="nav-item"><a class="nav-link" th:href="@{/cart}"><i class="bi bi-cart shaded-icon"></i><span>My Cart</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/profile}"><i class="bi bi-person"></i><span>User</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
+            
+            <!-- Extra Section Label -->
+            <li class="menu-section">EXTRA (JUST FOR REFERENCE)</li>
+            
+            <li class="nav-item"><a class="nav-link" th:href="@{/blank-page}"><i class="bi bi-file-earmark"></i><span>BLANK PAGE</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="javascript:location.reload();"><i class="bi bi-arrow-clockwise"></i><span>Refresh SideBar</span></a></li>
+        </ul>
+    </aside>
+    
     <main id="main" class="main">
         <div class="pagetitle">
             <h1>Market Place</h1>
@@ -197,133 +132,31 @@
     
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
+    <script src="assets/js/category-page.js" th:src="@{/assets/js/category-page.js}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sortBySelect = document.getElementById('sort-by');
-            const filterCategorySelect = document.getElementById('filter-category');
-            const coursesContainer = document.getElementById('courses-list');
-            const spinner = document.querySelector('.spinner-border');
-            const loggedInUsername = document.getElementById('loggedInUsername');
-
-            // Display user name in the top right corner
-            const userName = getCookie('lrnznth_User_Name');
-            if (userName) {
-                loggedInUsername.textContent = userName;
-            } else {
-                loggedInUsername.textContent = 'Guest';
-            }
-
-            sortBySelect.addEventListener('change', loadCourses);
-            filterCategorySelect.addEventListener('change', loadCourses);
-
-            async function loadCourses() {
-                try {
-                    var sortBy = sortBySelect.value;
-                    var categoryId = filterCategorySelect.value || window.location.pathname.split("/").pop();
-
-                    // Show the loading spinner
-                    if (spinner) {
-                        spinner.style.display = 'inline-block';
-                    }
-
-                    // Clear the existing courses
-                    coursesContainer.innerHTML = '';
-                    coursesContainer.appendChild(spinner);
-
-                    const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`);
-                    const data = await response.json();
-
-                    // Remove spinner
-                    coursesContainer.innerHTML = '';
-
-                    data.forEach(course => {
-                        let courseElement = document.createElement('div');
-                        courseElement.classList.add('col-md-4', 'mb-4');
-                        courseElement.innerHTML = `
-                            <div class="card card-custom">
-                                <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
-                                <div class="card-body">
-                                    <h5 class="card-title">${course.title}</h5>
-                                    <p class="card-text">${course.description}</p>
-                                    <div class="course-rating">
-                                        <span class="star">&#9733;</span>
-                                        <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
-                                    </div>
-                                    <p class="card-price"><strong>$${course.price}</strong></p>
-                                    <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
-                                </div>
-                            </div>
-                        `;
-                        coursesContainer.appendChild(courseElement);
-                    });
-
-                    // Hide the loading spinner
-                    if (spinner) {
-                        spinner.style.display = 'none';
-                    }
-
-                    // Add event listeners to new Add to Cart buttons
-                    addCartEventListeners();
-                } catch(e) {
-                    console.error(e);
-                }
-            }
-
-            // Add to Cart event listener
-            function addCartEventListeners() {
-                const addToCartButtons = document.querySelectorAll('.add-to-cart');
-                addToCartButtons.forEach(button => {
-                    button.addEventListener('click', async function(event) {
-                        const courseId = event.target.getAttribute('data-course-id');
-                        let userId = getCookie('lrnznth_User_ID');
-                        
-                        if (!userId) {
-                            alert('Please login to add courses to cart');
-                            return;
-                        }
-
-                        // Check if user is already subscribed to the course
-                        const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
-                        const subscriptionCheckData = await subscriptionCheck.text();
-
-                        if(subscriptionCheckData === 'Subscribed'){
-                            alert('You have already subscribed to this course');
-                            return;
-                        }
-
-                        // Check if the course is already in user's cart
-                        const cartCheck = await fetch(`/cartitems/check/${userId}/${courseId}`);
-                        const cartCheckData = await cartCheck.text();
-                        if(cartCheckData === 'In cart'){
-                            alert('Course is already in your cart');
-                            return;
-                        }
-
-                        // Add course to cart
-                        const addResponse = await fetch(`/cartitems/add/${userId}/${courseId}`);
-                        if (addResponse.status != 200) {
-                            return alert("Failed to add course to cart");
-                        }
-                        const addData = await addResponse.text();
-                        if (addData === "Added"){
-                            alert("Course added to cart");
-                        } else {
-                            alert("Failed to add course to cart");
-                        }
-                    });
-                });
-            }
-
-            // Initial load
-            loadCourses();
-        });
-
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-    </script>
+     <!-- Modal -->
+     <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="topUpAmount">Enter Amount (USD):</label>
+                    <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
+                    <input type="hidden" name="userId" id="userId">
+                    <p>Current Balance: <span id="currentBalance">$0.00</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="redirectToPayPal()">Proceed to PayPal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>
