@@ -337,7 +337,8 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/delete-post(category_id=${category_id}, post_id=${post.postID}, user_group=${user_group})}" method="post">
+                <form action="#" th:action="@{/community/{user_group}/{category_id}/delete-post(category_id=${category_id}, user_group=${user_group})}" method="post">
+                  <input type="hidden" name="postId" th:value="${post_id}" />
                   <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
               </div>
