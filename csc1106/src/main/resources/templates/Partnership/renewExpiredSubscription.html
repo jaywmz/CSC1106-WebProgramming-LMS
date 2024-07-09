@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renew Expired Subscription</title>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Renew Expired Subscription</h5>
+                        <form th:action="@{/partnership/renewExpired}" method="post">
+                            <div th:if="${error}" class="alert alert-danger" role="alert">
+                                <span th:text="${error}"></span>
+                            </div>
+                            <div th:if="${success}" class="alert alert-success" role="alert">
+                                <span th:text="${success}"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">User Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reason" class="form-label">Renewal Reason</label>
+                                <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Renewal Request</button>
+                            <a href="/login" class="btn btn-primary">Back to Login</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
