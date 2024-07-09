@@ -357,7 +357,7 @@ public class UploadCourseService {
         }
     }
 
-     public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
+    public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
             String contentType = coverImage.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {

@@ -142,6 +142,11 @@
 
   <!-- ======= Main ======= -->
   <main id="main" class="main">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-1"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
     <div class="pagetitle">
       <h1>Post</h1>
@@ -165,7 +170,7 @@
         <div class="card">
 
           <!-- post body -->
-          <div class="card-body">
+          <div class="card-body" th:with="poster_name=${post.posterName}">
             <h5 class="card-title" th:text="${post.title}"></h5>
             <span th:utext="${post.content}"></span>
             <div th:each="attachment: ${attachment_urls}">
@@ -198,6 +203,36 @@
                   <i class="bi bi-bell-fill me-1"></i><span> Subscribed</span>
                 </button>
               </div>
+
+              <nav class="header-nav ms-auto" aria-label="Navigation" id="editPostButton" style="display: none;">
+                <ul class="d-flex align-items-center">
+                  <li class="nav-item dropdown pe-3">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                      <span class="d-none d-md-block dropdown-toggle ps-2">Options</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                      <li>
+                        <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#editModal">
+                          <i class="bi bi-pencil-square"></i>
+                          <span>Edit Post</span>
+                        </a>
+                      </li>
+                      
+                      <li>
+                        <hr class="dropdown-divider">
+                      </li>
+
+                      <li>
+                        <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                          <i class="bi bi-trash"></i>
+                          <span>Delete Post</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+
             </div>          
           </div>
         </div>
@@ -271,6 +306,51 @@
         </div>
       </div>
 
+      <!-- Edit Post Modal -->
+      <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit your post</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="#" th:action="@{/community/{user_group}/{category_id}/{post_id}/update-post(category_id=${category_id}, post_id=${post.postID}, user_group=${user_group})}" th:object="${post}" method="post" class="needs-validation" novalidate>
+              <div class="modal-body">
+                <!-- <h5 class="modal-title" th:text="${post.title}"></h5> -->
+                <input type="text" class="form-control mb-3" th:placeholder="${post.title}" disabled></input>
+                <textarea required class="form-control" placeholder="" id="floatingTextarea" th:field="*{content}" th:text="${post.content}"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div><!-- Edit Post Modal-->
+
+      <!-- Delete Post Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Delete your post?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+              <div class="modal-body">
+                Doing this will delete this post and all its comments. Are you sure you want to delete?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="#" th:action="@{/community/{user_group}/{category_id}/delete-post(category_id=${category_id}, user_group=${user_group})}" method="post">
+                  <input type="hidden" name="postId" th:value="${post_id}" />
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </div>
+          </div>
+        </div>
+      </div><!-- Delete Post Modal-->
+
     </section>
 
   </main><!-- End #main -->
@@ -305,6 +385,36 @@
   <script src="/assets/js/dashboard-main.js"></script>
   <script src="/assets/js/dashboard-checker.js"></script>
   <script src="/assets/js/like-subscribe-post.js"></script>
+  <script src="/assets/js/community.js"></script>
+
+  <script th:inline="javascript">
+    // Set the JavaScript variable using Thymeleaf's inline expression
+    /*<![CDATA[*/
+    var postUserId = /*[[${post.posterName}]]*/ 'defaultUserId';
+    /*]]>*/
+    
+    function getCookie(name) {
+        let cookieArray = document.cookie.split(';');
+        for(let i = 0; i < cookieArray.length; i++) {
+            let cookiePair = cookieArray[i].split('=');
+            if(name == cookiePair[0].trim()) {
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+        return null;
+    }
+    
+    function showButtonIfUserMatches() {
+        const userCookieId = getCookie("lrnznth_User_Name");
+        if(userCookieId === postUserId) {
+            document.getElementById("editPostButton").style.display = "block";
+        }
+    }
+    
+    // Call the function to check and show the button if user IDs match
+    showButtonIfUserMatches();
+    </script>
+
 </body>
 
 </html>

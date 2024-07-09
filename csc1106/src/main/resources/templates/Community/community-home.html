@@ -140,6 +140,7 @@
         <p class="text-center">Join the LearnZenith community to ask questions, share knowledge, and connect with other members.</p>
       </div>
       
+      <!-- Search-bar -->
       <div class="row align-items-center justify-content-center">
         <div class="form-floating mb-3" style="width: 40%;">
           <form method="GET" action="/community/search">
@@ -153,6 +154,7 @@
         </div>
       </div>
 
+      <!-- Main 3 categories -->
       <div class="row align-items-top">
         <div class="card-group mb-4 gap-4">
           <!-- Announcements Card -->
@@ -184,60 +186,99 @@
         </div>
       </div>
 
-      <div class="card">
-          <div class="card-body">
+      <div class="row">
+        <div class="col-lg-6">
+          <!-- browse community card -->
+          <div class="card">
+            <div class="card-body">
               <h5 class="card-title">Browse the Community</h5>
               <table class="table table-hover">
-                  <colgroup>
-                      <col style="width: 60%;">
-                      <col style="width: 20%;">
-                      <col style="width: 20%;">
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th scope="col">Category</th>
-                      <th scope="col">Posts</th>
-                      <th scope="col">Last Post</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      <tr>
-                          <th scope="row">
-                              <a href="/community/off-topic/11">Off-Topic</a>
-                              <p class="fs-6 fw-normal">Discuss anything not related to Learning.</p>
-                          </th>
-                          <td><p class="card-text" id="offTopicCount"></p></td>
-                          <td><p class="card-text" id="lastOffTopic"></td>
-                      </tr>
-                  </tbody>
+                <colgroup>
+                    <col style="width: 60%;">
+                    <col style="width: 20%;">
+                    <col style="width: 20%;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col">Posts</th>
+                    <th scope="col">Last Post</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">
+                        <a href="/community/general/11">Off-Topic</a>
+                        <p class="fs-6 fw-normal mb-0">Discuss anything not related to Learning.</p>
+                    </th>
+                    <td><p class="card-text" id="offTopicCount"></p></td>
+                    <td><p class="card-text" id="lastOffTopic"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <a href="/community/general/12">Feedback</a>
+                      <p class="fs-6 fw-normal mb-0">Post any feedback regarding the website and the community hub here.</p>
+                    </th>
+                    <td><p class="card-text" id="feedbackCount"></p></td>
+                    <td><p class="card-text" id="lastFeedback"></td>
+                  </tr>
+                </tbody>
               </table>
+            </div>
           </div>
-      </div>
-
-      <div class="card">
-          <div class="card-body">
-              <h5 class="card-title">Recent Threads</h5>
+        
+          <!-- Recent threads card -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Recent Posts</h5>
               <table class="table table-hover">
                 <thead>
-                    <tr>
-                      <th scope="col" style="width:50%">Title</th>
-                      <th scope="col">Category</th>
-                      <th scope="col">Poster</th>
-                      <th scope="col">Posted at</th>
-                    </tr>
-                  </thead>
-                  <tbody th:each="post: ${posts}">
-                    <tr>
-                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                      <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
-                    </tr>
-                  </tbody>
-            </table>
+                  <tr>
+                    <th scope="col" style="width:50%">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Poster</th>
+                    <th scope="col">Posted at</th>
+                  </tr>
+                </thead>
+                <tbody th:each="post: ${posts}">
+                  <tr>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- Subscribed Posts -->
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Subscribed Posts</h5>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" style="width:50%">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Poster</th>
+                    <th scope="col">Posted at</th>
+                  </tr>
+                </thead>
+                <tbody th:each="post: ${subbedPosts}">
+                  <tr>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

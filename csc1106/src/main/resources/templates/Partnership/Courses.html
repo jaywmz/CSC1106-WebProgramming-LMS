@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+    
+      <!-- Favicons -->
+      <link href="assets/img/favicon.png" rel="icon" th:href="@{/assets/img/favicon.png}">
+      <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
+      <!-- Google Fonts -->
+      <link href="https://fonts.gstatic.com" rel="preconnect">
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+      <!-- Vendor CSS Files -->
+      <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+      <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
+      <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}">
+      <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.snow.css}">
+      <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
+      <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
+      <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
+      <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        
+        h1, h2 {
+            text-align: center;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        li {
+            padding: 8px;
+            margin: 8px 0;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .section-title, .lesson-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: auto;
+            padding: 10px;
+            background-color: #e0f7fa;
+        }
+
+        .section-details, .lesson-details {
+            padding: 8px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-color: #00796b;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input[type="text"], input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 5px;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
+                <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
+                <span class="d-none d-lg-block">LearnZenith</span>
+            </a>
+        </div>
+        <nav class="header-nav ms-auto" aria-label="Navigation">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item dropdown pe-3 nav-profile">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
+                        <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>Need Help?</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Courses</h1>
+        <ul>
+            <li th:each="course : ${courses}">
+                
+                <h2>Course Title:</h2>
+                <h2 th:text="${course.title}">Course Title</h2>
+                <ul th:if="${course.sections.size() > 0}">
+                    <li th:each="section : ${course.sections}">
+                        <div class="section-title">
+                            <h3>Section:</h3>
+                            <div class="btn-container">
+                                <button type="button" th:attr="onclick='showEditSectionModal(' + ${section.id} + ', ' + ${course.id} + ')'">Edit Section</button>
+                                <button type="button" th:attr="onclick='showDeleteSectionModal(' + ${section.id} + ', ' + ${course.id} + ')'">Delete Section</button>
+                                <button type="button" th:attr="onclick='showAddLessonModal(' + ${section.id} + ', ' + ${course.id} + ')'">Add Lesson</button>
+                            </div>
+                        </div>
+                        <div class="section-details">
+                            <h4>Section - Title and Description:</h4>
+                            <p th:text="${section.title}">Section Title</p>
+                            <p th:text="${section.description}">Section Description</p>
+                        </div>
+                        <ul>
+                            <li th:each="lesson : ${section.lessons}">
+                                <div class="lesson-title">
+                                    <h4>Lesson Title:</h4>
+                                    <span th:text="${lesson.title}">Lesson Title</span>
+                                    <div class="btn-container">
+                                        <button type="button" th:attr="onclick='showDeleteLessonModal(' + ${lesson.id} + ', ' + ${course.id} + ')'">Delete Lesson</button>
+                                        <button type="button" th:attr="onclick='showAddMoreFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ')'">Add More Files</button>
+                                        <button type="button" th:attr="onclick='showEditLessonModal(' + ${lesson.id} + ', ' + ${course.id} + ')'">Edit Lesson</button>
+                                    </div>
+                                </div>
+                                <ul class="lesson-details">
+                                    <li th:each="file : ${lesson.files}">
+                                        <div> 
+                                            <h4>File Name:</h4>
+                                            <span th:text="${file.fileName}">File Name</span>
+                                            <div class="btn-container">
+                                                <button type="button" th:attr="onclick='showDeleteFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ', ' + ${file.id} + ')'">Delete</button>
+                                                <button type="button" th:attr="onclick='showEditFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ', ' + ${file.id} + ')'">Edit</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'" th:if="${course.sections.size() == 0}">Add Section</button>
+            </li>
+        </ul>
+    </div>
+
+
+
+    <!-- Add Section Modal -->
+    <div id="addSectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addSectionModal')">&times;</span>
+            <form th:action="@{/partnership/partner/sections}" method="post">
+                <input type="hidden" id="courseId" name="courseId">
+                <label for="sectionName">Section Title:</label>
+                <input type="text" id="sectionName" name="sectionName">
+                <label for="sectionDesc">Description:</label>
+                <input type="text" id="sectionDesc" name="sectionDesc">
+                <button type="submit">Add Section</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Section Modal -->
+    <div id="editSectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editSectionModal')">&times;</span>
+            <form th:action="@{/partnership/partner/editsections}" method="post">
+                <input type="hidden" id="editsectionId" name="editsectionId">
+                <input type="hidden" id="editsectionCourseId" name="editsectionCourseId">
+                <label for="editsectionName">Section Title:</label>
+                <input type="text" id="editsectionName" name="editsectionName">
+                <label for="editsectionDesc">Description:</label>
+                <input type="text" id="editsectionDesc" name="editsectionDesc">
+                <button type="submit">Update Section</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Section Modal -->
+    <div id="deleteSectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteSectionModal')">&times;</span>
+            <form th:action="@{/partnership/partner/deletesections}" method="post">
+                <p>Are you sure you want to delete this section?</p>
+                <input type="hidden" id="deletesectionCourseId" name="deletesectionCourseId">
+                <input type="hidden" id="deletesectionId" name="deletesectionId">
+                <button type="submit">Delete Section</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Lesson Modal -->
+    <div id="addLessonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addLessonModal')">&times;</span>
+            <form th:action="@{/partnership/partner/lessons}" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="sectionId" name="sectionId">
+                <input type="hidden" id="lessonCourseId" name="lessonCourseId">
+                <label for="lessonName">Lesson Title:</label>
+                <input type="text" id="lessonName" name="lessonName">
+                <label for="lessonFile">Lesson File:</label>
+                <input type="file" id="lessonFile" name="lessonFile">
+                <button type="submit">Add Lesson</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Lesson Modal -->
+    <div id="editLessonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editLessonModal')">&times;</span>
+            <form th:action="@{/partnership/partner/editlessons}" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="editlessonId" name="editlessonId">
+                <input type="hidden" id="editlessonCourseId" name="editlessonCourseId">
+                <label for="editlessonName">Lesson Title:</label>
+                <input type="text" id="editlessonName" name="editlessonName">
+                
+                <!--
+
+                <label for="editlessonFile">Lesson File:</label>
+                <input type="file" id="editlessonFile" name="editlessonFile">
+                
+                
+                -->
+                
+                
+                <button type="submit">Update Lesson</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Lesson Modal -->
+    <div id="deleteLessonModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteLessonModal')">&times;</span>
+            <form th:action="@{/partnership/partner/deletelessons}" method="post">
+                <p>Are you sure you want to delete this lesson?</p>
+                <input type="hidden" id="deletelessonCourseId" name="deletelessonCourseId">
+                <input type="hidden" id="deletelessonId" name="deletelessonId">
+                <button type="submit">Delete Lesson</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add more files into Lesson - Only add more files-->
+    <div id="addMoreFilesModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addMoreFilesModal')">&times;</span>
+            <form th:action="@{/partnership/partner/addmorefiles}" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="addmorefilelessonId" name="addmorefilelessonId">
+                <input type="hidden" id="addmorefilelessonCourseId" name="addmorefilelessonCourseId">
+                <label for="addmorefilelessonFile">Lesson File:</label>
+                <input type="file" id="addmorefilelessonFile" name="addmorefilelessonFile">
+                <button type="submit">Add More Files</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete certain files from lesson based on what partner select from a list of files-->
+    <div id="deleteFilesModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteFilesModal')">&times;</span>
+            <form th:action="@{/partnership/partner/deletefiles}" method="post">
+                <p>Are you sure you want to delete this file?</p>
+                <input type="hidden" id="deletefilelessonCourseId" name="deletefilelessonCourseId">
+                <input type="hidden" id="deletefilelessonId" name="deletefilelessonId">
+                <input type="hidden" id="deletefileId" name="deletefileId">
+                <button type="submit">Delete File</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit the lesson uploaded files including title also-->
+    <div id="editFilesModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editFilesModal')">&times;</span>
+            <form th:action="@{/partnership/partner/editfiles}" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="editfilelessonCourseId" name="editfilelessonCourseId">
+                <input type="hidden" id="editfilelessonId" name="editfilelessonId">
+                <input type="hidden" id="editfileId" name="editfileId">
+                <label for="editfilelessonFile">File:</label>
+                <input type="file" id="editfilelessonFile" name="editfilelessonFile">
+                <button type="submit">Edit File</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showAddSectionModal(courseId) {
+            document.getElementById('courseId').value = `${courseId}`;
+            document.getElementById('addSectionModal').style.display = 'block';
+        }
+
+        function showEditSectionModal(sectionId, courseId) {
+            document.getElementById('editsectionId').value = `${sectionId}`;
+            document.getElementById('editsectionCourseId').value = `${courseId}`;
+            document.getElementById('editSectionModal').style.display = 'block';
+        }
+
+        function showDeleteSectionModal(sectionId, courseId) {
+            document.getElementById('deletesectionId').value = `${sectionId}`;
+            document.getElementById('deletesectionCourseId').value = `${courseId}`;
+            document.getElementById('deleteSectionModal').style.display = 'block';
+        }
+
+        function showAddLessonModal(sectionId, courseId) {
+            document.getElementById('sectionId').value = `${sectionId}`;
+            document.getElementById('lessonCourseId').value = `${courseId}`;
+            document.getElementById('addLessonModal').style.display = 'block';
+        }
+
+        function showEditLessonModal(lessonId, courseId) {
+            document.getElementById('editlessonId').value = `${lessonId}`;
+            document.getElementById('editlessonCourseId').value = `${courseId}`;
+            document.getElementById('editLessonModal').style.display = 'block';
+        }
+
+        function showDeleteLessonModal(lessonId, courseId) {
+            document.getElementById('deletelessonId').value = `${lessonId}`;
+            document.getElementById('deletelessonCourseId').value = `${courseId}`;
+            document.getElementById('deleteLessonModal').style.display = 'block';
+        }
+
+        function showAddMoreFilesModal(lessonId, courseId) {
+            document.getElementById('addmorefilelessonId').value = `${lessonId}`;
+            document.getElementById('addmorefilelessonCourseId').value = `${courseId}`;
+            document.getElementById('addMoreFilesModal').style.display = 'block';
+        }
+
+        function showDeleteFilesModal(lessonId, courseId, fileId) {
+            document.getElementById('deletefilelessonId').value = `${lessonId}`;
+            document.getElementById('deletefilelessonCourseId').value = `${courseId}`;
+            document.getElementById('deletefileId').value = `${fileId}`;
+            document.getElementById('deleteFilesModal').style.display = 'block';
+        }
+
+        function showEditFilesModal(lessonId, courseId, fileId) {
+            document.getElementById('editfilelessonId').value = `${lessonId}`;
+            document.getElementById('editfilelessonCourseId').value = `${courseId}`;
+            document.getElementById('editfileId').value = `${fileId}`;
+            document.getElementById('editFilesModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) {
+                    let cookieValue = c.substring(nameEQ.length,c.length);
+                    return decodeURIComponent(cookieValue);
+                }
+            }
+            return null;
+        }
+
+        const userId = getCookie('lrnznth_User_ID');
+    </script>
+    <button><a href="/partner" class="btn btn-secondary">Go Back</a></button>
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </footer>
+     <!-- Vendor JS Files -->
+     <script src="assets/vendor/apexcharts/apexcharts.min.js" th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}"></script>
+     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+     <script src="assets/vendor/chart.js/chart.umd.js" th:src="@{/assets/vendor/chart.js/chart.umd.js}"></script>
+     <script src="assets/vendor/echarts/echarts.min.js" th:src="@{/assets/vendor/echarts/echarts.min.js}"></script>
+     <script src="assets/vendor/quill/quill.js" th:src="@{/assets/vendor/quill/quill.js}"></script>
+     <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+     <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
+ 
+     <!-- Template Main JS File -->
+     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
+     <script src="assets/js/dashboard-checker.js"></script>
+</body>
+
+</html>

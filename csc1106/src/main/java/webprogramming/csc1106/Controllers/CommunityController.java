@@ -1,12 +1,15 @@
 package webprogramming.csc1106.Controllers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.HttpStatus;
@@ -14,20 +17,44 @@ import org.springframework.http.HttpStatus;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.PostRepo;
+import webprogramming.csc1106.Repositories.SubscriptionsRepo;
+import webprogramming.csc1106.Repositories.UserRepository;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
 public class CommunityController {
-
     @Autowired
     private PostRepo postRepo;
+    @Autowired
+    private SubscriptionsRepo subRepo;
+    @Autowired
+    private UserRepository userRepo;
     
     @GetMapping("/community")
-    public String getCommunityHome(Model model) {
+    public String getCommunityHome(Model model, @CookieValue("userId") String userID) {
+        // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
+
+        // identify user
+        Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+
+        // get list of subscribed posts from user 
+        if (user.isPresent()) {
+            List<Subscription> allSubscriptions = subRepo.findAllByUser(user.get());
+            List<Long> postIDs = new ArrayList<Long>();
+            for (Subscription sub : allSubscriptions) {
+                postIDs.add(sub.getPost().getPostID());
+            }
+            List<Post> subbedPosts = postRepo.findAllById(postIDs);
+            model.addAttribute("subbedPosts", subbedPosts);
+        }
+        else {
+            model.addAttribute("subbedPosts", null);
+        }
 
         model.addAttribute("posts", posts);
 
@@ -45,6 +72,12 @@ public class CommunityController {
         return "Community/community-search";
     }
 
+    @GetMapping("/community/unauthorised")
+    public String getMethodName() {
+        return "Community/community-unauthorised";
+    }
+    
+
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
     public ResponseEntity<List> getPostsCount(){
@@ -56,23 +89,30 @@ public class CommunityController {
             Long totalStudents = 0L;
             Long totalInstructors = 0L;
             Long totalOffTopic = 0L;
+            Long totalFeedback = 0L;
             
-            for (int i = 0; i < categoryCounts.size(); i++) {
-                if("announcements".equals(categoryCounts.get(i)[1])){
+            for (int i = 0; i < categoryCounts.size(); i++) 
+            {
+                if("announcements".equals(categoryCounts.get(i)[1])) {
                     totalAnnouncements += (Long) categoryCounts.get(i)[2];
-                } else if("students".equals(categoryCounts.get(i)[1])){
+                } else if("students".equals(categoryCounts.get(i)[1])) {
                     totalStudents += (Long) categoryCounts.get(i)[2];
-                } else if("instructors".equals(categoryCounts.get(i)[1])){
+                } else if("instructors".equals(categoryCounts.get(i)[1])) {
                     totalInstructors += (Long) categoryCounts.get(i)[2];
-                } else {
+                } else if(categoryCounts.get(i)[0].equals(11L)) { // 10 is index of off-topic category
                     totalOffTopic += (Long) categoryCounts.get(i)[2];
+                } else if(categoryCounts.get(i)[0].equals(12L)) { // 11 is index of feedback category 
+                    totalFeedback += (Long) categoryCounts.get(i)[2];
                 }
             }
             
             Object lastOffTopic = 0;
-
             if(totalOffTopic > 0){
                 lastOffTopic = categoryCounts.get(10)[3];
+            }
+            Object lastFeeback = 0;
+            if(totalFeedback > 0){
+                lastFeeback = categoryCounts.get(11)[3];
             }
             
             return new ResponseEntity<>(List.of(
@@ -80,7 +120,9 @@ public class CommunityController {
                 totalStudents, 
                 totalInstructors, 
                 totalOffTopic, 
-                lastOffTopic
+                totalFeedback,
+                lastOffTopic,
+                lastFeeback
                 ), HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e.getMessage());
@@ -146,4 +188,23 @@ public class CommunityController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/community-get-user-role")
+    @ResponseBody
+    public String getUserRole(@CookieValue("lrnznth_User_ID") String userID) {
+
+        User user = userRepo.findByUserId(Integer.parseInt(userID));
+        Roles role = user.getRole();
+        int roleId = role.getRoleID();
+        String instructorCheck;
+
+        if(roleId == 3){
+            instructorCheck = "no";
+        }else{
+            instructorCheck = "yes";
+        }
+
+        return instructorCheck;
+    }
+    
 }

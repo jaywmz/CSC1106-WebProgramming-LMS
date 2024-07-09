@@ -1,5 +1,7 @@
 package webprogramming.csc1106.Entities;
 
+import java.sql.Timestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,8 +33,11 @@ public class Partner {
     @Column(name = "approval_reason", length = 255)
     private String approvalReason;
 
-    @Column(name = "validity_end", length = 255)
-    private String validityEnd;
+    @Column(name = "validity_end", nullable = true)
+    private Timestamp validityEnd;
+
+    @Column(name = "validity_start", nullable = true)
+    private Timestamp validityStart;
 
     @Column(name = "partner_status", length = 20)
     private String partnerStatus;
@@ -81,12 +86,20 @@ public class Partner {
         this.approvalReason = approvalReason;
     }
 
-    public String getValidityEnd() {
+    public Timestamp getValidityEnd() {
         return validityEnd;
     }
 
-    public void setValidityEnd(String validityEnd) {
+    public void setValidityEnd(Timestamp validityEnd) {
         this.validityEnd = validityEnd;
+    }
+
+    public Timestamp getValidityStart() {
+        return validityStart;
+    }
+
+    public void setValidityStart(Timestamp validityStart) {
+        this.validityStart = validityStart;
     }
 
     public String getPartnerStatus() {

@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import webprogramming.csc1106.Entities.CourseCategory;
 import webprogramming.csc1106.Entities.Partner;
 import webprogramming.csc1106.Entities.PartnerPublish;
-import webprogramming.csc1106.Entities.Roles;
 import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.CourseCategoryRepository;
@@ -89,6 +87,8 @@ public class PartnerService {
 
             // Associate User with Partner
             partner.setUser(user);
+            partner.setValidityStart(new java.sql.Timestamp(System.currentTimeMillis()));
+            partner.setValidityEnd(new java.sql.Timestamp(System.currentTimeMillis() + 31556952000L)); // 1 year
             partner.setPartnerStatus("Approved");
             partnerRepository.save(partner);
 
@@ -108,6 +108,28 @@ public class PartnerService {
             partnerRepository.save(partner);
             emailService.sendRejectionEmail(partner.getPartnerEmail(), partner.getCompanyName());
             return true;
+        }
+        return false;
+    }
+
+    public boolean renewPartnerSubscription(Integer partnerId) {
+
+        Partner partner = partnerRepository.findById(partnerId).orElse(null);
+        if (partner != null) {
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+            Timestamp validityEnd = partner.getValidityEnd();
+
+            // Check if the partner can renew (within 30 days of expiry or already expired)
+            long difference = validityEnd.getTime() - currentTimestamp.getTime();
+            long differenceInDays = difference / (1000 * 60 * 60 * 24);
+
+            if (differenceInDays <= 30) {
+                // Extend validity by one year
+                Timestamp newValidityEnd = new Timestamp(validityEnd.getTime() + 31556952000L); // 1 year in milliseconds
+                partner.setValidityEnd(newValidityEnd);
+                partnerRepository.save(partner);
+                return true;
+            }
         }
         return false;
     }
@@ -147,3 +169,4 @@ public class PartnerService {
 
 
 }
+

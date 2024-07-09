@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Models.LikesID;
@@ -29,6 +30,8 @@ public class CommunityPostController {
     private LikesRepo likesRepo;
     @Autowired
     private SubscriptionsRepo subsRepo;
+    @Autowired 
+    private AttachmentsRepo attachmentsRepo;
 
     @GetMapping("/community/{user_group}/{category_id}/{post_id}")
     public String getPost(@PathVariable String category_id, @PathVariable String post_id, @PathVariable String user_group, @CookieValue("lrnznth_User_Name") String username, Model model) {
@@ -67,7 +70,7 @@ public class CommunityPostController {
     }
 
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/add-comment")
-    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username) {
+    public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username, RedirectAttributes redirectAttributes) {
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newComment.setTimestamp(timestamp);
@@ -80,6 +83,9 @@ public class CommunityPostController {
         // postRepo.save(post);
         commentRepo.save(newComment);
         
+        redirectAttributes.addFlashAttribute("successMessage", "Comment added successfully!");
+
+
         return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
     
@@ -164,5 +170,26 @@ public class CommunityPostController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/community/{user_group}/{category_id}/{post_id}/update-post")
+    public String updatePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, RedirectAttributes redirectAttributes) {
+        Post originalPost = postRepo.findByPostID(Long.parseLong(post_id));
+        originalPost.setContent(post.getContent());
+        postRepo.save(originalPost);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Post edited successfully!");
+        
+        return "redirect:/community/{user_group}/{category_id}/{post_id}";
+    }
+
+    @PostMapping("/community/{user_group}/{category_id}/delete-post")
+    public String deletePost(@PathVariable String user_group, @PathVariable String category_id, @RequestParam("postId") Long postId, RedirectAttributes redirectAttributes) {
+
+        postRepo.deleteByPostID(postId.intValue());
+
+        redirectAttributes.addFlashAttribute("successMessage", "Post deleted successfully!");
+        
+        return "redirect:/community/{user_group}/{category_id}";
     }
 }   

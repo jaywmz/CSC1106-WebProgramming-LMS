@@ -2,6 +2,7 @@ package webprogramming.csc1106.Controllers;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -51,16 +52,21 @@ public class CommunityNewPostController {
     }
 
     @PostMapping("/community/new-post")
-    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_Name") String username, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
+    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("userId") String userID, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
         // set post timestamp
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newPost.setTimestamp(timestamp);
 
         // retrieve user by user object and set post's User link and username attribute
-        User user = userRepo.findByUserName(username);
-        newPost.setUser(user);
-        newPost.setPosterName(username);
+        Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+        if (user.isPresent()) {
+            newPost.setUser(user.get());
+            newPost.setPosterName(user.get().getUserName());
+        }
+        else {
+            throw new Error("Cannot find user from user id in cookie");
+        }
 
         // set post category
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id));
@@ -96,7 +102,7 @@ public class CommunityNewPostController {
         }else if(Integer.parseInt(category_id) <= 10){
             return "redirect:/community/instructors/" + category_id;
         }else{
-            return "redirect:/community/" + category_id; 
+            return "redirect:/community/general/" + category_id; 
         }
     }
     
