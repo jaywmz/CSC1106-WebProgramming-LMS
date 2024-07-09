@@ -65,7 +65,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Likes> likes;
-
+    
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subscription> subscriptions;
 
@@ -173,6 +173,18 @@ public class User {
 
     public void setLoginCookie(String loginCookie) {
         this.loginCookie = loginCookie;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public List<Likes> getLikes() {
+        return likes;
+    }
+
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
     }
 
     // Generate Random String with Numbers

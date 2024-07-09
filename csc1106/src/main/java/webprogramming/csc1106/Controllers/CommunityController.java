@@ -1,19 +1,27 @@
 package webprogramming.csc1106.Controllers;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.wavefront.WavefrontProperties.Application;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.HttpStatus;
 
 
 import webprogramming.csc1106.Entities.*;
+import webprogramming.csc1106.Models.SubscribeID;
 import webprogramming.csc1106.Repositories.PostRepo;
+import webprogramming.csc1106.Repositories.SubscriptionsRepo;
+import webprogramming.csc1106.Repositories.UserRepository;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,13 +29,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class CommunityController {
-
     @Autowired
     private PostRepo postRepo;
+    @Autowired
+    private SubscriptionsRepo subRepo;
+    @Autowired
+    private UserRepository userRepo;
     
     @GetMapping("/community")
-    public String getCommunityHome(Model model) {
+    public String getCommunityHome(Model model, @CookieValue("userId") String userID) {
+        // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
+
+        // identify user
+        Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+
+        // get list of subscribed posts from user 
+        if (user.isPresent()) {
+            List<Subscription> allSubscriptions = subRepo.findAllByUser(user.get());
+            List<Long> postIDs = new ArrayList<Long>();
+            for (Subscription sub : allSubscriptions) {
+                postIDs.add(sub.getPost().getPostID());
+            }
+            List<Post> subbedPosts = postRepo.findAllById(postIDs);
+            model.addAttribute("subbedPosts", subbedPosts);
+        }
+        else {
+            model.addAttribute("subbedPosts", null);
+        }
 
         model.addAttribute("posts", posts);
 

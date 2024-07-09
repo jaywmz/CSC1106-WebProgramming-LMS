@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import webprogramming.csc1106.Entities.Post;
 import org.springframework.data.jpa.repository.Query;
 
-public interface PostRepo extends JpaRepository<Post, Integer>{
+public interface PostRepo extends JpaRepository<Post, Long>{
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
     List<Post> findTop5ByOrderByTimestampDesc();
     Post findByPostID(long id);

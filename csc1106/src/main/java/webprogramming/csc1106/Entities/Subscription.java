@@ -32,6 +32,10 @@ public class Subscription {
         this.post = post;
     }
 
+    public SubscribeID getSubID() {
+        return subID;
+    }
+
     public User getUser() {
         return user;
     }
