@@ -315,8 +315,11 @@ async function coverPage(boolean){
 async function dashboardRefreshItems(){
     await userSigned()
     
-    if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
-    else await refreshDashboardSideBarItems();
+    // if(getCookie('lrnznth_Dashboard_Items_Count')) await refreshDashboardSideBarItemsLocally();
+    // else await refreshDashboardSideBarItems();
+
+    // if cookie does not already have side bar items added, the refreshDashboardSideBarItemsLocally() function won't load sidebar because it does not add sidebar items to cookie first.
+    refreshDashboardSideBarItems();
 
     await coverPage(false);
 }
