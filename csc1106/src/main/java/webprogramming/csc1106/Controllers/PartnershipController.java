@@ -1,6 +1,7 @@
 package webprogramming.csc1106.Controllers;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import webprogramming.csc1106.Entities.Lesson;
 import webprogramming.csc1106.Entities.Partner;
 import webprogramming.csc1106.Entities.PartnerCertificate;
 import webprogramming.csc1106.Entities.PartnerPublish;
+import webprogramming.csc1106.Entities.PartnerRenew;
 import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Entities.User;
@@ -38,6 +40,7 @@ import webprogramming.csc1106.Repositories.PartnerCertificateRepository;
 import webprogramming.csc1106.Repositories.PartnerPublishRepository;
 import webprogramming.csc1106.Repositories.PartnerRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
+import webprogramming.csc1106.Repositories.PartnerRenewRepository;
 import webprogramming.csc1106.Services.AzureBlobService;
 import webprogramming.csc1106.Services.CourseSubscriptionService;
 import webprogramming.csc1106.Services.LessonService;
@@ -73,6 +76,9 @@ public class PartnershipController {
 
     @Autowired
     private PartnerRepository partnerRepository;
+
+    @Autowired
+    private PartnerRenewRepository partnerRenewRepository;
 
     @Autowired
     private AzureBlobService azureBlobService;
@@ -111,6 +117,73 @@ public class PartnershipController {
             model.addAttribute("message", "Renewal failed. Subscription is not within 30 days of expiry.");
         }
         return "Partnership/renewResult";
+    }
+
+    //get for renewExpiredSubcription
+    @GetMapping("/renewExpired")
+    public String getRenewExpiredSubscription() {
+        return "Partnership/renewExpiredSubscription";
+    }
+    
+    // For renewal (EXPIRED), from login redirect
+    @PostMapping("/renewExpired")
+    public String renewExpiredSubscription(@RequestParam("email") String email, @RequestParam("reason") String reason, Model model) {
+        User user = userRepository.findByUserEmail(email);
+        Partner partner = partnerRepository.findByUser(user);
+        
+        if (partner == null || partner.getValidityEnd().after(new Timestamp(System.currentTimeMillis()))) {
+            model.addAttribute("error", "Invalid email or partner subscription is still valid.");
+            return "Partnership/renewExpiredSubscription";
+        }
+        
+        PartnerRenew existingRenewal = partnerRenewRepository.findByPartnerAndRenewStatus(partner, "Pending");
+        if (existingRenewal != null) {
+            model.addAttribute("error", "You have already submitted a renewal request. It is pending for admin action.");
+            return "Partnership/renewExpiredSubscription";
+        }
+        
+        PartnerRenew partnerRenew = new PartnerRenew(partner, "Pending", reason, new Timestamp(System.currentTimeMillis()), null);
+        partnerRenewRepository.save(partnerRenew);
+        
+        model.addAttribute("success", "Renewal request submitted successfully.");
+        return "Partnership/renewExpiredSubscription";
+    }
+    
+    // For renewal (EXPIRED), for admin actions
+    @GetMapping("/approvalExpiredSubscription")
+    public String getApprovalExpiredSubscription(Model model) {
+        List<PartnerRenew> renewList = partnerRenewRepository.findAllByRenewStatus("Pending");
+        model.addAttribute("renewList", renewList);
+        return "Partnership/approvalExpiredSubscription";
+    }
+
+    @PostMapping("/approveRenewal/{id}")
+    public ResponseEntity<Void> approveRenewal(@PathVariable Integer id) {
+        Optional<PartnerRenew> optionalRenew = partnerRenewRepository.findById(id);
+        if (optionalRenew.isPresent()) {
+            PartnerRenew renew = optionalRenew.get();
+            renew.setRenewStatus("Approved");
+            // set the renew partner validity end to be extended by 1 year
+            Timestamp validityEnd = renew.getPartner().getValidityEnd();
+            LocalDateTime localDateTime = validityEnd.toLocalDateTime();
+            localDateTime = localDateTime.plusYears(1);
+            renew.getPartner().setValidityEnd(Timestamp.valueOf(localDateTime));
+            renew.setApprovaldatetime(new Timestamp(System.currentTimeMillis()));
+            partnerRenewRepository.save(renew);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/rejectRenewal/{id}")
+    public ResponseEntity<Void> rejectRenewal(@PathVariable Integer id) {
+        Optional<PartnerRenew> optionalRenew = partnerRenewRepository.findById(id);
+        if (optionalRenew.isPresent()) {
+            PartnerRenew renew = optionalRenew.get();
+            renew.setRenewStatus("Rejected");
+            renew.setApprovaldatetime(new Timestamp(System.currentTimeMillis()));
+            partnerRenewRepository.save(renew);
+        }
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/partner/viewAllCourses")
@@ -614,6 +687,10 @@ public String partnerSubscriptions(@RequestParam("userId") int userId, Model mod
 
 
 }
+
+
+
+
 
 
 
