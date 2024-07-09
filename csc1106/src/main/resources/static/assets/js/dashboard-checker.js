@@ -358,7 +358,7 @@ async function redirectUserToCorrectDashboard(){
     else if(userRole === 'Partner'){
         if(!partnerRoute.includes(urlSegment)) return window.location.href = '/partner';
 
-        
+
         // Check if partnership is expired
         const isExpired = await partnershipIsExpired();
         if(isExpired) return window.location.href = '/partner/expired';
@@ -369,8 +369,25 @@ async function redirectUserToCorrectDashboard(){
     }
 }
 
+// Check if partnership is expired
 async function partnershipIsExpired(){
-    //API to check if partnership is expired
+    
+    //Try to get from Cookie first
+    const partnershipCookie = getCookie('lrnznth_PartnerShip');
+    // If partnership cookie does not exist, return false
+    if(!partnershipCookie) {
+        // API to check if partnership is expired
 
-    //Return true or false
+        // If partnership is expired
+        return true;
+
+
+        // If partnership is not expired
+        setCookie('lrnznth_PartnerShip', 'true', 1); // Set one day cookie as this need to be checked again day by day
+        return false;
+    }
+    // Since partnership cookie exists, return true
+    else{
+        return true;
+    }
 }
