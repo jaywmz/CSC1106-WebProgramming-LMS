@@ -165,4 +165,38 @@ public class CommunityPostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/community/{user_group}/{category_id}/{post_id}/update-post")
+    public String updatePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username) {
+        // java.util.Date date = new java.util.Date();
+        // Timestamp timestamp = new Timestamp(date.getTime());
+        // newComment.setTimestamp(timestamp);
+        // newComment.setCommenterName(username);
+
+        // Post post = postRepo.findByPostID(Long.parseLong(post_id));
+        // // post.getComments().add(newComment);
+        // newComment.setPost(post);
+
+        // // postRepo.save(post);
+        // commentRepo.save(newComment);
+        
+        return "redirect:/community/{user_group}/{category_id}/{post_id}";
+    }
+
+    @PostMapping("/community/{user_group}/{category_id}/{post_id}/delete-post")
+    public String deletePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username) {
+        // java.util.Date date = new java.util.Date();
+        // Timestamp timestamp = new Timestamp(date.getTime());
+        // newComment.setTimestamp(timestamp);
+        // newComment.setCommenterName(username);
+
+        // Post post = postRepo.findByPostID(Long.parseLong(post_id));
+        // // post.getComments().add(newComment);
+        // newComment.setPost(post);
+
+        // // postRepo.save(post);
+        // commentRepo.save(newComment);
+        
+        return "redirect:/community/{user_group}/{category_id}/{post_id}";
+    }
 }   
