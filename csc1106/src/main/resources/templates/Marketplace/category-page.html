@@ -37,7 +37,9 @@
             <ul class="d-flex align-items-center">
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
                 <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/cart}">Cart</a></li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link nav-link-custom" data-bs-toggle="modal" data-bs-target="#topUpModal">Top Up</a>
+                </li>
                 <li class="nav-item dropdown pe-3 nav-profile">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
@@ -55,6 +57,29 @@
         </nav>
     </header>
 
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link active" th:href="@{/market}"><i class="bi bi-shop"></i><span>Marketplace</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/community}"><i class="bi bi-people shaded-icon"></i><span>Community</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/mylearning}"><i class="bi bi-book"></i><span>My Learning</span></a></li>
+            
+            <!-- User Section Label -->
+            <li class="menu-section">USER</li>
+            
+            <li class="nav-item"><a class="nav-link" th:href="@{/cart}"><i class="bi bi-cart shaded-icon"></i><span>My Cart</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/profile}"><i class="bi bi-person"></i><span>User</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
+            
+            <!-- Extra Section Label -->
+            <li class="menu-section">EXTRA (JUST FOR REFERENCE)</li>
+            
+            <li class="nav-item"><a class="nav-link" th:href="@{/blank-page}"><i class="bi bi-file-earmark"></i><span>BLANK PAGE</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="javascript:location.reload();"><i class="bi bi-arrow-clockwise"></i><span>Refresh SideBar</span></a></li>
+        </ul>
+    </aside>
+    
     <main id="main" class="main">
         <div class="pagetitle">
             <h1>Market Place</h1>
@@ -108,6 +133,30 @@
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script src="assets/js/category-page.js" th:src="@{/assets/js/category-page.js}"></script>
+
+     <!-- Modal -->
+     <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="topUpAmount">Enter Amount (USD):</label>
+                    <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
+                    <input type="hidden" name="userId" id="userId">
+                    <p>Current Balance: <span id="currentBalance">$0.00</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="redirectToPayPal()">Proceed to PayPal</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
 </body>
 </html>

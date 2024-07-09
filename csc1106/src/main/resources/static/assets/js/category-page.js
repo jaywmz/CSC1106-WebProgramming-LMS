@@ -122,4 +122,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
+
+    // PayPal Top Up functionality
+    let userId = getCookie("lrnznth_User_ID");
+    if (userId) {
+        document.getElementById("userId").value = userId;
+
+        fetch(`/user/${userId}/balance`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("currentBalance").innerText = `$${data.balance.toFixed(2)}`;
+            })
+            .catch(error => {
+                console.error('Error fetching balance:', error);
+            });
+    }
+
+    window.redirectToPayPal = function() {
+        const userId = document.getElementById("userId").value;
+        const amount = document.getElementById("topUpAmount").value;
+        if (amount && !isNaN(amount)) {
+            window.location.href = `/paypal/pay?total=${amount}&userId=${userId}`;
+        } else {
+            alert("Please enter a valid amount.");
+        }
+    };
 });
