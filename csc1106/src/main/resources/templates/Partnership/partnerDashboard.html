@@ -194,7 +194,15 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" id="viewSubscriptBtn">
           <i class="bi bi-card-list"></i>
-          <span>Partner Subscriptions</span>
+          <span>Partner Course Subscriptions</span>
+        </a>
+      </li>
+
+      <!--Get renewal page using renewBtn-->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" id="renewBtn">
+          <i class="bi bi-card-list"></i>
+          <span>Renew Partnership Subscription</span>
         </a>
       </li>
 
@@ -365,6 +373,12 @@
           document.getElementById('viewSubscriptBtn').addEventListener('click', function(event) {
             event.preventDefault();
             window.location.href = '/partnership/partner/partnerSubscriptions?userId=' + userId;
+          });
+
+          // for /partner/renew
+          document.getElementById('renewBtn').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.location.href = '/partnership/partner/renew?userId=' + userId;
           });
           
         }
