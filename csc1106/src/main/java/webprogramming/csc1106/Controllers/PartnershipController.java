@@ -2,8 +2,6 @@ package webprogramming.csc1106.Controllers;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,11 +9,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,24 +18,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
+import webprogramming.csc1106.Entities.CategoryGroup;
+import webprogramming.csc1106.Entities.CourseCategory;
+import webprogramming.csc1106.Entities.CourseSubscriptionEntity;
+import webprogramming.csc1106.Entities.FileResource;
+import webprogramming.csc1106.Entities.Lesson;
+import webprogramming.csc1106.Entities.Partner;
+import webprogramming.csc1106.Entities.PartnerCertificate;
+import webprogramming.csc1106.Entities.PartnerPublish;
+import webprogramming.csc1106.Entities.Section;
+import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Entities.User;
+import webprogramming.csc1106.Repositories.PartnerCertificateRepository;
+import webprogramming.csc1106.Repositories.PartnerPublishRepository;
+import webprogramming.csc1106.Repositories.PartnerRepository;
+import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Services.AzureBlobService;
-import webprogramming.csc1106.Services.PartnerService;
-import webprogramming.csc1106.Services.UploadCourseService;
-import webprogramming.csc1106.Services.UserService;
 import webprogramming.csc1106.Services.CourseSubscriptionService;
-import webprogramming.csc1106.Services.SectionService;
 import webprogramming.csc1106.Services.LessonService;
-import webprogramming.csc1106.Entities.*;
-import webprogramming.csc1106.Repositories.*;
-import java.time.format.DateTimeFormatter;
+import webprogramming.csc1106.Services.PartnerService;
+import webprogramming.csc1106.Services.SectionService;
+import webprogramming.csc1106.Services.UploadCourseService;
 
 
 @Controller
@@ -87,6 +90,27 @@ public class PartnershipController {
     @GetMapping
     public String showPartnershipPage() {
         return "Partnership/partnership";
+    }
+
+    @GetMapping("/partner/renew")
+    public String showRenewalForm(@RequestParam("userId") int userId, Model model) {
+        User user = userRepository.findById(userId).get();
+        Partner partner = partnerRepository.findByUser(user);
+        model.addAttribute("partner", partner);
+        return "Partnership/renew";
+    }
+
+    @PostMapping("/partner/renew")
+    public String processRenewal(@RequestParam("partnerId") int partnerId, Model model) {
+        boolean success = partnerService.renewPartnerSubscription(partnerId);
+        Partner partner = partnerRepository.findById(partnerId).get();
+        model.addAttribute("partner", partner);
+        if (success) {
+            model.addAttribute("message", "Subscription renewed successfully!");
+        } else {
+            model.addAttribute("message", "Renewal failed. Subscription is not within 30 days of expiry.");
+        }
+        return "Partnership/renewResult";
     }
 
     @GetMapping("/partner/viewAllCourses")
@@ -590,6 +614,9 @@ public String partnerSubscriptions(@RequestParam("userId") int userId, Model mod
 
 
 }
+
+
+
 
 
 
