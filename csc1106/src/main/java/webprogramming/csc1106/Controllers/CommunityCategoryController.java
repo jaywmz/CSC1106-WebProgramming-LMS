@@ -67,6 +67,10 @@ public class CommunityCategoryController {
 
     @GetMapping("/community/instructors")
     public String getInstructors(Model model) {
+        List<Integer> categoryIds = Arrays.asList(9, 10);
+        List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
+
+        model.addAttribute("posts", posts);
         return "Community/community-instructors";
     }
 
