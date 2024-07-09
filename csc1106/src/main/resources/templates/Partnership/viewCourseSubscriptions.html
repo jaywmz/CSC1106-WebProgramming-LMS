@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Subscriptions</title>
+    <meta name="description" content="View all courses uploaded by partners">
+    <meta name="keywords" content="courses, partners, uploaded courses">
+  
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" th:href="@{/assets/img/favicon.png}">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}">
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.snow.css}">
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
+    <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fc;
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        }
+        .pagetitle {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #e3e7f3;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e3e7f3;
+        }
+        .table th {
+            background-color: #f8f9fc;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .table td {
+            color: #333;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+        .image-container {
+            max-width: 100px;
+            max-height: 100px;
+            overflow: hidden;
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .card {
+                padding: 15px;
+            }
+            .card-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
+                <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
+                <span class="d-none d-lg-block">LearnZenith</span>
+            </a>
+        </div>
+        <nav class="header-nav ms-auto" aria-label="Navigation">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item dropdown pe-3 nav-profile">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
+                        <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>Need Help?</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="card">
+            <div class="card-title">Your Uploaded Course Subscriptions</div>
+            <input type="text" id="searchInput" placeholder="Search By Name" class="form-control">
+            <button onclick="filterSubscriptions()" class="btn btn-primary mt-2">Search</button>
+        </div>
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Course Category</th>
+                        <th>Instructor</th>
+                        <th>Subscriber ID</th>
+                        <th>Subscription Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="subscriptionTableBody">
+                    <!-- Populate with course subscription data -->
+                    <tr th:each="subscription : ${courseSubscriptions}">
+                        <td th:text="${subscription.courseName}"></td>
+                        <td th:text="${subscription.courseCategory}"></td>
+                        <td th:text="${subscription.courseInstructor}"></td>
+                        <td th:text="${subscription.userId}"></td>
+                        <td th:text="${subscription.subscriptionDate}"></td>
+                        <td th:text="${subscription.subscriptionStatus}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button><a href="/partner" class="btn btn-secondary">Go Back</a></button>
+    </div>
+
+    <script>
+        function filterSubscriptions() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let table = document.getElementById('subscriptionTableBody');
+            let rows = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                let courseName = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+                let courseCategory = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+                if (courseName.includes(input) || courseCategory.includes(input)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+    <script>
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) {
+                    let cookieValue = c.substring(nameEQ.length, c.length);
+                    return decodeURIComponent(cookieValue);
+                }
+            }
+            return null;
+        }
+  
+        document.addEventListener('DOMContentLoaded', function() {
+            const userIdString = getCookie('lrnznth_User_ID');
+    if (userIdString) {
+        const userId = parseInt(userIdString, 10); 
+        document.getElementById('userId').value = userId;
+    }
+        });
+    </script>
+</body>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/chart.js/chart.umd.js"></script>
+<script src="assets/vendor/echarts/echarts.min.js"></script>
+<script src="assets/vendor/quill/quill.js"></script>
+<script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+<script src="assets/vendor/tinymce/tinymce.min.js"></script>
+<script src="assets/vendor/php-email-form/validate.js"></script>
+
+</html>
