@@ -357,11 +357,20 @@ async function redirectUserToCorrectDashboard(){
     // If user is partner
     else if(userRole === 'Partner'){
         if(!partnerRoute.includes(urlSegment)) return window.location.href = '/partner';
+
+        
+        // Check if partnership is expired
+        const isExpired = await partnershipIsExpired();
+        if(isExpired) return window.location.href = '/partner/expired';
     }
     // If user is student or instructor
     else if(userRole === 'Student' || userRole === 'Instructor'){
         if(!userRoute.includes(urlSegment)) return window.location.href = '/dashboard';
     }
-    
+}
 
+async function partnershipIsExpired(){
+    //API to check if partnership is expired
+
+    //Return true or false
 }
