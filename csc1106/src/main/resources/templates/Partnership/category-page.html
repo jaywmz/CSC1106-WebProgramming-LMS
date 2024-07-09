@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Partner Market Place - LearnZenith</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" th:href="@{/assets/img/favicon.png}">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}">
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.snow.css}">
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
+    <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .nav-item a {
+            margin-right: 20px;
+            padding: 10px;
+        }
+        .nav-profile {
+            margin-left: auto;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card-custom {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link-custom {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .card {
+            width: 18rem;
+            height: 30rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-img-top {
+            width: 100%;
+            height: 10rem;
+            object-fit: contain;
+            padding: 5px;
+        }
+        .course-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+        .course-rating .star {
+            color: #ffbf00;
+            margin-right: 5px;
+        }
+        .course-rating .reviews {
+            margin-left: 5px;
+            font-size: 14px;
+            color: #777;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .card-title, .card-text, .course-rating, .card-price, .add-to-cart {
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .card-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .btn {
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
+                <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
+                <span class="d-none d-lg-block">LearnZenith</span>
+            </a>
+        </div>
+        <nav class="header-nav ms-auto" aria-label="Navigation">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item dropdown pe-3 nav-profile">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
+                        <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>Need Help?</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Partner Market Place</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a class="nav-link collapsed" th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Market Place</li>
+                </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="container mt-5">
+                <!-- Add filters here -->
+                <div class="filters mb-4">
+                    <select id="sort-by" class="form-control mt-2">
+                        <option value="newest">Newest</option>
+                        <option value="price-low-high">Price: Low to High</option>
+                        <option value="price-high-low">Price: High to Low</option>
+                        <option value="rating">Rating</option>
+                    </select>
+                </div>
+                <div class="row" id="courses-list">
+                    <div class="col-lg-4 col-md-6" th:each="course : ${courses}"
+                         th:data-price="${course.price}"
+                         th:data-rating="${course.averageRating}">
+                        <div class="card mb-3">
+                            <div class="card card-custom">
+                                <img th:src="@{${course.coverImageUrl}}" class="card-img-top" alt="Course Image">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${course.title}"></h5>
+                                    <p class="card-text" th:text="${course.description}"></p>
+                                    <div class="course-rating">
+                                        <span class="star">&#9733;</span>
+                                        <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'"></span>
+                                    </div>
+                                    <p class="card-price"><strong th:text="'$' + ${course.price}"></strong></p>
+                                   
+                                    <div class="btn-container">
+                                        <button class="btn btn-primary subscribe-btn" th:data-course-id="${course.id}">Subscribe</button>
+                                        <button class="btn btn-secondary unsubscribe-btn" th:data-course-id="${course.id}">Unsubscribe</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <button><a href="/partner" class="btn btn-secondary">Go Back</a></button>
+    </main>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
+    <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
+    <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = getCookie('lrnznth_User_ID');
+    if (userId) {
+        const userId = parseInt(userId, 10); 
+        document.getElementById('userId').value = userId;
+    }
+        });
+
+        $(document).ready(function () {
+            
+            function getCookie(name) {
+                let nameEQ = name + "=";
+                let ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) {
+                        let cookieValue = c.substring(nameEQ.length, c.length);
+                        return decodeURIComponent(cookieValue);
+                    }
+                }
+                return null;
+            }
+      
+            function filterAndSortCourses() {
+                let sortBy = $('#sort-by').val();
+                let courses = $('#courses-list .col-lg-4');
+    
+                if (sortBy) {
+                    courses.sort(function (a, b) {
+                        let aValue, bValue;
+    
+                        if (sortBy === 'price-low-high') {
+                            aValue = parseFloat($(a).data('price'));
+                            bValue = parseFloat($(b).data('price'));
+                            return aValue - bValue;
+                        } else if (sortBy === 'price-high-low') {
+                            aValue = parseFloat($(a).data('price'));
+                            bValue = parseFloat($(b).data('price'));
+                            return bValue - aValue;
+                        } else if (sortBy === 'rating') {
+                            aValue = parseFloat($(a).data('rating'));
+                            bValue = parseFloat($(b).data('rating'));
+                            return bValue - aValue;
+                        } else if (sortBy === 'newest') {
+                            aValue = new Date($(a).data('newest'));
+                            bValue = new Date($(b).data('newest'));
+                            return bValue - aValue;
+                        }
+                        return 0;
+                    }).appendTo('#courses-list');
+                }
+            }
+    
+            $('#sort-by').on('change', function () {
+                filterAndSortCourses();
+            });
+    
+            // Initially call the filter and sort function
+            filterAndSortCourses();
+
+             // Subscribe button click handler
+        $('.subscribe-btn').on('click', function() {
+            let courseId = $(this).data('course-id');
+            let userId = getCookie('lrnznth_User_ID');
+            if (userId) {
+                $.post(`/partnership/partner/subscribe/${courseId}`, { userId: userId })
+                    .done(function(response) {
+                        alert(response.message || response);
+                        location.reload();
+                    })
+                    .fail(function(xhr) {
+                        alert(xhr.responseText);
+                    });
+            } else {
+                alert("User not logged in.");
+            }
+        });
+
+        // Unsubscribe button click handler
+        $('.unsubscribe-btn').on('click', function() {
+            let courseId = $(this).data('course-id');
+            let userId = getCookie('lrnznth_User_ID');
+            if (userId) {
+                $.post(`/partnership/partner/unsubscribe/${courseId}`, { userId: userId })
+                    .done(function(response) {
+                        alert(response.message || response);
+                        location.reload();
+                    })
+                    .fail(function(xhr) {
+                        alert(xhr.responseText);
+                    });
+            } else {
+                alert("User not logged in.");
+            }
+        });
+
+        });
+    </script>
+</body>
+</html>

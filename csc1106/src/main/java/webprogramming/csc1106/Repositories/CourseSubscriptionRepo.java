@@ -14,6 +14,11 @@ public interface CourseSubscriptionRepo extends JpaRepository<CourseSubscription
     // GET by user
     List<CourseSubscriptionEntity> findByUserId(int userId);
 
+    // GET by list of course
+    @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.courseId IN :courseIds")
+    List<CourseSubscriptionEntity> findByCourseIdIn(@Param("courseIds") List<Long> courseIds);
+
+
     // GET all
     @Query("SELECT c FROM CourseSubscriptionEntity c")
     List<CourseSubscriptionEntity> findAll();
@@ -21,4 +26,9 @@ public interface CourseSubscriptionRepo extends JpaRepository<CourseSubscription
     // Get by course id and user id
     @Query("SELECT c FROM CourseSubscriptionEntity c WHERE c.courseId = :courseId AND c.userId = :userId")
     CourseSubscriptionEntity findByCourseIdAndUserId(@Param("courseId") long courseId, @Param("userId") int userId);
+
+    int countByUserIdAndSubscriptionStatus(int userId, String string);
+
+    //findByUserIdAndCourseIdAndSubscriptionStatus
+    CourseSubscriptionEntity findByUserIdAndCourseIdAndSubscriptionStatus(int userId, long courseId, String string);
 }

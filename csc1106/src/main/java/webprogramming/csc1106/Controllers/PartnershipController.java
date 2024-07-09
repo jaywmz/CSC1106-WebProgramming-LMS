@@ -3,14 +3,14 @@ package webprogramming.csc1106.Controllers;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,12 +23,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import webprogramming.csc1106.Entities.CategoryGroup;
+import webprogramming.csc1106.Entities.CourseCategory;
+import webprogramming.csc1106.Entities.CourseSubscriptionEntity;
+import webprogramming.csc1106.Entities.FileResource;
+import webprogramming.csc1106.Entities.Lesson;
+import webprogramming.csc1106.Entities.Partner;
+import webprogramming.csc1106.Entities.PartnerCertificate;
+import webprogramming.csc1106.Entities.PartnerPublish;
+import webprogramming.csc1106.Entities.Section;
+import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Entities.User;
+import webprogramming.csc1106.Repositories.PartnerCertificateRepository;
+import webprogramming.csc1106.Repositories.PartnerPublishRepository;
+import webprogramming.csc1106.Repositories.PartnerRepository;
+import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Services.AzureBlobService;
+import webprogramming.csc1106.Services.CourseSubscriptionService;
+import webprogramming.csc1106.Services.LessonService;
 import webprogramming.csc1106.Services.PartnerService;
+import webprogramming.csc1106.Services.SectionService;
 import webprogramming.csc1106.Services.UploadCourseService;
-import webprogramming.csc1106.Entities.*;
-import webprogramming.csc1106.Repositories.*;
-import java.time.format.DateTimeFormatter;
 
 
 @Controller
@@ -45,6 +60,9 @@ public class PartnershipController {
     private UploadCourseService uploadCourseService;
 
     @Autowired
+    private CourseSubscriptionService courseSubscriptionService;
+
+    @Autowired
     private PartnerCertificateRepository partnerCertificateRepository;
 
     @Autowired
@@ -59,11 +77,40 @@ public class PartnershipController {
     @Autowired
     private AzureBlobService azureBlobService;
 
+    @Autowired
+    private SectionService sectionService;
+
+    @Autowired
+    private LessonService lessonService;
+
+    @Autowired
+    private UploadCourseService courseService;
 
 
     @GetMapping
     public String showPartnershipPage() {
         return "Partnership/partnership";
+    }
+
+    @GetMapping("/partner/renew")
+    public String showRenewalForm(@RequestParam("userId") int userId, Model model) {
+        User user = userRepository.findById(userId).get();
+        Partner partner = partnerRepository.findByUser(user);
+        model.addAttribute("partner", partner);
+        return "Partnership/renew";
+    }
+
+    @PostMapping("/partner/renew")
+    public String processRenewal(@RequestParam("partnerId") int partnerId, Model model) {
+        boolean success = partnerService.renewPartnerSubscription(partnerId);
+        Partner partner = partnerRepository.findById(partnerId).get();
+        model.addAttribute("partner", partner);
+        if (success) {
+            model.addAttribute("message", "Subscription renewed successfully!");
+        } else {
+            model.addAttribute("message", "Renewal failed. Subscription is not within 30 days of expiry.");
+        }
+        return "Partnership/renewResult";
     }
 
     @GetMapping("/partner/viewAllCourses")
@@ -86,6 +133,238 @@ public class PartnershipController {
 
         return "Partnership/viewAllCourses"; 
     }
+
+
+    @GetMapping("/partner/Courses")
+    public String getCoursePage(@RequestParam("userId") int userId, Model model) {
+        User user = userRepository.findById(userId).get();
+        Partner partner = partnerRepository.findByUser(user);
+        // Fetch courses uploaded by the partner based on userId
+        List<UploadCourse> courses = uploadCourseService.getCoursesByPartnerId(partner.getPartnerId());
+
+         // Fetch PartnerPublish entities associated with the partner
+         List<PartnerPublish> partnerPublishes = partnerService.getPartnerPublishByPartnerId(partner.getPartnerId());
+
+         // Pass courses and partnerPublishes to the view
+         model.addAttribute("courses", courses);
+         model.addAttribute("partnerPublishes", partnerPublishes);
+
+         List<Long> courseIds = courses.stream().map(UploadCourse::getId).collect(Collectors.toList());
+    List<CourseCategory> courseCategories = partnerService.getCourseCategoriesByCourseIds(courseIds);
+    model.addAttribute("courseCategories", courseCategories);
+
+        return "Partnership/Courses"; 
+    }
+
+    @PostMapping("/partner/sections")
+    public String createSection(@RequestParam("courseId") Long courseId, @RequestParam("sectionName") String sectionName, @RequestParam("sectionDesc") String sectionDesc) {
+        Section section = new Section();
+        section.setTitle(sectionName);
+        section.setDescription(sectionDesc);
+        sectionService.createSection(section, courseId);
+
+          // Fetch PartnerPublish entities associated with the partner
+          UploadCourse course = courseService.getCourseById(courseId).get();
+          Partner partner = partnerService.getPartnerByCourseId(course);
+          User user = partner.getUser();
+
+            return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
+    }
+
+    @PostMapping("/partner/editsections")
+    public String editSection(@RequestParam("editsectionId") Long sectionId, @RequestParam("editsectionName") String sectionName, @RequestParam("editsectionDesc") String sectionDesc, @RequestParam("editsectionCourseId") Long courseId) {
+        Section section = sectionService.getSectionById(sectionId);
+        section.setTitle(sectionName);
+        section.setDescription(sectionDesc);
+        sectionService.updateSection(sectionId, section);
+
+          // Fetch PartnerPublish entities associated with the partner
+          UploadCourse course = courseService.getCourseById(courseId).get();
+          Partner partner = partnerService.getPartnerByCourseId(course);
+          User user = partner.getUser();
+
+            return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
+    }
+
+    @PostMapping("/partner/deletesections")
+    public String deleteSection(@RequestParam("deletesectionId") Long sectionId, @RequestParam("deletesectionCourseId") Long courseId) {
+        Section section = sectionService.getSectionById(sectionId);
+        sectionService.deleteSection(sectionId);
+
+          // Fetch PartnerPublish entities associated with the partner
+          UploadCourse course = courseService.getCourseById(courseId).get();
+          Partner partner = partnerService.getPartnerByCourseId(course);
+          User user = partner.getUser();
+
+            return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
+    }
+
+
+    @PostMapping("/partner/lessons")
+public String createLesson(
+        @RequestParam("lessonCourseId") Long courseId,
+        @RequestParam("sectionId") Long sectionId,
+        @RequestParam("lessonName") String lessonName,
+        @RequestParam("lessonFile") MultipartFile lessonFile) {
+
+    Lesson lesson = new Lesson();
+    lesson.setTitle(lessonName);
+
+    // Handle file upload
+    if (!lessonFile.isEmpty()) {
+        try {
+            String fileName = lessonFile.getOriginalFilename();
+            String blobUrl = azureBlobService.uploadToAzureBlob(lessonFile.getInputStream(), fileName);
+            blobUrl = azureBlobService.generateSasUrl(blobUrl);
+
+            FileResource fileResource = new FileResource();
+            fileResource.setFileName(fileName);
+            fileResource.setFileUrl(blobUrl);
+            fileResource.setLesson(lesson);
+
+            lesson.getFiles().add(fileResource);
+        } catch (IOException e) {
+            // Handle the IOException (e.g., log the error and/or set an error message)
+            e.printStackTrace(); // Example of logging the exception
+            // Optionally, add a redirect to an error page or return an error message
+            return "redirect:/error";
+        }
+    }
+
+    lessonService.createLesson(lesson, sectionId);
+    
+     // Fetch PartnerPublish entities associated with the partner
+     UploadCourse course = courseService.getCourseById(courseId).get();
+     Partner partner = partnerService.getPartnerByCourseId(course);
+     User user = partner.getUser();
+
+    return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
+}
+
+
+@PostMapping("/partner/editlessons")
+public String editLesson(
+    @RequestParam("editlessonId") Long lessonId,
+    @RequestParam("editlessonName") String lessonName,
+    @RequestParam("editlessonCourseId") Long courseId) {
+    // Your code here
+    Lesson lesson = lessonService.getLessonById(lessonId);
+    lesson.setTitle(lessonName);
+
+    lessonService.updateLesson(lessonId,lesson);
+         UploadCourse course = courseService.getCourseById(courseId).get();
+         Partner partner = partnerService.getPartnerByCourseId(course);
+         User user = partner.getUser();
+        return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
+}
+
+
+//post for /partner/deleteLessons
+@PostMapping("/partner/deletelessons")
+public String deleteLesson(@RequestParam("deletelessonId") Long lessonId, @RequestParam("deletelessonCourseId") Long courseId) {
+    // Your code here
+    Lesson lesson = lessonService.getLessonById(lessonId);
+    lessonService.deleteLesson(lessonId);
+    UploadCourse course = courseService.getCourseById(courseId).get();
+    Partner partner = partnerService.getPartnerByCourseId(course);
+    User user = partner.getUser();
+    return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
+}
+
+
+//post for /partner/addmorefiles
+@PostMapping("/partner/addmorefiles")
+public String addMoreFiles(@RequestParam("addmorefilelessonId") Long lessonId, @RequestParam("addmorefilelessonFile") MultipartFile lessonFile, @RequestParam("addmorefilelessonCourseId") Long courseId) {
+    // Your code here
+    Lesson lesson = lessonService.getLessonById(lessonId);
+    // Handle file upload
+    if (!lessonFile.isEmpty()) {
+        try {
+            String fileName = lessonFile.getOriginalFilename();
+            String blobUrl = azureBlobService.uploadToAzureBlob(lessonFile.getInputStream(), fileName);
+            blobUrl = azureBlobService.generateSasUrl(blobUrl);
+
+            FileResource fileResource = new FileResource();
+            fileResource.setFileName(fileName);
+            fileResource.setFileUrl(blobUrl);
+            fileResource.setLesson(lesson);
+
+            lesson.getFiles().add(fileResource);
+        } catch (IOException e) {
+            // Handle the IOException (e.g., log the error and/or set an error message)
+            e.printStackTrace(); // Example of logging the exception
+            // Optionally, add a redirect to an error page or return an error message
+            return "redirect:/error";
+        }
+    }
+    lessonService.updateLesson(lessonId,lesson);
+    UploadCourse course = courseService.getCourseById(courseId).get();
+    Partner partner = partnerService.getPartnerByCourseId(course);
+    User user = partner.getUser();
+    return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
+}
+
+//post for /partner/deletefiles
+@PostMapping("/partner/deletefiles")
+public String deleteFile(@RequestParam("deletefileId") Long fileId, @RequestParam("deletefilelessonId") Long lessonId, @RequestParam("deletefilelessonCourseId") Long courseId) {
+    // Your code here
+    Lesson lesson = lessonService.getLessonById(lessonId);
+    lessonService.deleteFile(fileId);
+    UploadCourse course = courseService.getCourseById(courseId).get();
+    Partner partner = partnerService.getPartnerByCourseId(course);
+    User user = partner.getUser();
+    return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
+}
+
+//post for /partner/editfiles
+@PostMapping("/partner/editfiles")
+public String editFile(@RequestParam("editfileId") Long fileId, @RequestParam("editfilelessonId") Long lessonId, @RequestParam("editfilelessonCourseId") Long courseId,
+@RequestParam("editfilelessonFile")  MultipartFile lessonfile){
+    // Your code here
+    FileResource file = lessonService.getFileById(fileId);
+    String fileName = lessonfile.getOriginalFilename();
+    file.setFileName(fileName);
+
+    if (!lessonfile.isEmpty()) {
+        try {
+            String blobUrl = azureBlobService.uploadToAzureBlob(lessonfile.getInputStream(), fileName);
+            blobUrl = azureBlobService.generateSasUrl(blobUrl);
+            file.setFileUrl(blobUrl);
+            lessonService.updateFile(fileId, file);
+        } catch (IOException e) {
+            // Handle the IOException (e.g., log the error and/or set an error message)
+            e.printStackTrace(); // Example of logging the exception
+            // Optionally, add a redirect to an error page or return an error message
+            return "redirect:/error";
+        }
+    }
+
+    UploadCourse course = courseService.getCourseById(courseId).get();
+    Partner partner = partnerService.getPartnerByCourseId(course);
+    User user = partner.getUser();
+    return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
+}
+
+    
+    @GetMapping("/partner/viewCourseSubscriptions")
+public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model model) {
+    User user = userRepository.findById(userId).get();
+    Partner partner = partnerRepository.findByUser(user);
+    
+    // Fetch courses uploaded by the partner
+    List<UploadCourse> courses = uploadCourseService.getCoursesByPartnerId(partner.getPartnerId());
+    List<Long> courseIds = courses.stream().map(UploadCourse::getId).collect(Collectors.toList());
+    
+    // Fetch course subscriptions for the uploaded courses
+    List<CourseSubscriptionEntity> courseSubscriptions = courseSubscriptionService.getSubscriptionsByCourseIds(courseIds);
+    
+    // Pass courses and course subscriptions to the view
+    model.addAttribute("courses", courses);
+    model.addAttribute("courseSubscriptions", courseSubscriptions);
+    
+    return "Partnership/viewCourseSubscriptions";
+}
+
 
 
     @PostMapping("/submit")
@@ -267,9 +546,75 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         return "redirect:/partnership/partner/viewAllCourses?userId=" + user.getUserID(); 
     }
 
+        // Displays the category page with the category details and its courses
+        @GetMapping("/partner/category")
+        public String getCategoryPage(Model model) {
+            List<CategoryGroup> categories = courseService.getAllCategories();
+            model.addAttribute("categories", categories);
+            //get courses
+            List<UploadCourse> courses = courseService.getAllCourses();
+            model.addAttribute("courses", courses);
+
+            List<Long> courseIds = courses.stream().map(UploadCourse::getId).collect(Collectors.toList());
+            List<CourseCategory> courseCategories = partnerService.getCourseCategoriesByCourseIds(courseIds);
+            model.addAttribute("courseCategories", courseCategories);
+            
+            return "Partnership/category-page";
+        }
+
+         // Subscribe to a course
+    @PostMapping("/partner/subscribe/{courseId}")
+    @ResponseBody
+    public ResponseEntity<?> subscribeToCourse(@PathVariable Long courseId, @RequestParam("userId") int userId) {
+        try {
+            Optional<UploadCourse> course = uploadCourseService.getCourseById(courseId);
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            courseSubscriptionService.addpartnerSubscription(course.get(), user.getUserID());
+            return ResponseEntity.ok().body(Map.of("message", "Successfully subscribed to the course."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // Unsubscribe from a course
+    @PostMapping("/partner/unsubscribe/{courseId}")
+    @ResponseBody
+    public ResponseEntity<?> unsubscribeFromCourse(@PathVariable Long courseId, @RequestParam("userId") int userId) {
+        try {
+            Optional<UploadCourse> course = uploadCourseService.getCourseById(courseId);
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            courseSubscriptionService.checkPartnerUnsubscription(course.get(), user.getUserID());
+            return ResponseEntity.ok().body(Map.of("message", "Successfully unsubscribed from the course."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    
+    
+    @GetMapping("/partner/partnerSubscriptions")
+public String partnerSubscriptions(@RequestParam("userId") int userId, Model model) {
+    User user = userRepository.findById(userId).get();
+    
+    // get all courses
+    List<UploadCourse> courses = uploadCourseService.getAllCourses();
+    // Pass courses and course subscriptions to the view
+    model.addAttribute("courses", courses);
+
+    //fetch courseSubscription by user id
+    List<CourseSubscriptionEntity> courseSubscriptions = courseSubscriptionService.getSubscriptionsByUserId(user.getUserID());
+
+    // Pass course subscriptions to the view
+    model.addAttribute("subscriptions", courseSubscriptions);
+    
+    return "Partnership/partnerSubscriptions";
+}
+
+
 
 
 }
+
 
 
 
