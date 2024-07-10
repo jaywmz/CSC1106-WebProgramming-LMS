@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Entities.CourseCategory;
@@ -49,7 +52,7 @@ import webprogramming.csc1106.Services.SectionService;
 import webprogramming.csc1106.Services.UploadCourseService;
 
 
-@Controller
+@RestController
 @RequestMapping("/partnership")
 public class PartnershipController {
 
@@ -97,6 +100,28 @@ public class PartnershipController {
     public String showPartnershipPage() {
         return "Partnership/partnership";
     }
+
+    // to check if partner validity expired 
+    @GetMapping("/checkExpired")
+    @ResponseBody
+    public ResponseEntity<String> checkExpiredSubscription(@RequestParam("userId") int userId) {
+    
+        Optional<User> optionalUser = userRepository.findById(userId);
+    
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+    
+        User user = optionalUser.get();
+        Partner partner = partnerRepository.findByUser(user);
+    
+        if (partner == null || partner.getValidityEnd().after(new Timestamp(System.currentTimeMillis()))) {
+            return ResponseEntity.ok("false"); // Partnership is not expired
+        }
+    
+        return ResponseEntity.ok("true"); // Partnership is expired
+    }
+    
 
     @GetMapping("/partner/renew")
     public String showRenewalForm(@RequestParam("userId") int userId, Model model) {
