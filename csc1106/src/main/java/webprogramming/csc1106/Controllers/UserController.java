@@ -253,6 +253,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+    @GetMapping("/user/{userId}/role")
+    public ResponseEntity<Map<String, String>> getUserRole(@PathVariable int userId) {
+        Optional<User> userOptional = userService.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Map<String, String> response = new HashMap<>();
+            response.put("role", user.getRole().getRoleName());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    
+
 
     private void saveUser(User user) {
         userRepository.save(user);

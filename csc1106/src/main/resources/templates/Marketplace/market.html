@@ -37,8 +37,8 @@
         </div>
         <nav class="header-nav ms-auto" aria-label="Navigation">
             <ul class="d-flex align-items-center">
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
+                <li class="nav-item"><a id="uploadCourseLink" class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
+                <li class="nav-item"><a id="viewCoursesLink" class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
                 <li class="nav-item">
                     <a href="#" class="nav-link nav-link-custom" data-bs-toggle="modal" data-bs-target="#topUpModal">Top Up</a>
                 </li>
@@ -165,6 +165,24 @@
     <script src="assets/js/dashboard-checker.js"></script>
 
     <!-- Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Access Denied</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Top Up -->
     <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -187,5 +205,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>
