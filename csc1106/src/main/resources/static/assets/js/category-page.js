@@ -20,22 +20,33 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             var sortBy = sortBySelect.value;
             var categoryId = filterCategorySelect.value || window.location.pathname.split("/").pop();
-
+    
             // Show the loading spinner
             if (spinner) {
                 spinner.style.display = 'inline-block';
             }
-
+    
             // Clear the existing courses
             coursesContainer.innerHTML = '';
             coursesContainer.appendChild(spinner);
-
+    
             const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`);
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+    
             const data = await response.json();
-
+            console.log('Fetched data:', data);
+    
             // Remove spinner
             coursesContainer.innerHTML = '';
-
+    
+            if (!Array.isArray(data)) {
+                console.error("Data is not an array: ", data);
+                return;
+            }
+    
             data.forEach(course => {
                 let courseElement = document.createElement('div');
                 courseElement.classList.add('col-md-4', 'mb-4');
@@ -56,19 +67,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 coursesContainer.appendChild(courseElement);
             });
-
+    
             // Hide the loading spinner
             if (spinner) {
                 spinner.style.display = 'none';
             }
-
+    
             // Add event listeners to new Add to Cart buttons
             addCartEventListeners();
         } catch(e) {
-            console.error(e);
+            console.error('Error loading courses:', e);
         }
     }
-
+    
     // Add to Cart event listener
     function addCartEventListeners() {
         const addToCartButtons = document.querySelectorAll('.add-to-cart');

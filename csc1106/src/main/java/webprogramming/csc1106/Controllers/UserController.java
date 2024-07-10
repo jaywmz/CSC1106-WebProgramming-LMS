@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.HashMap;   
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +29,7 @@ import com.paypal.base.rest.PayPalRESTException;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Securities.Encoding;
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ModelAndView login(@RequestParam String email, @RequestParam String password, HttpServletResponse response) {
+    public ModelAndView login(@RequestParam String email, @RequestParam String password, HttpServletResponse response, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
 
         // Query the database for the user with the given email and password
@@ -71,6 +72,9 @@ public class UserController {
         if (user != null) {
             // Encode email address
             String encodedEmail = Encoding.encode(email);
+
+            // Set userId in session
+            session.setAttribute("userId", user.getUserID());
 
             // Set userId cookie
             Cookie cookie = new Cookie("userId", String.valueOf(user.getUserID()));
@@ -88,7 +92,7 @@ public class UserController {
     }
 
     @PostMapping("/logmein")
-    public ResponseEntity<User> logMeIn(@RequestBody Map<String, String> loginData, HttpServletResponse response) {
+    public ResponseEntity<User> logMeIn(@RequestBody Map<String, String> loginData, HttpServletResponse response, HttpSession session) {
         try {
             User user = userRepository.findByUserEmailAndUserPassword(loginData.get("email"), loginData.get("password"));
 
@@ -103,6 +107,9 @@ public class UserController {
             user.setLoginCookie(cookie);
 
             saveUser(user);
+
+            // Set userId in session
+            session.setAttribute("userId", user.getUserID());
 
             // Set userId cookie
             Cookie userIdCookie = new Cookie("userId", String.valueOf(user.getUserID()));
@@ -253,6 +260,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+    
     @GetMapping("/user/{userId}/role")
     public ResponseEntity<Map<String, String>> getUserRole(@PathVariable int userId) {
         Optional<User> userOptional = userService.findById(userId);
@@ -266,8 +274,6 @@ public class UserController {
         }
     }
     
-
-
     private void saveUser(User user) {
         userRepository.save(user);
         logger.debug("User data saved to the database");
