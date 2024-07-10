@@ -155,6 +155,28 @@ public class UserController {
         }
     }
 
+    //Update user
+    @PostMapping("/updateuser")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        try {
+            User userToUpdate = userRepository.findById(user.getUserID()).get();
+            userToUpdate.setUserName(user.getUserName());
+            userToUpdate.setUserEmail(user.getUserEmail());
+            userToUpdate.setUserPassword(user.getUserPassword());
+            userToUpdate.setRole(user.getRole());
+            userToUpdate.setUserBalance(user.getUserBalance());
+            userToUpdate.setLastLogin(user.getLastLogin());
+            userToUpdate.setLoginCookie(user.getLoginCookie());
+            userToUpdate.setJoinedDate(user.getJoinedDate());
+            userToUpdate.setJoinedTime(user.getJoinedTime());
+            userRepository.save(userToUpdate);
+            return new ResponseEntity<>(userToUpdate, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/register")
     public String registerForm(@ModelAttribute User user) {
         logger.debug("POST request received for registration form submission");
