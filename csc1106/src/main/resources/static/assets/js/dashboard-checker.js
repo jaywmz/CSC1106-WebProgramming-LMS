@@ -315,6 +315,8 @@ async function redirectUserToCorrectDashboard(){
 
     // Get User Cookie
     const userCookie = getCookie('lrnznth_User_Cookie');
+    // Get User Id
+    const userId = getCookie('lrnznth_User_ID');
 
     // If User Cookie does not exist, redirect to login page
     if(!userCookie) return window.location.href = '/login';
@@ -325,6 +327,9 @@ async function redirectUserToCorrectDashboard(){
     // Get User Role (Staff/Partner/Student/Instructor)
     const userRole = user.role.roleName;
 
+    // Get User Email
+    const userEmail = user.email;
+
     // Set A list of route for each role
     // For Admin
     let adminRoute = [
@@ -332,7 +337,12 @@ async function redirectUserToCorrectDashboard(){
     ];
     // For Partner
     let partnerRoute = [
-        'partner'
+        'partner',
+        'partnership',
+        'partnership/partner/viewAllCourses',
+        'partnerDashboard', // Assuming 'partnerDashboard' is the route after redirection
+        'renewExpired' // Assuming 'renewExpired' is the route for renewing subscriptions
+
     ];
     // For Student & Instructor
     let userRoute = [
@@ -356,12 +366,17 @@ async function redirectUserToCorrectDashboard(){
     }
     // If user is partner
     else if(userRole === 'Partner'){
-        if(!partnerRoute.includes(urlSegment)) return window.location.href = '/partner';
 
+        //log
+        console.log('User is a partner');
+       
+        if(!partnerRoute.includes(urlSegment)) return window.location.href = '/partner'; // Redirect to partnerDashboard
 
         // Check if partnership is expired
-        const isExpired = await partnershipIsExpired();
-        if(isExpired) return window.location.href = '/partner/expired';
+        const isExpired = await partnershipIsExpired(userId);
+        if(isExpired) return window.location.href = '/partnership/renewExpired'; // Redirect to renewExpired if partnership is expired
+
+
     }
     // If user is student or instructor
     else if(userRole === 'Student' || userRole === 'Instructor'){
@@ -370,24 +385,33 @@ async function redirectUserToCorrectDashboard(){
 }
 
 // Check if partnership is expired
-async function partnershipIsExpired(){
-    
-    //Try to get from Cookie first
-    const partnershipCookie = getCookie('lrnznth_PartnerShip');
-    // If partnership cookie does not exist, return false
-    if(!partnershipCookie) {
-        // API to check if partnership is expired
+async function partnershipIsExpired(userId) {
 
-        // If partnership is expired
-        return true;
+    console.log(userId);
+    // Try to get from Cookie first
+    const userCookie = getCookie('lrnznth_User_ID');
 
+    console.log(userCookie);
 
-        // If partnership is not expired
-        setCookie('lrnznth_PartnerShip', 'true', 1); // Set one day cookie as this need to be checked again day by day
-        return false;
-    }
-    // Since partnership cookie exists, return false (partner is not expired)
-    else{
-        return false;
-    }
+     const response = await fetch('/partnership/checkExpired?userId=' + userId, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+
+            console.log(data);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } 
+
+            // If partnership is expired
+            if (data === true) {
+                return true;
+            } else {
+                  setCookie('lrnznth_PartnerShip', 'true', 1);
+                  return false;
+            }
+
 }
