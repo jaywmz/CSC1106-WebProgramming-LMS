@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Services.UploadCourseService;
+import webprogramming.csc1106.Services.UserService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +23,8 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class MarketplaceUploadController {
 
@@ -30,20 +33,31 @@ public class MarketplaceUploadController {
     @Autowired
     private UploadCourseService courseService;
 
-    // Displays the courses upload page, filtered by category if specified
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/coursesupload")
-    public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
+    public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login"; // Redirect to login if user is not logged in
+        }
+
         if (categoryId != null) {
             model.addAttribute("courses", courseService.getApprovedCoursesByCategoryId(categoryId));
         } else {
-            model.addAttribute("courses", courseService.getApprovedCourses());
+            model.addAttribute("courses", courseService.getApprovedCoursesByUserId(userId));
         }
         return "Marketplace/coursesupload";
     }
 
     // Displays the upload course page with a new course object and list of categories
     @GetMapping("/upload")
-    public String showUploadPage(Model model) {
+    public String showUploadPage(Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login"; // Redirect to login if user is not logged in
+        }
         model.addAttribute("course", new UploadCourse());
         model.addAttribute("categories", courseService.getAllCategories());
         return "Marketplace/upload";
@@ -54,9 +68,17 @@ public class MarketplaceUploadController {
     public String uploadCourse(@ModelAttribute UploadCourse course,
                                @RequestParam("coverImage") MultipartFile coverImage,
                                @RequestParam("selectedCategory") Long selectedCategory,
+                               HttpSession session,
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
+            Integer userId = (Integer) session.getAttribute("userId");
+            if (userId == null) {
+                return "redirect:/login"; // Redirect to login if user is not logged in
+            }
+
+            User user = userService.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            course.setUser(user);
             course.setApproved(false);  // Set course as not approved initially
             courseService.processCourseUpload(course, coverImage, selectedCategory);
             redirectAttributes.addFlashAttribute("successMessage", "Course uploaded successfully.");
@@ -129,7 +151,11 @@ public class MarketplaceUploadController {
 
     // Displays the edit course page with the course details and categories
     @GetMapping("/courses/edit")
-    public String showEditPage(@RequestParam("courseId") Long courseId, Model model) {
+    public String showEditPage(@RequestParam("courseId") Long courseId, Model model, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login"; // Redirect to login if user is not logged in
+        }
         Optional<UploadCourse> courseOptional = courseService.getCourseById(courseId);
         if (courseOptional.isPresent()) {
             model.addAttribute("course", courseOptional.get());
@@ -153,7 +179,6 @@ public class MarketplaceUploadController {
             logger.severe("Failed to update the file: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to update the file. Please try again.");
         } catch (RuntimeException e) {
-            logger.severe("Runtime exception: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/courses/edit?courseId=" + course.getId();
@@ -205,7 +230,6 @@ public class MarketplaceUploadController {
         }
     }
 
-    // API endpoint to add a course to the cart
     @PostMapping("/cart/add")
     @ResponseBody
     public ResponseEntity<String> addToCart(@RequestParam Long courseId) {

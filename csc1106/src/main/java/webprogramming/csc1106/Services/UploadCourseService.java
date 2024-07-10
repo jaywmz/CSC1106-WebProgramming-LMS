@@ -37,7 +37,6 @@ import webprogramming.csc1106.Repositories.RatingRepository;
 import webprogramming.csc1106.Repositories.SectionRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
 
-
 @Service
 public class UploadCourseService {
 
@@ -250,6 +249,10 @@ public class UploadCourseService {
         return courseRepository.findByCourseCategories_CategoryGroup_IdAndIsApprovedTrue(categoryId);
     }
 
+    public List<UploadCourse> getApprovedCoursesByUserId(Integer userId) {
+        return courseRepository.findByUser_UserIdAndIsApprovedTrue(userId);
+    }
+
     public void processCourseUpdate(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
         if (!existingCourseOpt.isPresent()) {
@@ -326,9 +329,10 @@ public class UploadCourseService {
         }
         return courses;
     }
+
     public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
         Sort sort = Sort.by(Sort.Direction.DESC, "price"); // Default sort by price descending
-
+    
         if ("price-low-high".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "price");
         } else if ("price-high-low".equals(sortBy)) {
@@ -336,12 +340,12 @@ public class UploadCourseService {
         } else if ("rating".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.DESC, "averageRating");
         }
-
+    
         List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
+        courses.forEach(course -> course.setUser(null)); // Ensure user is not serialized
         return courses;
     }
     
-
     
 
     private void calculateRating(UploadCourse course) {
@@ -435,27 +439,26 @@ public class UploadCourseService {
         existingCourse.getCourseCategories().add(courseCategory);
 
     // Update the certificate details
-    if (certificateBlobUrl != null && certificateTitle != null) {
-        PartnerPublish partnerpublish = partnerPublishRepository.findByCourse(existingCourse);
-        PartnerCertificate certificate = partnerCertificateRepository.findByPartnerPublish(partnerpublish);
-        certificate.setCertificateName(certificateTitle);
-        certificate.setBlobUrl(certificateBlobUrl); // Set Blob URL
-        certificate.setIssueDate(LocalDateTime.now());
+        if (certificateBlobUrl != null && certificateTitle != null) {
+            PartnerPublish partnerpublish = partnerPublishRepository.findByCourse(existingCourse);
+            PartnerCertificate certificate = partnerCertificateRepository.findByPartnerPublish(partnerpublish);
+            certificate.setCertificateName(certificateTitle);
+            certificate.setBlobUrl(certificateBlobUrl); // Set Blob URL
+            certificate.setIssueDate(LocalDateTime.now());
 
         // Save the updated certificate details
-        addPartnerCertificate(certificate);
+            addPartnerCertificate(certificate);
 
         // Update the PartnerPublish entity with the new certificate details
-        PartnerPublish publish = partnerPublishRepository.findByCourse(existingCourse);
-        publish.setCertificate(certificate);
+            PartnerPublish publish = partnerPublishRepository.findByCourse(existingCourse);
+            publish.setCertificate(certificate);
 
         // Save the updated PartnerPublish entity
-        addPartnerPublish(publish);
+            addPartnerPublish(publish);
+        }
+
+        updateCourse(existingCourse);
     }
-
-    updateCourse(existingCourse);
-}
-
 
     public PartnerCertificate addPartnerCertificate(PartnerCertificate certificate) {
         return partnerCertificateRepository.save(certificate);
@@ -473,11 +476,11 @@ public class UploadCourseService {
     }
 
      // Method to get PartnerPublish by partnerId
-     public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
+    public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
         return partnerPublishRepository.findByPartnerPartnerId(partnerId);
     }
 
-     public List<CourseCategory> getCourseCategoriesByCourseIds(List<Long> courseIds) {
+    public List<CourseCategory> getCourseCategoriesByCourseIds(List<Long> courseIds) {
         return courseCategoryRepository.findByCourseIdIn(courseIds);
     }
 }
