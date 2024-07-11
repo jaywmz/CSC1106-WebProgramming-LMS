@@ -205,11 +205,11 @@ public class UserController {
     }
 
     @GetMapping("/paypal/pay")
-    public RedirectView pay(@RequestParam("total") Double total, @RequestParam("userId") int userId) {
+    public RedirectView pay(@RequestParam("total") Double total, @RequestParam("currency") String currency, @RequestParam("userId") int userId) {
         String cancelUrl = "http://localhost:8080/paypal/cancel";
         String successUrl = "http://localhost:8080/paypal/success?userId=" + userId;
         try {
-            Payment payment = payPalService.createPayment(total, "USD", "paypal", "sale", "Top up eCredit", cancelUrl, successUrl);
+            Payment payment = payPalService.createPayment(total, currency, "paypal", "sale", "Top up eCredit", cancelUrl, successUrl);
             for (com.paypal.api.payments.Links links : payment.getLinks()) {
                 if (links.getRel().equals("approval_url")) {
                     return new RedirectView(links.getHref());

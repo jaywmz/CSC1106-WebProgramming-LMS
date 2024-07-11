@@ -17,8 +17,8 @@ public class PayPalService {
 
     public Payment createPayment(Double total, String currency, String method, String intent, String description, String cancelUrl, String successUrl) throws PayPalRESTException {
         Amount amount = new Amount();
-        amount.setCurrency(currency);
-        amount.setTotal(String.format("%.2f", total));
+        amount.setCurrency(currency); // Use the selected currency
+        amount.setTotal(String.format("%.2f", total)); // Use the total amount as is
 
         Transaction transaction = new Transaction();
         transaction.setDescription(description);

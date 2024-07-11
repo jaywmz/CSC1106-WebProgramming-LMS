@@ -1,4 +1,19 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // Fetch supported currencies from the server
+    fetch('/currencies')
+        .then(response => response.json())
+        .then(data => {
+            let currencySelect = document.getElementById('currency');
+            data.forEach(currency => {
+                let option = document.createElement('option');
+                option.value = currency;
+                option.text = currency;
+                currencySelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching currencies:', error));
+
+    // Existing code...
     fetch('/market/totalApprovedCourses')
         .then(response => response.json())
         .then(data => {
@@ -84,9 +99,10 @@ document.addEventListener("DOMContentLoaded", function() {
 function redirectToPayPal() {
     const userId = document.getElementById("userId").value;
     const amount = document.getElementById("topUpAmount").value;
-    if (amount && !isNaN(amount)) {
-        window.location.href = `/paypal/pay?total=${amount}&userId=${userId}`;
+    const currency = document.getElementById("currency").value;
+    if (amount && !isNaN(amount) && currency) {
+        window.location.href = `/paypal/pay?total=${amount}&currency=${currency}&userId=${userId}`;
     } else {
-        alert("Please enter a valid amount.");
+        alert("Please enter a valid amount and select a currency.");
     }
 }
