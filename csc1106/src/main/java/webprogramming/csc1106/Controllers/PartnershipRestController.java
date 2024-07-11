@@ -1,6 +1,9 @@
 package webprogramming.csc1106.Controllers;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,25 +31,29 @@ public class PartnershipRestController {
     private PartnerRepository partnerRepository;
 
     
-    //api get to check if partner validity expired 
-    @GetMapping("/checkExpired")
+@GetMapping("/checkExpired")
     @ResponseBody
-    public ResponseEntity<String> checkExpiredSubscription(@RequestParam("userId") int userId) {
-    
+    public ResponseEntity<Map<String, Boolean>> checkExpiredSubscription(@RequestParam("userId") int userId) {
+
         Optional<User> optionalUser = userRepository.findById(userId);
-    
+
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-    
+
         User user = optionalUser.get();
         Partner partner = partnerRepository.findByUser(user);
-    
-        if (partner == null || partner.getValidityEnd().after(new Timestamp(System.currentTimeMillis()))) {
-            return ResponseEntity.ok("false"); // Partnership is not expired
+
+        if (partner == null) {
+            return ResponseEntity.ok(Map.of("isExpired", true, "willExpireSoon", false));
         }
-    
-        return ResponseEntity.ok("true"); // Partnership is expired
+
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        Timestamp validityEnd = partner.getValidityEnd();
+        boolean isExpired = validityEnd.before(currentTimestamp);
+        boolean willExpireSoon = validityEnd.toInstant().isBefore(Instant.now().plus(30, ChronoUnit.DAYS));
+
+        return ResponseEntity.ok(Map.of("isExpired", isExpired, "willExpireSoon", willExpireSoon));
     }
     
     
