@@ -30,7 +30,11 @@
                                 <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit Renewal Request</button>
-                            <a href="/login" class="btn btn-primary">Back to Login</a>
+                            <!--Clear cookies, make use of logout-->
+                            <a class=class="btn btn-primary" id="signoutButton" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Back To Login</span></a>
+                         <!--
+                             <a href="/login" class="btn btn-primary">Back to Login</a>
+                         -->  
                         </form>
                     </div>
                 </div>
