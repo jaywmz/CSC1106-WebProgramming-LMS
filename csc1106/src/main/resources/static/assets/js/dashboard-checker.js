@@ -310,6 +310,8 @@ async function logoutChecker(){
     }
 } 
 
+
+
 // Control the redirection of the user according to the role
 async function redirectUserToCorrectDashboard(){
 
@@ -339,7 +341,6 @@ async function redirectUserToCorrectDashboard(){
     let partnerRoute = [
         'partner',
         'partnership',
-        'partnership/partner/viewAllCourses',
         'partnerDashboard', // Assuming 'partnerDashboard' is the route after redirection
         'renewExpired' // Assuming 'renewExpired' is the route for renewing subscriptions
 
@@ -370,12 +371,16 @@ async function redirectUserToCorrectDashboard(){
         //log
         console.log('User is a partner');
        
-        if(!partnerRoute.includes(urlSegment)) return window.location.href = '/partner'; // Redirect to partnerDashboard
+        if (!partnerRoute.includes(urlSegment)) return window.location.href = '/partner'; // Redirect to partnerDashboard
 
-        // Check if partnership is expired
-        const isExpired = await partnershipIsExpired(userId);
-        if(isExpired) return window.location.href = '/partnership/renewExpired'; // Redirect to renewExpired if partnership is expired
+         // Check if partnership is expired
+         const expirationInfo = await partnershipIsExpired(userId);
 
+         if (expirationInfo.isExpired) {
+             return window.location.href = '/partnership/renewExpired'; // Redirect to renewExpired if partnership is expired
+         } else if (expirationInfo.willExpireSoon) {
+             alert('Your partnership is going to expire in less than 30 days. Please renew soon - under Renew Partnership Subscription Tab.');
+         }
 
     }
     // If user is student or instructor
@@ -384,34 +389,33 @@ async function redirectUserToCorrectDashboard(){
     }
 }
 
-// Check if partnership is expired
+// Check if partnership is expired or will expire soon
 async function partnershipIsExpired(userId) {
-
-    console.log(userId);
-    // Try to get from Cookie first
-    const userCookie = getCookie('lrnznth_User_ID');
-
-    console.log(userCookie);
-
-     const response = await fetch('/partnership/checkExpired?userId=' + userId, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const data = await response.json();
-
-            console.log(data);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            } 
-
-            // If partnership is expired
-            if (data === true) {
-                return true;
-            } else {
-                  setCookie('lrnznth_PartnerShip', 'true', 1);
-                  return false;
+    try {
+        const response = await fetch('/partnership/checkExpired?userId=' + userId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
+        });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const isExpired = data.isExpired;
+        const willExpireSoon = data.willExpireSoon;
+
+        if (isExpired) {
+            setCookie('lrnznth_PartnerShip', 'true', 1);
+        }
+
+        return { isExpired, willExpireSoon };
+    } catch (error) {
+        console.error('Error checking partnership expiration:', error);
+        return { isExpired: false, willExpireSoon: false }; // Handle error case, assuming partnership is not expired or will expire soon
+    }
 }
+
