@@ -119,9 +119,9 @@ public class PartnershipController {
         if (success) {
             model.addAttribute("message", "Subscription renewed successfully!");
         } else {
-            model.addAttribute("message", "Renewal failed. Subscription is not within 30 days of expiry.");
+            model.addAttribute("message", "Renewal Request Unsuccessful. Subscription is not within 30 days of expiry.");
         }
-        return "Partnership/renewResult";
+        return "Partnership/renew";
     }
 
     //get for renewExpiredSubcription
@@ -692,8 +692,6 @@ public String partnerSubscriptions(@RequestParam("userId") int userId, Model mod
 
 
 }
-
-
 
 
 
