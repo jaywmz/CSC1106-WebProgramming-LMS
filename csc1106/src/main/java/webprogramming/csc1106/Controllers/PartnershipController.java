@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 import webprogramming.csc1106.Entities.CategoryGroup;
 import webprogramming.csc1106.Entities.CourseCategory;
@@ -41,11 +38,12 @@ import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.PartnerCertificateRepository;
 import webprogramming.csc1106.Repositories.PartnerPublishRepository;
+import webprogramming.csc1106.Repositories.PartnerRenewRepository;
 import webprogramming.csc1106.Repositories.PartnerRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
-import webprogramming.csc1106.Repositories.PartnerRenewRepository;
 import webprogramming.csc1106.Services.AzureBlobService;
 import webprogramming.csc1106.Services.CourseSubscriptionService;
+import webprogramming.csc1106.Services.EmailService;
 import webprogramming.csc1106.Services.LessonService;
 import webprogramming.csc1106.Services.PartnerService;
 import webprogramming.csc1106.Services.SectionService;
@@ -94,6 +92,9 @@ public class PartnershipController {
 
     @Autowired
     private UploadCourseService courseService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @GetMapping
@@ -175,6 +176,8 @@ public class PartnershipController {
             renew.getPartner().setValidityEnd(Timestamp.valueOf(localDateTime));
             renew.setApprovaldatetime(new Timestamp(System.currentTimeMillis()));
             partnerRenewRepository.save(renew);
+            //send renew success email
+            emailService.sendRenewalSuccessEmail(renew.getPartner().getPartnerEmail(), renew.getPartner().getCompanyName(), renew.getPartner().getValidityEnd());
         }
         return ResponseEntity.ok().build();
     }
@@ -692,6 +695,8 @@ public String partnerSubscriptions(@RequestParam("userId") int userId, Model mod
 
 
 }
+
+
 
 
 
