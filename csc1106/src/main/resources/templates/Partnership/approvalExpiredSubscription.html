@@ -25,6 +25,7 @@
                                         <th>Email</th>
                                         <th>Reason</th>
                                         <th>Send Date</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -33,7 +34,9 @@
                                         <td th:text="${renew.partner.user.userEmail}"></td>
                                         <td th:text="${renew.reason}"></td>
                                         <td th:text="${#dates.format(renew.senddatetime, 'yyyy-MM-dd HH:mm')}"></td>
-                                        <td>      
+                                        <td th:text="${renew.renewStatus}"></td>
+                                        <td>    
+                                              
                                             <button class="btn btn-success" 
                                                 th:disabled="${renew.renewStatus == 'Approved' || renew.renewStatus == 'Rejected'}" 
                                                 th:onclick="'approveRenewal(' + ${renew.renewId} + ')'">
