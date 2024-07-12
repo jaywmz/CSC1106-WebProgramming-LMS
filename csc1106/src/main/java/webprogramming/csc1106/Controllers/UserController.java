@@ -178,17 +178,18 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerForm(@ModelAttribute User user) {
-        logger.debug("POST request received for registration form submission");
-        logger.debug("Received user registration form submission:");
-        logger.debug("User ID: {}", user.getUserID());
-        logger.debug("Role ID: {}", user.getRole().getRoleID());
-        logger.debug("Username: {}", user.getUserName());
-        logger.debug("User Password: {}", user.getUserPassword());
-        logger.debug("User Email: {}", user.getUserEmail());
-        logger.debug("Joined Date: {}", user.getJoinedDate());
-        logger.debug("Joined Time: {}", user.getJoinedTime());
+public String registerForm(@ModelAttribute User user, Model model) {
+    logger.debug("POST request received for registration form submission");
+    logger.debug("Received user registration form submission:");
+    logger.debug("User ID: {}", user.getUserID());
+    logger.debug("Role ID: {}", user.getRole().getRoleID());
+    logger.debug("Username: {}", user.getUserName());
+    logger.debug("User Password: {}", user.getUserPassword());
+    logger.debug("User Email: {}", user.getUserEmail());
+    logger.debug("Joined Date: {}", user.getJoinedDate());
+    logger.debug("Joined Time: {}", user.getJoinedTime());
 
+    try {
         // Set joinedDate and joinedTime
         user.setJoinedDate(new Date(System.currentTimeMillis()));
         user.setJoinedTime(new Time(System.currentTimeMillis()));
@@ -200,9 +201,15 @@ public class UserController {
         saveUser(user);
 
         // Redirect to a success page or dashboard after successful registration
-        logger.debug("Redirecting to /dashboard after successful registration");
+        logger.debug("Redirecting to /login after successful registration");
         return "redirect:/login";
+    } catch (Exception e) {
+        logger.error("Error during registration: " + e.getMessage(), e);
+        model.addAttribute("errorMessage", "An error occurred during registration. Please try again.");
+        return "User/pages-register";
     }
+}
+
 
     @GetMapping("/paypal/pay")
     public RedirectView pay(@RequestParam("total") Double total, @RequestParam("currency") String currency, @RequestParam("userId") int userId) {

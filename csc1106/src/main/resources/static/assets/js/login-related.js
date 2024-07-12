@@ -7,49 +7,50 @@ document.querySelector('#login-form').addEventListener('submit', async function(
         data[key] = value;
     });
 
-    if(data['email'] == '' || data['email'] == null) return console.log('Email is required');
+    if(data['email'] == '' || data['email'] == null) {
+        console.log('Email is required');
+        return;
+    }
 
-    if(data['password'] == '' || data['password'] == null) return console.log('Password is required');
-    
+    if(data['password'] == '' || data['password'] == null) {
+        console.log('Password is required');
+        return;
+    }
+
     const rememberMe = data['remember'];
 
     const thisUser = await logMeIn(data);
-    
-    // If user is not found
+
     if(!thisUser) {
         document.querySelector('#login-form').reset();
-        return alert('Invalid Email or Password')
+        alert('Invalid Email or Password');
+        return;
     }
 
-    // Set Cookie for user
     if(rememberMe === 'true') {
         setCookie('lrnznth_User_Cookie', thisUser.loginCookie, 365);
-        setCookie('lrnznth_User_Name', thisUser.userName, 1);
-        setCookie('lrnznth_User_ID', thisUser.userID, 1)
-    }
-    else{
+    } else {
         setCookie('lrnznth_User_Cookie', thisUser.loginCookie, 1);
-        setCookie('lrnznth_User_Name', thisUser.userName, 1);
-        setCookie('lrnznth_User_ID', thisUser.userID, 1)
     }
-    
-    // Redirect user to respective dashboard
-    await redirectUserDashboard(thisUser.role.roleName);
 
+    setCookie('lrnznth_User_Name', thisUser.userName, 1);
+    setCookie('lrnznth_User_ID', thisUser.userID, 1);
+
+    await redirectUserDashboard(thisUser.role.roleName);
 });
 
 document.addEventListener('DOMContentLoaded', async function(){
-    
-    // Get Cookie and check if it is valid
     const thisCheck = getCookie('lrnznth_User_Cookie');
+    if (!thisCheck) return;
+    
     const user = await checkCookieProMax(thisCheck);
-    
-    // If user is not found
-    if(!user) return deleteCookie('lrnznth_User_Cookie');
 
-    // Redirect user to respective dashboard
+    if(!user) {
+        deleteCookie('lrnznth_User_Cookie');
+        return;
+    }
+
     await redirectUserDashboard(user.role.roleName);
-    
 });
 
 function getCookie(name) {
@@ -67,7 +68,7 @@ function getCookie(name) {
 }
 
 function deleteCookie(name){
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
 }
 
 function setCookie(name, value, days){
@@ -126,10 +127,11 @@ async function checkCookieProMax(cookie){
 }
 
 async function redirectUserDashboard(userRole){
-    // If user is staff, redirect to admin dashboard
-    if(userRole === 'Staff') return window.location.href = '/admin';
-    // If user is partner, redirect to partner dashboard
-    else if(userRole === 'Partner') return window.location.href = '/partner';
-    // If user is student & Professor, redirect to general dashboard
-    else return window.location.href = '/dashboard';
+    if(userRole === 'Staff') {
+        window.location.href = '/admin';
+    } else if(userRole === 'Partner') {
+        window.location.href = '/partner';
+    } else {
+        window.location.href = '/dashboard';
+    }
 }
