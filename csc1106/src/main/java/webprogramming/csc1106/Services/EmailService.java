@@ -1,5 +1,7 @@
 package webprogramming.csc1106.Services;
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,7 +16,7 @@ public class EmailService {
     public void sendApprovalEmail(String toEmail, String companyName, String username, String password) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("learnzenith7@outlook.com");
+            message.setFrom("learnzenith71@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Partnership Approval Notification");
             message.setText("Dear " + companyName + ",\n\n" +
@@ -37,7 +39,7 @@ public class EmailService {
     public void sendRejectionEmail(String toEmail, String companyName) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("learnzenith7@outlook.com");
+            message.setFrom("learnzenith71@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Partnership Rejection Notification");
             message.setText("Dear " + companyName + ",\n\n" +
@@ -53,5 +55,28 @@ public class EmailService {
             throw new RuntimeException("Failed to send rejection email", e);
         }
     }
-}
 
+
+    //send renewal success email for partner subscription
+    public void sendRenewalSuccessEmail(String toEmail, String companyName, Timestamp validityEnd)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("learnzenith71@outlook.com");
+            message.setTo(toEmail);
+            message.setSubject("Subscription Renewal Notification");
+            message.setText("Dear " + companyName + ",\n\n" +
+                    "Your subscription has been approved and successfully renewed. Thank you for your continued partnership.\n\n" +
+                    "Your new validity end date is: " + validityEnd + "\n\n" +
+                    "Best regards,\n" +
+                    "Web Programming Team");
+            mailSender.send(message);
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Failed to send email: " + e.getMessage());
+            // Re-throw the exception to ensure the error is handled appropriately
+            throw new RuntimeException("Failed to send renewal success email", e);
+        }
+    }
+    
+}

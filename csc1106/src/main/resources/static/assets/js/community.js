@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function(){
+    if(window.location.pathname.includes('instructors')){
+        await checkUserRole()
+    }
+
     if(window.location.pathname === '/community'){
         await getPostCountHome();
     }else if(window.location.pathname === '/community/students'){
@@ -161,6 +165,30 @@ async function getPostCountInstructors(){
         const data = await response.json();
         document.getElementById('courseHelpCount').textContent = data[0] + " Posts";
         document.getElementById('teachingCount').textContent = data[1] + " Posts";
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
+}
+
+async function checkUserRole(){
+    try{
+        const response = await fetch("/community-get-user-role", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.text();
+
+        if(data == "no"){
+            window.location.href = "/community/unauthorised";
+        }
+
     } catch (error) {
         console.error('There was a problem with the fetch operation: ' + error.message);
     }

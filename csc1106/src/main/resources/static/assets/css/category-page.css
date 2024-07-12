@@ -1,0 +1,257 @@
+/* General styles */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f8f9fa;
+}
+.container {
+    margin-top: 30px;
+}
+.nav-item a {
+    margin-right: 20px;
+    padding: 10px;
+}
+.nav-profile {
+    margin-left: auto;
+}
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.card-custom {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.nav-link-custom {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.card {
+    width: 18rem;
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.card-img-top {
+    width: 100%;
+    height: 10rem;
+    object-fit: contain;
+    padding: 5px;
+}
+.course-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+}
+.course-rating .star {
+    color: #ffbf00;
+    margin-right: 5px;
+}
+.course-rating .reviews {
+    margin-left: 5px;
+    font-size: 14px;
+    color: #777;
+}
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.card-title, .card-text, .course-rating, .card-price, .add-to-cart {
+    margin-bottom: 10px;
+}
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+.card-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.btn {
+    margin-top: auto;
+}
+/* Loading spinner styles */
+.spinner-border {
+    display: none;
+    width: 3rem;
+    height: 3rem;
+    border-width: .3em;
+}
+.loading .spinner-border {
+    display: inline-block;
+}
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 996;
+    transition: all 0.3s ease;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+}
+
+@media (max-width: 1199px) {
+    .sidebar {
+        left: -300px;
+    }
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #fff;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #aab7cf;
+}
+
+@media (min-width: 1200px) {
+    #main,
+    #footer {
+        margin-left: 300px;
+    }
+}
+
+@media (max-width: 1199px) {
+    .toggle-sidebar .sidebar {
+        left: 0;
+    }
+}
+
+@media (min-width: 1200px) {
+    .toggle-sidebar #main,
+    .toggle-sidebar #footer {
+        margin-left: 0;
+    }
+
+    .toggle-sidebar .sidebar {
+        left: -300px;
+    }
+}
+
+.sidebar-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 5px;
+}
+
+.sidebar-nav .menu-section {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #899bbd;
+    font-weight: 600;
+    margin: 10px 0 5px 15px;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6c757d; /* Default grey color for icons */
+    transition: 0.3s;
+    background: transparent;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.sidebar-nav .nav-link.active,
+.sidebar-nav .nav-link:hover {
+    background-color: #e9ecef;
+    color: #4154f1;
+}
+
+.sidebar-nav .nav-link i {
+    margin-right: 10px;
+    font-size: 1.2em;
+    color: inherit; /* Use inherit to match the link color */
+}
+
+.sidebar-nav .nav-link.collapsed {
+    color: #012970;
+    background: #fff;
+}
+
+.sidebar-nav .nav-link.collapsed i {
+    color: #899bbd;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #4154f1;
+    background: #f6f9ff;
+}
+
+.sidebar-nav .nav-link:hover i {
+    color: #4154f1;
+}
+
+.sidebar-nav .nav-link .bi-chevron-down {
+    margin-right: 0;
+    transition: transform 0.2s ease-in-out;
+}
+
+.sidebar-nav .nav-link:not(.collapsed) .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.sidebar-nav .nav-content {
+    padding: 5px 0 0 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-nav .nav-content a {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #012970;
+    transition: 0.3s;
+    padding: 10px 0 10px 40px;
+}
+
+.sidebar-nav .nav-content a i {
+    font-size: 6px;
+    margin-right: 8px;
+    line-height: 0;
+    border-radius: 50%;
+}
+
+.sidebar-nav .nav-content a:hover,
+.sidebar-nav .nav-content a.active {
+    color: #4154f1;
+}
+
+.sidebar-nav .nav-content a.active i {
+    background-color: #4154f1;
+}
+
+/* Specific styles for Community and Cart icons */
+.sidebar-nav .nav-link i.bi-people,
+.sidebar-nav .nav-link i.bi-cart {
+    color: #6c757d !important; /* Grey color for Community and Cart icons */
+}

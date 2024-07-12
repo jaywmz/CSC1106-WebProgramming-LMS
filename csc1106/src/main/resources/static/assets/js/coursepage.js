@@ -1,10 +1,79 @@
 const queryParams = new URLSearchParams(window.location.search);
 const courseId = queryParams.get('id');
 const userId = getCookie('lrnznth_User_ID');
+const iframe = document.querySelector('iframe[src="/loading"]');
+let addCartButton = document.getElementById('add-to-cart-button');
+let contentCard = document.getElementById('course-content-card');
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Course ID: " + courseId);
-    console.log("User ID: " + userId);
+document.addEventListener('DOMContentLoaded', async () => {
+    // console.log("Course ID: " + courseId);
+    // console.log("User ID: " + userId);
+
+    // Check if user is already add the course to cart
+    const cartCheck = await fetch(`/cartitems/check/${userId}/${courseId}`);
+    const cartCheckData = await cartCheck.text();
+    if(cartCheckData === 'In cart'){
+        addCartButton.innerHTML = 'Already In Cart';
+        addCartButton.disabled = true;
+        // Course In user cart (not buy yet)
+        if (contentCard) contentCard.remove();
+        iframe.remove();
+        return;
+    } 
+
+    // Check if user is already subscribed to the course
+    const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
+    const subscriptionCheckData = await subscriptionCheck.text();
+    if(subscriptionCheckData === 'Subscribed'){
+        // Hide the Add to Cart button as the user bought this course
+        addCartButton.style.display = 'none';
+        // Remove the Loading Iframe
+        iframe.remove();
+    }
+    // User not subscribe to the course
+    else{
+        // Delete the content card div
+        if (contentCard) contentCard.remove();
+        // Remove the Loading Iframe
+        iframe.remove();
+
+        // Add event listener to Add to Cart button
+        addCartButton.addEventListener('click', async function(event) {
+            const addResponse = await fetch(`/cartitems/add/${userId}/${courseId}`);
+            if (addResponse.status != 200) {
+                return alert("Failed to add course to cart");
+            }
+            const addData = await addResponse.text();
+            if (addData === "Added"){
+                alert("Course added to cart");
+                addCartButton.innerHTML = 'Already In Cart';
+                addCartButton.disabled = true;
+            } else {
+                alert("Failed to add course to cart");
+            }
+
+        });
+
+        // Show the Add to Cart button
+        addCartButton.style.display = 'block';
+    }
+});
+
+document.addEventListener('click', async function(event) {
+    // Check if the clicked element is a link
+    if (event.target.tagName === 'A') {
+        // Prevent the default action to not immediately redirect
+        event.preventDefault();
+
+        // Log the href attribute of the clicked link
+        console.log(event.target.href);
+
+        // Check if the url link contains "disposition=attachment"
+        if (event.target.href.includes("disposition=attachment")) {
+            // replace 
+            window.location.href = event.target.href.replace("disposition=attachment", "disposition=inline");
+        }
+    }
 });
 
 function getCookie(name) {
@@ -35,3 +104,4 @@ function setCookie(name, value, days){
     }
     document.cookie = name + "=" + (encodedValue || "")  + expires + "; path=/";
 }
+

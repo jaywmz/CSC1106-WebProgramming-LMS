@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.HashMap;   
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +29,7 @@ import com.paypal.base.rest.PayPalRESTException;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Securities.Encoding;
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ModelAndView login(@RequestParam String email, @RequestParam String password, HttpServletResponse response) {
+    public ModelAndView login(@RequestParam String email, @RequestParam String password, HttpServletResponse response, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
 
         // Query the database for the user with the given email and password
@@ -71,6 +72,9 @@ public class UserController {
         if (user != null) {
             // Encode email address
             String encodedEmail = Encoding.encode(email);
+
+            // Set userId in session
+            session.setAttribute("userId", user.getUserID());
 
             // Set userId cookie
             Cookie cookie = new Cookie("userId", String.valueOf(user.getUserID()));
@@ -88,7 +92,7 @@ public class UserController {
     }
 
     @PostMapping("/logmein")
-    public ResponseEntity<User> logMeIn(@RequestBody Map<String, String> loginData, HttpServletResponse response) {
+    public ResponseEntity<User> logMeIn(@RequestBody Map<String, String> loginData, HttpServletResponse response, HttpSession session) {
         try {
             User user = userRepository.findByUserEmailAndUserPassword(loginData.get("email"), loginData.get("password"));
 
@@ -103,6 +107,9 @@ public class UserController {
             user.setLoginCookie(cookie);
 
             saveUser(user);
+
+            // Set userId in session
+            session.setAttribute("userId", user.getUserID());
 
             // Set userId cookie
             Cookie userIdCookie = new Cookie("userId", String.valueOf(user.getUserID()));
@@ -148,18 +155,41 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register")
-    public String registerForm(@ModelAttribute User user) {
-        logger.debug("POST request received for registration form submission");
-        logger.debug("Received user registration form submission:");
-        logger.debug("User ID: {}", user.getUserID());
-        logger.debug("Role ID: {}", user.getRole().getRoleID());
-        logger.debug("Username: {}", user.getUserName());
-        logger.debug("User Password: {}", user.getUserPassword());
-        logger.debug("User Email: {}", user.getUserEmail());
-        logger.debug("Joined Date: {}", user.getJoinedDate());
-        logger.debug("Joined Time: {}", user.getJoinedTime());
+    //Update user
+    @PostMapping("/updateuser")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        try {
+            User userToUpdate = userRepository.findById(user.getUserID()).get();
+            userToUpdate.setUserName(user.getUserName());
+            userToUpdate.setUserEmail(user.getUserEmail());
+            userToUpdate.setUserPassword(user.getUserPassword());
+            userToUpdate.setRole(user.getRole());
+            userToUpdate.setUserBalance(user.getUserBalance());
+            userToUpdate.setLastLogin(user.getLastLogin());
+            userToUpdate.setLoginCookie(user.getLoginCookie());
+            userToUpdate.setJoinedDate(user.getJoinedDate());
+            userToUpdate.setJoinedTime(user.getJoinedTime());
+            userRepository.save(userToUpdate);
+            return new ResponseEntity<>(userToUpdate, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @PostMapping("/register")
+public String registerForm(@ModelAttribute User user, Model model) {
+    logger.debug("POST request received for registration form submission");
+    logger.debug("Received user registration form submission:");
+    logger.debug("User ID: {}", user.getUserID());
+    logger.debug("Role ID: {}", user.getRole().getRoleID());
+    logger.debug("Username: {}", user.getUserName());
+    logger.debug("User Password: {}", user.getUserPassword());
+    logger.debug("User Email: {}", user.getUserEmail());
+    logger.debug("Joined Date: {}", user.getJoinedDate());
+    logger.debug("Joined Time: {}", user.getJoinedTime());
+
+    try {
         // Set joinedDate and joinedTime
         user.setJoinedDate(new Date(System.currentTimeMillis()));
         user.setJoinedTime(new Time(System.currentTimeMillis()));
@@ -171,16 +201,22 @@ public class UserController {
         saveUser(user);
 
         // Redirect to a success page or dashboard after successful registration
-        logger.debug("Redirecting to /dashboard after successful registration");
+        logger.debug("Redirecting to /login after successful registration");
         return "redirect:/login";
+    } catch (Exception e) {
+        logger.error("Error during registration: " + e.getMessage(), e);
+        model.addAttribute("errorMessage", "An error occurred during registration. Please try again.");
+        return "User/pages-register";
     }
+}
+
 
     @GetMapping("/paypal/pay")
-    public RedirectView pay(@RequestParam("total") Double total, @RequestParam("userId") int userId) {
+    public RedirectView pay(@RequestParam("total") Double total, @RequestParam("currency") String currency, @RequestParam("userId") int userId) {
         String cancelUrl = "http://localhost:8080/paypal/cancel";
         String successUrl = "http://localhost:8080/paypal/success?userId=" + userId;
         try {
-            Payment payment = payPalService.createPayment(total, "USD", "paypal", "sale", "Top up eCredit", cancelUrl, successUrl);
+            Payment payment = payPalService.createPayment(total, currency, "paypal", "sale", "Top up eCredit", cancelUrl, successUrl);
             for (com.paypal.api.payments.Links links : payment.getLinks()) {
                 if (links.getRel().equals("approval_url")) {
                     return new RedirectView(links.getHref());
@@ -253,7 +289,22 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
+    
+    @GetMapping("/user/{userId}/role")
+    public ResponseEntity<Map<String, String>> getUserRole(@PathVariable int userId) {
+        Optional<User> userOptional = userService.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Map<String, String> response = new HashMap<>();
+            response.put("role", user.getRole().getRoleName());
+            logger.info("User ID: " + userId + ", Role: " + user.getRole().getRoleName()); // Add this line for logging
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    
+    
     private void saveUser(User user) {
         userRepository.save(user);
         logger.debug("User data saved to the database");

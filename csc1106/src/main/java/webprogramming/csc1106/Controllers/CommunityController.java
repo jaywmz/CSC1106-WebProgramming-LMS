@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.thymeleaf.util.Validate;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
@@ -74,6 +75,12 @@ public class CommunityController {
         model.addAttribute("totalPage", queriedPosts.getTotalPages());
         return "Community/community-search";
     }
+
+    @GetMapping("/community/unauthorised")
+    public String getMethodName() {
+        return "Community/community-unauthorised";
+    }
+    
 
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
@@ -197,6 +204,25 @@ public class CommunityController {
         catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
+    }
+    
+
+    @PostMapping("/community-get-user-role")
+    @ResponseBody
+    public String getUserRole(@CookieValue("lrnznth_User_ID") String userID) {
+
+        User user = userRepo.findByUserId(Integer.parseInt(userID));
+        Roles role = user.getRole();
+        int roleId = role.getRoleID();
+        String instructorCheck;
+
+        if(roleId == 3){
+            instructorCheck = "no";
+        }else{
+            instructorCheck = "yes";
+        }
+
+        return instructorCheck;
     }
     
 }

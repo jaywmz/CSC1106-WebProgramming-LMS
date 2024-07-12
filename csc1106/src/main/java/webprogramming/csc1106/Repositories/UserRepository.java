@@ -10,6 +10,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByRoleRoleID(Integer roleID);
     User findByUserEmail(String userEmail); // For getting user by email
     //User findByHashedUserName(String hashedUserName); // New method to find user by hashed username
+    User findByUserId(Integer userId);
     
     // Find User by Cookie
     User findByLoginCookie(String loginCookie);

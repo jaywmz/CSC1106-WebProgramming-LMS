@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -37,6 +39,15 @@ public class PayPalConfig {
         APIContext context = new APIContext(payPalProperties.getClient().getId(), payPalProperties.getClient().getSecret(), payPalProperties.getMode());
         context.setConfigurationMap(paypalSdkConfig());
         return context;
+    }
+
+    @Bean
+    public List<String> supportedCurrencies() {
+        return Arrays.asList(
+            "AUD", "BRL", "CAD", "CNY", "CZK", "DKK", "EUR", "HKD", "HUF", "ILS",
+            "JPY", "MYR", "MXN", "TWD", "NZD", "NOK", "PHP", "PLN", "GBP", "SGD",
+            "SEK", "CHF", "THB", "USD"
+        );
     }
 }
 

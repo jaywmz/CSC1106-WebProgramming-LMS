@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
@@ -52,6 +53,11 @@ public class UploadCourse {
 
     @Column(name = "is_approved")
     private boolean isApproved;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
     public UploadCourse() {}
 
@@ -166,5 +172,13 @@ public class UploadCourse {
 
     public void setApproved(boolean isApproved) {
         this.isApproved = isApproved;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -66,7 +67,8 @@ public class CommunityCategoryController {
     }
 
     @GetMapping("/community/instructors")
-    public String getInstructors(Model model) {
+    public String getInstructors(Model model, @CookieValue("lrnznth_User_ID") String userID) {
+
         List<Integer> categoryIds = Arrays.asList(9, 10);
         List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
 

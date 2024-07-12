@@ -24,186 +24,7 @@
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
     <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
-    <style>
-        /* General styles */
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 30px;
-        }
-        .nav-item a {
-            margin-right: 20px;
-            padding: 10px;
-        }
-
-        .nav-profile {
-            margin-left: auto;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .card-custom {
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card-custom:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .carousel-item img {
-            max-height: 300px;
-            object-fit: cover;
-        }
-        .carousel-caption h5 {
-            font-size: 1.5rem;
-        }
-        .nav-link-custom {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        .card.category-card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: #fff;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .card.category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .category-image-wrapper {
-            flex: 0 0 100px;
-            margin-right: 15px;
-        }
-
-        .category-image {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .card-body {
-            flex: 1;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            margin-bottom: 10px;
-        }
-
-        .card-text {
-            font-size: 1rem;
-            margin-bottom: 15px;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-            padding: 10px 20px;
-            font-size: 0.875rem;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        /* Specific styles for the carousel to ensure it maintains its size */
-        .carousel-inner img {
-            max-height: 300px;
-            object-fit: cover;
-        }
-
-        /* Adjusting the container and carousel to align */
-        .carousel-container,
-        .category-cards-container {
-            width: 100%;
-        }
-
-        /* Modal styles */
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch('/market/totalApprovedCourses')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('totalCourses').innerText = data;
-                });
-
-            fetch('/market/categories')
-                .then(response => response.json())
-                .then(data => {
-                    let categoriesContainer = document.getElementById('categories');
-                    data.forEach(category => {
-                        let categoryElement = document.createElement('div');
-                        categoryElement.classList.add('col-md-6', 'mb-4');
-                        categoryElement.innerHTML = `
-                            <a href="/category/${category.id}" class="card-link">
-                                <div class="card category-card card-custom d-flex flex-row align-items-center">
-                                    <div class="category-image-wrapper">
-                                        <img src="${category.coverImageUrl}" class="category-image" alt="Category Image" onerror="this.onerror=null;this.src='/assets/img/category-placeholder.jpg';">
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">${category.name}</h5>
-                                        <p class="card-text">${category.description}</p>
-                                    </div>
-                                </div>
-                            </a>
-                        `;
-                        categoriesContainer.appendChild(categoryElement);
-                    });
-                });
-
-            function getCookie(name) {
-                let cookieArr = document.cookie.split(";");
-                for (let i = 0; i < cookieArr.length; i++) {
-                    let cookiePair = cookieArr[i].split("=");
-                    if (name == cookiePair[0].trim()) {
-                        return decodeURIComponent(cookiePair[1]);
-                    }
-                }
-                return null;
-            }
-
-            let userId = getCookie("userId");
-            if (userId) {
-                document.getElementById("userId").value = userId;
-
-                fetch(`/user/${userId}/balance`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("currentBalance").innerText = `$${data.balance.toFixed(2)}`;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching balance:', error);
-                    });
-            }
-        });
-
-        function redirectToPayPal() {
-            const userId = document.getElementById("userId").value;
-            const amount = document.getElementById("topUpAmount").value;
-            if (amount && !isNaN(amount)) {
-                window.location.href = `/paypal/pay?total=${amount}&userId=${userId}`;
-            } else {
-                alert("Please enter a valid amount.");
-            }
-        }
-    </script>
+    <link href="assets/css/marketplace.css" rel="stylesheet" th:href="@{/assets/css/marketplace.css}">
 </head>
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -216,8 +37,8 @@
         </div>
         <nav class="header-nav ms-auto" aria-label="Navigation">
             <ul class="d-flex align-items-center">
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
+                <li class="nav-item"><a id="uploadCourseLink" class="nav-link nav-link-custom" th:href="@{/upload}">Upload Course</a></li>
+                <li class="nav-item"><a id="viewCoursesLink" class="nav-link nav-link-custom" th:href="@{/coursesupload}">View Courses</a></li>
                 <li class="nav-item">
                     <a href="#" class="nav-link nav-link-custom" data-bs-toggle="modal" data-bs-target="#topUpModal">Top Up</a>
                 </li>
@@ -240,13 +61,7 @@
 
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
-            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/market}"><i class="bi bi-shop"></i><span>Marketplace</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/community}"><i class="bi bi-people"></i><span>Community</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/my-learning}"><i class="bi bi-book"></i><span>My Learning</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/profile}"><i class="bi bi-person"></i><span>Profile</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
+          
         </ul>
     </aside>
 
@@ -346,30 +161,53 @@
 
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
+    <script src="assets/js/marketplace.js" th:src="@{/assets/js/marketplace.js}"></script>
     <script src="assets/js/dashboard-checker.js"></script>
 
     <!-- Modal -->
-    <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title" id="errorModalLabel">Access Denied</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <label for="topUpAmount">Enter Amount (USD):</label>
-                    <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
-                    <input type="hidden" name="userId" id="userId">
-                    <p>Current Balance: <span id="currentBalance">$0.00</span></p>
+                    <p id="modalMessage"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="redirectToPayPal()">Proceed to PayPal</button>
                 </div>
             </div>
         </div>
     </div>
+
+<!-- Modal for Top Up -->
+<div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="topUpAmount">Enter Amount:</label>
+                <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
+                <label for="currency">Select Currency:</label>
+                <select id="currency" class="form-control" required></select>
+                <input type="hidden" name="userId" id="userId">
+                <p>Current Balance: <span id="currentBalance">$0.00</span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="redirectToPayPal()">Proceed to PayPal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
 </html>
