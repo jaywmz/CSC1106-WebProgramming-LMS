@@ -297,11 +297,13 @@ public String registerForm(@ModelAttribute User user, Model model) {
             User user = userOptional.get();
             Map<String, String> response = new HashMap<>();
             response.put("role", user.getRole().getRoleName());
+            logger.info("User ID: " + userId + ", Role: " + user.getRole().getRoleName()); // Add this line for logging
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+    
     
     private void saveUser(User user) {
         userRepository.save(user);

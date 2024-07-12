@@ -71,20 +71,23 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`/user/${userId}/role`)
             .then(response => response.json())
             .then(data => {
-                if (data.role !== 'Instructor') {
-                    document.getElementById("uploadCourseLink").addEventListener("click", function(event) {
-                        event.preventDefault();
-                        showModal("You do not have the rights to upload a course.");
-                    });
-                    document.getElementById("viewCoursesLink").addEventListener("click", function(event) {
-                        event.preventDefault();
-                        showModal("You do not have the rights to view courses.");
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user role:', error);
+            console.log('Fetched role:', data.role);  // Add this line for logging
+        if (data.role.toLowerCase() !== 'professor') {  // Ensure case-insensitive comparison
+            document.getElementById("uploadCourseLink").addEventListener("click", function(event) {
+                event.preventDefault();
+                showModal("You do not have the rights to upload a course.");
             });
+            document.getElementById("viewCoursesLink").addEventListener("click", function(event) {
+                event.preventDefault();
+                showModal("You do not have the rights to view courses.");
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching user role:', error);
+    });
+
+        
     }
 
     function showModal(message) {
