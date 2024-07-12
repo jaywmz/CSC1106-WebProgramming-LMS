@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (contentCard) contentCard.remove();
         iframe.remove();
         return;
-    }
+    } 
 
     // Check if user is already subscribed to the course
     const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
@@ -59,6 +59,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+document.addEventListener('click', async function(event) {
+    // Check if the clicked element is a link
+    if (event.target.tagName === 'A') {
+        // Prevent the default action to not immediately redirect
+        event.preventDefault();
+
+        // Log the href attribute of the clicked link
+        console.log(event.target.href);
+
+        // Check if the url link contains "disposition=attachment"
+        if (event.target.href.includes("disposition=attachment")) {
+            // replace 
+            window.location.href = event.target.href.replace("disposition=attachment", "disposition=inline");
+        }
+    }
+});
+
 function getCookie(name) {
     let nameEQ = name + "=";
     let ca = document.cookie.split(';');
@@ -87,3 +104,4 @@ function setCookie(name, value, days){
     }
     document.cookie = name + "=" + (encodedValue || "")  + expires + "; path=/";
 }
+
