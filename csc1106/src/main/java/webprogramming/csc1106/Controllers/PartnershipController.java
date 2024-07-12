@@ -539,6 +539,17 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         publish.setPublishDate(LocalDateTime.now()); // Set current date and time
         publish.setPublishStatus("Successful");
 
+        Partner partner = partnerRepository.findByUserUserId(userId);
+            if (partner == null) {
+                throw new RuntimeException("Partner not found for user ID " + userId);
+            }
+            publish.setPartner(partner);
+            
+             // Set the user for the UploadCourse entity
+             User user = partner.getUser(); // Assuming Partner has a User property
+             logger.info("#1 Attempting get user " + user.getUserID());
+             course.setUser(user);
+
         // Process the course upload and capture the returned UploadCourse entity
         UploadCourse savedCourse = uploadCourseService.partnerprocessCourseUpload(course, coverImage1, categoryId);
 
@@ -549,11 +560,6 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
 
         logger.info("Attempting get user " + userId);
 
-        Partner partner = partnerRepository.findByUserUserId(userId);
-            if (partner == null) {
-                throw new RuntimeException("Partner not found for user ID " + userId);
-            }
-            publish.setPartner(partner);
        
 
         // Set the certificate association
