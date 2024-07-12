@@ -112,6 +112,17 @@ public class PartnerService {
         return false;
     }
 
+    //send success renewpartnersubscription to partner email
+    public boolean successRenewPartnerSubscription(Integer partnerId) {
+        Partner partner = partnerRepository.findById(partnerId).orElse(null);
+        if (partner != null) {
+            emailService.sendRenewalSuccessEmail(partner.getPartnerEmail(), partner.getCompanyName(),partner.getValidityEnd());
+            return true;
+        }
+        return false;
+    }
+
+
     public boolean renewPartnerSubscription(Integer partnerId) {
 
         Partner partner = partnerRepository.findById(partnerId).orElse(null);
@@ -128,6 +139,8 @@ public class PartnerService {
                 Timestamp newValidityEnd = new Timestamp(validityEnd.getTime() + 31556952000L); // 1 year in milliseconds
                 partner.setValidityEnd(newValidityEnd);
                 partnerRepository.save(partner);
+                //send email
+                successRenewPartnerSubscription(partnerId);
                 return true;
             }
         }
@@ -169,4 +182,3 @@ public class PartnerService {
 
 
 }
-
