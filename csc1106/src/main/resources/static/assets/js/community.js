@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', async function(){
     if(window.location.pathname === '/community'){
         await getPostCountHome();
@@ -9,7 +8,26 @@ document.addEventListener('DOMContentLoaded', async function(){
     };
 });
 
-async function getPostCountHome(){
+async function sortBySelected() {
+    let selected = document.getElementById("sortSelector");
+    try {
+        const response = await fetch("/community/sort/" + selected.value, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
+}
+
+async function getPostCountHome() {
     try{
         const response = await fetch('/community-get-post-count', {
             method: 'POST',

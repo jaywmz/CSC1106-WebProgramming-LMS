@@ -1,30 +1,32 @@
 package webprogramming.csc1106.Controllers;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.wavefront.WavefrontProperties.Application;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.HttpStatus;
 
 
 import webprogramming.csc1106.Entities.*;
-import webprogramming.csc1106.Models.SubscribeID;
 import webprogramming.csc1106.Repositories.PostRepo;
 import webprogramming.csc1106.Repositories.SubscriptionsRepo;
 import webprogramming.csc1106.Repositories.UserRepository;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.util.Validate;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -38,7 +40,6 @@ public class CommunityController {
     
     @GetMapping("/community")
     public String getCommunityHome(Model model, @CookieValue("userId") String userID) {
-        // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
 
         // identify user
@@ -184,4 +185,18 @@ public class CommunityController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @SuppressWarnings({ "null", "rawtypes" })
+    @PostMapping("/community/sort/{filter}")
+    public ResponseEntity<List> postMethodName(@PathVariable String filter) {
+        try {
+            List<Post> posts = postRepo.findTop5ByOrderByLikesDesc();
+
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+    
 }

@@ -230,8 +230,19 @@
           <!-- Recent threads card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Recent Posts</h5>
-              <table class="table table-hover">
+              <div class="row">
+                <div class="col">  
+                  <h5 class="card-title display-inline">All Posts</h5>
+                </div>
+                <div class="col d-flex align-items-center">
+                  <select class="form-select form-select-sm" id="sortSelector">
+                    <option selected value="newest">Newest</option>
+                    <option value="topLikes">Top Likes</option>
+                  </select>
+                  <button class="btn btn-primary" onclick="sortBySelected()">Sort</button>
+                </div>
+              </div>
+              <table class="table table-hover" id="allPosts">
                 <thead>
                   <tr>
                     <th scope="col" style="width:50%">Title</th>

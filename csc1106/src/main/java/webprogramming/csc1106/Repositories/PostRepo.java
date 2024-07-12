@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostRepo extends JpaRepository<Post, Long>{
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
     List<Post> findTop5ByOrderByTimestampDesc();
+    List<Post> findTop5ByOrderByLikesDesc();
     Post findByPostID(long id);
     List<Post> findTop5ByCategoryIdInOrderByTimestampDesc(List<Integer> categoryIds);
     @Transactional
