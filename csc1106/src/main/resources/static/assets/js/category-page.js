@@ -125,17 +125,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initial load
-    loadCourses();
-
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-
-    // PayPal Top Up functionality
-    let userId = getCookie("lrnznth_User_ID");
+    // Check user role and adjust UI accordingly
+    let userId = getCookie('lrnznth_User_ID');
     if (userId) {
         document.getElementById("userId").value = userId;
 
