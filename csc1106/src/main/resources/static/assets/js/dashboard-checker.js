@@ -1,6 +1,22 @@
 let sidebarNav = document.getElementById('sidebar-nav');
 let currentUrl = window.location.href;
 
+let sideBarJSON = [
+    {"index": 0, "name": "Dashboard", "icon": "bi bi-grid", "urlRedirection": "/dashboard"},
+    {"index": 1, "name": "Marketplace", "icon": "bi bi-shop", "urlRedirection": "/market"},
+    {"index": 2, "name": "Community", "icon": "bi bi-people-fill", "urlRedirection": "/community"},
+    {"index": 3, "name": "My Learning", "icon": "bi bi-vector-pen", "urlRedirection": "/mylearning"},
+    {"index": 4, "name": "User", "icon": "nav-heading", "urlRedirection": null},
+    {"index": 5, "name": "My Cart", "icon": "bi bi-cart-fill", "urlRedirection": "/cart"},
+    {"index": 6, "name": "User", "icon": "bi bi-person-circle", "urlRedirection": "/userprofile"},
+    {"index": 7, "name": "F.A.Q", "icon": "bi bi-info-square", "urlRedirection": "/faq"},
+    {"index": 8, "name": "Contact Us", "icon": "bi bi-envelope", "urlRedirection": "/contact"},
+    {"index": 9, "name": "Extra (Just For Reference)", "icon": "nav-heading", "urlRedirection": null},
+    {"index": 10, "name": "BLANK PAGE", "icon": "bi bi-file-earmark-lock2", "urlRedirection": "/blank"},
+    {"index": 11, "name": "Refresh SideBar", "icon": "bi bi-arrow-repeat", "urlRedirection": "/refreshsidebar"}
+]
+
+
 
 ///////////////////////// EVENT LISTENERS /////////////////////////
 
@@ -93,19 +109,7 @@ function setCookie(name, value, days){
 // Function to fetch the dashboard sidebar items from the server
 // Return sidebar items (Array)
 async function getDashboardItems(){
-    const response = await fetch('/dashboard/dashboard-sidebar-items', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    } else {
-        const data = await response.json();
-        return data;
-    }
+    return sideBarJSON;
 }
 
 // Will check if user is signed in and set the username in the dashboard
