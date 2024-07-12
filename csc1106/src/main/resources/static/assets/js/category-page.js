@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const coursesContainer = document.getElementById('courses-list');
     const spinner = document.querySelector('.spinner-border');
     const loggedInUsername = document.getElementById('loggedInUsername');
+    const uploadCourseLink = document.querySelector('.nav-item a[href="/upload"]');
+    const viewCoursesLink = document.querySelector('.nav-item a[href="/coursesupload"]');
+    const currencySelect = document.getElementById('currency'); // Ensure this ID matches your HTML
 
     // Display user name in the top right corner
     const userName = getCookie('lrnznth_User_Name');
@@ -12,6 +15,19 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         loggedInUsername.textContent = 'Guest';
     }
+
+    // Fetch supported currencies from the server and populate the currency dropdown
+    fetch('/currencies')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(currency => {
+                let option = document.createElement('option');
+                option.value = currency;
+                option.text = currency;
+                currencySelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching currencies:', error));
 
     sortBySelect.addEventListener('change', loadCourses);
     filterCategorySelect.addEventListener('change', loadCourses);
@@ -138,15 +154,57 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error fetching balance:', error);
             });
+
+        fetch(`/user/${userId}/role`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched role:', data.role);  // Add this line for logging
+                if (data.role.toLowerCase() !== 'professor' && data.role.toLowerCase() !== 'instructor') {  // Ensure case-insensitive comparison
+                    uploadCourseLink.addEventListener("click", function(event) {
+                        event.preventDefault();
+                        showModal("You do not have the rights to upload a course.");
+                    });
+                    viewCoursesLink.addEventListener("click", function(event) {
+                        event.preventDefault();
+                        showModal("You do not have the rights to view courses.");
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user role:', error);
+            });
+    }
+
+    // Initial load
+    loadCourses();
+
+    function getCookie(name) {
+        let cookieArr = document.cookie.split(";");
+        for (let i = 0; i < cookieArr.length; i++) {
+            let cookiePair = cookieArr[i].split("=");
+            if (name == cookiePair[0].trim()) {
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+        return null;
+    }
+
+    function showModal(message) {
+        const modal = document.getElementById('errorModal');
+        const modalMessage = document.getElementById('modalMessage');
+        modalMessage.innerText = message;
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
     }
 
     window.redirectToPayPal = function() {
         const userId = document.getElementById("userId").value;
         const amount = document.getElementById("topUpAmount").value;
-        if (amount && !isNaN(amount)) {
-            window.location.href = `/paypal/pay?total=${amount}&userId=${userId}`;
+        const currency = document.getElementById("currency").value;
+        if (amount && !isNaN(amount) && currency) {
+            window.location.href = `/paypal/pay?total=${amount}&currency=${currency}&userId=${userId}`;
         } else {
-            alert("Please enter a valid amount.");
+            alert("Please enter a valid amount and select a currency.");
         }
     };
 });
