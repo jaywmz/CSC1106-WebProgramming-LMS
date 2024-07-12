@@ -158,7 +158,7 @@ public class PartnershipController {
     // For renewal (EXPIRED), for admin actions
     @GetMapping("/approvalExpiredSubscription")
     public String getApprovalExpiredSubscription(Model model) {
-        List<PartnerRenew> renewList = partnerRenewRepository.findAllByRenewStatus("Pending");
+        List<PartnerRenew> renewList = partnerRenewRepository.findAll();
         model.addAttribute("renewList", renewList);
         return "Partnership/approvalExpiredSubscription";
     }
@@ -166,7 +166,7 @@ public class PartnershipController {
     @PostMapping("/approveRenewal/{id}")
     public ResponseEntity<Void> approveRenewal(@PathVariable Integer id) {
         Optional<PartnerRenew> optionalRenew = partnerRenewRepository.findById(id);
-        if (optionalRenew.isPresent()) {
+        if (optionalRenew.isPresent() && optionalRenew.get().getRenewStatus().equals("Pending")) {
             PartnerRenew renew = optionalRenew.get();
             renew.setRenewStatus("Approved");
             // set the renew partner validity end to be extended by 1 year
@@ -695,6 +695,8 @@ public String partnerSubscriptions(@RequestParam("userId") int userId, Model mod
 
 
 }
+
+
 
 
 
