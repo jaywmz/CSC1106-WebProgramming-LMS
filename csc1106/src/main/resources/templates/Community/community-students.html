@@ -149,7 +149,7 @@
             <div class="card-body">
               <h5 class="card-title"><a th:href="@{'/community/students/' + ${category.id}}" th:text="${category.name}"></a></h5>
               <p class="card-text" th:text="${category.description}"></p>
-              <!-- <p class="card-text align-bottom" id="generalCount"></p> -->
+              <p class="card-text align-bottom" th:id="|${category.id}Count|"id="generalCount"></p>
             </div>
           </div>
 
