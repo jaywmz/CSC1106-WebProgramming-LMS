@@ -43,45 +43,46 @@
             </div>
             <h3>Sections</h3>
             <div id="sections-container">
-                <div th:each="section, sectionStat : ${course.sections}">
-                    <div class="card mt-3" th:id="'section-' + ${section.id}">
-                        <div class="card-body">
-                            <h4>Section <span th:text="${sectionStat.index + 1}"></span></h4>
-                            <div class="form-group">
-                                <label th:for="|section-title-${section.id}|">Section Title</label>
-                                <input type="text" th:id="|section-title-${section.id}|"
-                                       th:field="*{sections[__${sectionStat.index}__].title}" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label th:for="|section-description-${section.id}|">Section Description</label>
-                                <textarea th:id="|section-description-${section.id}|"
-                                          th:field="*{sections[__${sectionStat.index}__].description}" class="form-control"
-                                          required></textarea>
-                            </div>
-                            <h5>Lessons</h5>
-                            <div th:id="|lessons-container-${section.id}|">
-                                <div th:each="lesson, lessonStat : ${section.lessons}">
-                                    <div class="form-group mt-2" th:id="'lesson-' + ${lesson.id}">
-                                        <label th:for="|lesson-title-${lesson.id}|">Lesson Title</label>
-                                        <input type="text" th:id="|lesson-title-${lesson.id}|"
-                                               th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].title}"
-                                               class="form-control" required>
-                                        <label th:for="|lesson-file-${lesson.id}|">Upload File</label>
-                                        <input type="file" th:id="|lesson-file-${lesson.id}|"
-                                               th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].file}"
-                                               class="form-control">
-                                        <button type="button" class="btn btn-danger mt-2" th:onclick="'removeLesson(' + ${lesson.id} + ',' + ${section.id} + ')'">Remove Lesson</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-secondary mt-3" th:onclick="'addLesson(' + ${section.id} + ',' + ${sectionStat.index} + ')'">Add Lesson</button>
-                            <button type="button" class="btn btn-danger mt-3" th:onclick="'removeSection(' + ${section.id} + ',' + ${course.id} + ')'">Remove Section</button>
+                <div th:each="section, sectionStat : ${course.sections}" class="card mt-3" th:id="'section-' + ${section.id}">
+                    <div class="card-body">
+                        <h4>Section <span th:text="${sectionStat.index + 1}"></span></h4>
+                        <div class="form-group">
+                            <label th:for="|section-title-${section.id}|">Section Title</label>
+                            <input type="text" th:id="|section-title-${section.id}|"
+                                   th:field="*{sections[__${sectionStat.index}__].title}" class="form-control" required>
                         </div>
+                        <div class="form-group">
+                            <label th:for="|section-description-${section.id}|">Section Description</label>
+                            <textarea th:id="|section-description-${section.id}|"
+                                      th:field="*{sections[__${sectionStat.index}__].description}" class="form-control"
+                                      required></textarea>
+                        </div>
+                        <h5>Lessons</h5>
+                        <div th:id="|lessons-container-${section.id}|">
+                            <div th:each="lesson, lessonStat : ${section.lessons}" class="form-group mt-2" th:id="'lesson-' + ${lesson.id}">
+                                <label th:for="|lesson-title-${lesson.id}|">Lesson Title</label>
+                                <input type="text" th:id="|lesson-title-${lesson.id}|"
+                                       th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].title}"
+                                       class="form-control" required>
+                                <label th:for="|lesson-file-${lesson.id}|">Upload File</label>
+                                <input type="file" th:id="|lesson-file-${lesson.id}|"
+                                       th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].file}"
+                                       class="form-control">
+                                <div th:if="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].file}">
+                                    <a th:href="@{${lesson.fileUrl}}" target="_blank" th:text="${lesson.fileName}"></a>
+                                    <input type="hidden" th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].existingFile}"/>
+                                </div>
+                                <button type="button" class="btn btn-danger mt-2" th:onclick="'removeLesson(' + ${lesson.id} + ',' + ${section.id} + ')'">Remove Lesson</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary mt-3" th:onclick="'addLesson(' + ${section.id} + ',' + ${sectionStat.index} + ')'">Add Lesson</button>
+                        <button type="button" class="btn btn-danger mt-3" th:onclick="'removeSection(' + ${section.id} + ',' + ${course.id} + ')'">Remove Section</button>
                     </div>
                 </div>
             </div>
             <button type="button" class="btn btn-secondary mt-3" onclick="addSection()">Add Section</button>
             <button type="submit" class="btn btn-primary mt-3">Update</button>
+            <a href="http://localhost:8080/coursesupload" class="btn btn-info mt-3">Back</a>
         </form>
     </div>
 
@@ -188,6 +189,15 @@
             });
             sectionCount = sections.length;
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize lessonCount with the number of lessons per section
+            const sections = document.querySelectorAll('#sections-container .card');
+            sections.forEach((section, index) => {
+                const sectionId = section.id.replace('section-', '');
+                lessonCount[sectionId] = section.querySelectorAll('.form-group.mt-2').length;
+            });
+        });
     </script>
 </body>
 </html>
