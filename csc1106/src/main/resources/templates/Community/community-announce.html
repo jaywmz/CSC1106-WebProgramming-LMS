@@ -163,7 +163,7 @@
           <!-- General Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/announcements/news">News</a></h5>
+              <h5 class="card-title"><a class="stretched-link link-opacity-50-hover" href="/community/announcements/1">News</a></h5>
                 <p class="card-text">Find out the latest news about LearnZenith!</p>
               <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
             </div>
@@ -172,7 +172,7 @@
           <!-- IT & Software Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/announcements/events">Events</a></h5>
+              <h5 class="card-title"><a class="stretched-link link-opacity-50-hover" href="/community/announcements/2">Events</a></h5>
                 <p class="card-text">Find out the latest events happening at LearnZenith!</p>
               <!-- <p class="card-text" th:text="${AnnouncementsCount != null ? AnnouncementsCount : 0} + ' Posts'"></p> -->
             </div>  
@@ -184,21 +184,23 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Recent Announcements</h5>
-          <table class="table table-hover">
+          <table class="table table-hover sortable">
             <thead>
               <tr>
+                <th scope="col">Likes</th>
                 <th scope="col" style="width:50%">Title</th>
                 <th scope="col">Category</th>
                 <th scope="col">Poster</th>
                 <th scope="col">Posted at</th>
               </tr>
             </thead>
-            <tbody th:each="post: ${posts}">
-              <tr>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+            <tbody>
+              <tr th:each="post: ${posts}">
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.likes}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
               </tr>
             </tbody>
           </table>

@@ -56,26 +56,6 @@ public class CommunityCategoryController {
         return "Community/community-category";
     }
 
-    // @PostMapping("/community/{user_group}/{categoryName}/sort")
-    // public String sortCategoryPosts(@PathVariable String user_group, @PathVariable String categoryName, @RequestParam("filter") String filter, Model model) {
-    //     List<Post> posts = new ArrayList<Post>();
-    //     if (filter.toLowerCase().contains("newest")) {
-    //         posts = postRepo.findByOrderByTimestampDesc();
-    //     }
-    //     else if (filter.toLowerCase().contains("toplikes")) {
-    //         posts = postRepo.findByOrderByLikesDesc();
-    //     }
-
-    //     CommunityCategory category = categoryRepo.findByNameIgnoreCase(categoryName); // retrieve category object from db by name
-        
-    //     model.addAttribute("user_group", user_group);
-    //     model.addAttribute("category_name", category.getName()); // add category name to template model
-    //     model.addAttribute("category_id", category.getId()); // used for new post later
-    //     model.addAttribute("posts", posts);
-
-    //     return "Community/community-category";
-    // }
-
     @GetMapping("/community/announcements")
     public String getAnnouncements(Model model) {
         List<Integer> categoryIds = Arrays.asList(1, 2);
@@ -87,23 +67,21 @@ public class CommunityCategoryController {
 
     @GetMapping("/community/students")
     public String getStudents(Model model) {
-        // List<Integer> categoryIds = Arrays.asList(3, 4, 5, 6, 7, 8);
-        // List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
-
+        // get all the categories under student group
         List<CommunityCategory> categories = categoryRepo.findByGroup("students");
 
-        // model.addAttribute("posts", posts);
+        // TO-DO: get recent posts from categories under student group and put in posts
+
+        // model.addAttribute("posts", post);
         model.addAttribute("categories", categories);
         return "Community/community-students";
     }
 
     @GetMapping("/community/instructors")
     public String getInstructors(Model model, @CookieValue("lrnznth_User_ID") String userID) {
-
-        List<Integer> categoryIds = Arrays.asList(9, 10);
-        List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
-
-        model.addAttribute("posts", posts);
+        // TO-DO: get recent posts from categories under instructor group and put in posts
+        
+        // model.addAttribute("posts", posts);
         return "Community/community-instructors";
     }
     
