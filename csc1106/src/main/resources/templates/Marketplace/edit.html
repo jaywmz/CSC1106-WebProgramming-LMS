@@ -44,7 +44,7 @@
             <h3>Sections</h3>
             <div id="sections-container">
                 <div th:each="section, sectionStat : ${course.sections}">
-                    <div class="card mt-3">
+                    <div class="card mt-3" th:id="'section-' + ${section.id}">
                         <div class="card-body">
                             <h4>Section <span th:text="${sectionStat.index + 1}"></span></h4>
                             <div class="form-group">
@@ -61,7 +61,7 @@
                             <h5>Lessons</h5>
                             <div th:id="|lessons-container-${section.id}|">
                                 <div th:each="lesson, lessonStat : ${section.lessons}">
-                                    <div class="form-group mt-2">
+                                    <div class="form-group mt-2" th:id="'lesson-' + ${lesson.id}">
                                         <label th:for="|lesson-title-${lesson.id}|">Lesson Title</label>
                                         <input type="text" th:id="|lesson-title-${lesson.id}|"
                                                th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].title}"
@@ -70,10 +70,12 @@
                                         <input type="file" th:id="|lesson-file-${lesson.id}|"
                                                th:field="*{sections[__${sectionStat.index}__].lessons[__${lessonStat.index}__].file}"
                                                class="form-control">
+                                        <button type="button" class="btn btn-danger mt-2" th:onclick="'removeLesson(' + ${lesson.id} + ',' + ${section.id} + ')'">Remove Lesson</button>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-secondary mt-3" th:onclick="'addLesson(' + ${section.id} + ')'">Add Lesson</button>
+                            <button type="button" class="btn btn-secondary mt-3" th:onclick="'addLesson(' + ${section.id} + ',' + ${sectionStat.index} + ')'">Add Lesson</button>
+                            <button type="button" class="btn btn-danger mt-3" th:onclick="'removeSection(' + ${section.id} + ',' + ${course.id} + ')'">Remove Section</button>
                         </div>
                     </div>
                 </div>
@@ -84,7 +86,8 @@
     </div>
 
     <script>
-        let sectionCount = /*[[${course.sections.size()}]]*/ 0;
+        let existingSections = /*[[${course.sections.size()}]]*/ 0;
+        let sectionCount = existingSections; // To keep track of total sections including existing ones
         let lessonCount = {};
 
         function generateUniqueId() {
@@ -92,38 +95,41 @@
         }
 
         function addSection() {
+            sectionCount++; // Increment the section count
             const uniqueSectionId = generateUniqueId();
             lessonCount[uniqueSectionId] = 0;
             const sectionHtml = `
-                <div class="card mt-3">
+                <div class="card mt-3" id="section-${uniqueSectionId}">
                     <div class="card-body">
-                        <h4>Section ${sectionCount + 1}</h4>
+                        <h4>Section ${sectionCount}</h4>
                         <div class="form-group">
                             <label for="section-title-${uniqueSectionId}">Section Title</label>
-                            <input type="text" id="section-title-${uniqueSectionId}" name="sections[${sectionCount}].title" class="form-control" required>
+                            <input type="text" id="section-title-${uniqueSectionId}" name="sections[${sectionCount - 1}].title" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="section-description-${uniqueSectionId}">Section Description</label>
-                            <textarea id="section-description-${uniqueSectionId}" name="sections[${sectionCount}].description" class="form-control" required></textarea>
+                            <textarea id="section-description-${uniqueSectionId}" name="sections[${sectionCount - 1}].description" class="form-control" required></textarea>
                         </div>
                         <h5>Lessons</h5>
                         <div id="lessons-container-${uniqueSectionId}"></div>
-                        <button type="button" class="btn btn-secondary mt-3" onclick="addLesson('${uniqueSectionId}', ${sectionCount})">Add Lesson</button>
+                        <button type="button" class="btn btn-secondary mt-3" onclick="addLesson('${uniqueSectionId}', ${sectionCount - 1})">Add Lesson</button>
+                        <button type="button" class="btn btn-danger mt-3" onclick="removeSection('${uniqueSectionId}')">Remove Section</button>
                     </div>
                 </div>`;
             document.getElementById('sections-container').insertAdjacentHTML('beforeend', sectionHtml);
-            sectionCount++;
+            renumberSections();
         }
 
         function addLesson(sectionId, sectionIndex) {
             const uniqueLessonId = generateUniqueId();
             const lessonIndex = lessonCount[sectionId]++;
             const lessonHtml = `
-                <div class="form-group mt-2">
+                <div class="form-group mt-2" id="lesson-${uniqueLessonId}">
                     <label for="lesson-title-${uniqueLessonId}">Lesson Title</label>
                     <input type="text" id="lesson-title-${uniqueLessonId}" name="sections[${sectionIndex}].lessons[${lessonIndex}].title" class="form-control" required>
                     <label for="lesson-file-${uniqueLessonId}">Upload File</label>
                     <input type="file" id="lesson-file-${uniqueLessonId}" name="sections[${sectionIndex}].lessons[${lessonIndex}].file" class="form-control">
+                    <button type="button" class="btn btn-danger mt-2" onclick="removeLesson('${uniqueLessonId}', ${sectionIndex})">Remove Lesson</button>
                 </div>`;
             const container = document.getElementById(`lessons-container-${sectionId}`);
             if (container) {
@@ -131,6 +137,56 @@
             } else {
                 console.error(`Element with ID lessons-container-${sectionId} not found`);
             }
+        }
+
+        function removeSection(sectionId) {
+            const sectionElement = document.getElementById(`section-${sectionId}`);
+            if (sectionElement) {
+                if (confirm("Are you sure you want to remove this section?")) {
+                    sectionElement.remove();
+                    renumberSections();
+                }
+            } else {
+                alert("There are no sections to remove.");
+            }
+        }
+
+        function removeLesson(lessonId, sectionIndex) {
+            const lessonElement = document.getElementById(`lesson-${lessonId}`);
+            if (lessonElement) {
+                if (confirm("Are you sure you want to remove this lesson?")) {
+                    lessonElement.remove();
+                }
+            } else {
+                alert("There are no lessons to remove.");
+            }
+        }
+
+        function renumberSections() {
+            const sections = document.querySelectorAll('#sections-container .card');
+            sections.forEach((section, index) => {
+                const sectionHeader = section.querySelector('h4');
+                if (sectionHeader) {
+                    sectionHeader.textContent = `Section ${index + 1}`;
+                }
+                const inputs = section.querySelectorAll('input, textarea');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        const newName = name.replace(/sections\[\d+\]/, `sections[${index}]`);
+                        input.setAttribute('name', newName);
+                    }
+                });
+                const buttons = section.querySelectorAll('button');
+                buttons.forEach(button => {
+                    const onclick = button.getAttribute('onclick');
+                    if (onclick) {
+                        const newOnclick = onclick.replace(/\(\d+\)/, `(${index})`);
+                        button.setAttribute('onclick', newOnclick);
+                    }
+                });
+            });
+            sectionCount = sections.length;
         }
     </script>
 </body>

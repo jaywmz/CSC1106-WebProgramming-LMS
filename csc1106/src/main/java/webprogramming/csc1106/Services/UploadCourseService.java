@@ -78,7 +78,6 @@ public class UploadCourseService {
         return courses;
     }
 
-    // get all course but filter out those not approved
     public List<UploadCourse> getAllApprovedCourses() {
         List<UploadCourse> courses = courseRepository.findByIsApprovedTrue();
         courses.forEach(this::calculateRating);
@@ -319,6 +318,43 @@ public class UploadCourseService {
         updateCourse(existingCourse);
     }
 
+    public void removeSection(Long sectionId, Long courseId) {
+        Section section = sectionRepository.findById(sectionId)
+            .orElseThrow(() -> new RuntimeException("Section not found"));
+    
+        // Remove the section's lessons and their associated files
+        for (Lesson lesson : section.getLessons()) {
+            for (FileResource file : lesson.getFiles()) {
+                azureBlobService.deleteBlob(file.getFileUrl());
+            }
+            lessonRepository.delete(lesson);
+        }
+    
+        // Remove the section itself
+        sectionRepository.delete(section);
+    
+        // Update the course by removing the section reference
+        Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
+        if (courseOpt.isPresent()) {
+            UploadCourse course = courseOpt.get();
+            course.getSections().removeIf(s -> s.getId().equals(sectionId));
+            courseRepository.save(course);
+        }
+    }
+    
+
+    public void removeLesson(Long lessonId, Long courseId) {
+        lessonRepository.deleteById(lessonId);
+        Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
+        if (courseOpt.isPresent()) {
+            UploadCourse course = courseOpt.get();
+            for (Section section : course.getSections()) {
+                section.getLessons().removeIf(lesson -> lesson.getId().equals(lessonId));
+            }
+            courseRepository.save(course);
+        }
+    }
+
     public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
         List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
         List<UploadCourse> courses = new ArrayList<>();
@@ -332,7 +368,7 @@ public class UploadCourseService {
 
     public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
         Sort sort = Sort.by(Sort.Direction.DESC, "price"); // Default sort by price descending
-    
+
         if ("price-low-high".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "price");
         } else if ("price-high-low".equals(sortBy)) {
@@ -340,13 +376,11 @@ public class UploadCourseService {
         } else if ("rating".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.DESC, "averageRating");
         }
-    
+
         List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
         courses.forEach(course -> course.setUser(null)); // Ensure user is not serialized
         return courses;
     }
-    
-    
 
     private void calculateRating(UploadCourse course) {
         List<Rating> ratings = ratingRepository.findByCourse(course);
@@ -399,10 +433,10 @@ public class UploadCourseService {
                 }
             }
         }
-        return savedCourse; 
+        return savedCourse;
     }
 
-    public void updateCourse(UploadCourse course, MultipartFile coverImage, Long categoryId,String certificateBlobUrl, String certificateTitle) throws IOException {
+    public void updateCourse(UploadCourse course, MultipartFile coverImage, Long categoryId, String certificateBlobUrl, String certificateTitle) throws IOException {
         Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
         if (!existingCourseOpt.isPresent()) {
             throw new RuntimeException("Course not found.");
@@ -438,7 +472,7 @@ public class UploadCourseService {
         addCourseCategory(courseCategory);
         existingCourse.getCourseCategories().add(courseCategory);
 
-    // Update the certificate details
+        // Update the certificate details
         if (certificateBlobUrl != null && certificateTitle != null) {
             PartnerPublish partnerpublish = partnerPublishRepository.findByCourse(existingCourse);
             PartnerCertificate certificate = partnerCertificateRepository.findByPartnerPublish(partnerpublish);
@@ -446,14 +480,14 @@ public class UploadCourseService {
             certificate.setBlobUrl(certificateBlobUrl); // Set Blob URL
             certificate.setIssueDate(LocalDateTime.now());
 
-        // Save the updated certificate details
+            // Save the updated certificate details
             addPartnerCertificate(certificate);
 
-        // Update the PartnerPublish entity with the new certificate details
+            // Update the PartnerPublish entity with the new certificate details
             PartnerPublish publish = partnerPublishRepository.findByCourse(existingCourse);
             publish.setCertificate(certificate);
 
-        // Save the updated PartnerPublish entity
+            // Save the updated PartnerPublish entity
             addPartnerPublish(publish);
         }
 
@@ -471,11 +505,10 @@ public class UploadCourseService {
     public List<UploadCourse> getCoursesByPartnerId(Integer partnerId) {
         List<PartnerPublish> publishes = partnerPublishRepository.findByPartnerPartnerId(partnerId);
         return publishes.stream()
-                        .map(PartnerPublish::getCourse)
-                        .collect(Collectors.toList());
+                .map(PartnerPublish::getCourse)
+                .collect(Collectors.toList());
     }
 
-     // Method to get PartnerPublish by partnerId
     public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
         return partnerPublishRepository.findByPartnerPartnerId(partnerId);
     }

@@ -15,6 +15,7 @@ import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Services.UploadCourseService;
 import webprogramming.csc1106.Services.UserService;
 
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -22,8 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MarketplaceUploadController {
@@ -195,6 +194,33 @@ public class MarketplaceUploadController {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete the course. Please try again.");
         }
         return "redirect:/coursesupload";
+    }
+
+    // Handles the section removal request
+    @PostMapping("/courses/removeSection")
+    public String removeSection(@RequestParam("sectionId") Long sectionId, @RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
+        try {
+            courseService.removeSection(sectionId, courseId);
+            redirectAttributes.addFlashAttribute("successMessage", "Section removed successfully.");
+        } catch (Exception e) {
+            logger.severe("Failed to remove the section: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to remove the section. Please try again.");
+        }
+        return "redirect:/courses/edit?courseId=" + courseId;
+    }
+
+
+    // Handles the lesson removal request
+    @PostMapping("/courses/removeLesson")
+    public String removeLesson(@RequestParam("lessonId") Long lessonId, @RequestParam("courseId") Long courseId, RedirectAttributes redirectAttributes) {
+        try {
+            courseService.removeLesson(lessonId, courseId);
+            redirectAttributes.addFlashAttribute("successMessage", "Lesson removed successfully.");
+        } catch (Exception e) {
+            logger.severe("Failed to remove the lesson: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to remove the lesson. Please try again.");
+        }
+        return "redirect:/courses/edit?courseId=" + courseId;
     }
 
     // Displays the category page with the category details and its courses
