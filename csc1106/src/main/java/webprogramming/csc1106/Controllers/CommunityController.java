@@ -37,7 +37,10 @@ public class CommunityController {
     private CategoryRepo categoryRepo;
     
     @GetMapping("/community")
-    public String getCommunityHome(Model model, @CookieValue("lrnznth_User_ID") String userID) {
+    public String getCommunityHome(Model model, @CookieValue(value="lrnznth_User_ID", required = false) String userID) {
+        if(userID == null) {
+            return "redirect:/login";
+        }
         // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
 
@@ -45,8 +48,8 @@ public class CommunityController {
         List<CommunityCategory> categories = categoryRepo.findByGroup("general");
 
         // identify user
-        Optional<User> user = userRepo.findById(Integer.parseInt(userID));
-
+            Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+            
         // get list of subscribed posts from user 
         if (user.isPresent()) {
             List<Subscription> allSubscriptions = subRepo.findAllByUser(user.get());

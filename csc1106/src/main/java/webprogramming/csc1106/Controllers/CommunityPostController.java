@@ -34,7 +34,10 @@ public class CommunityPostController {
     // private AttachmentsRepo attachmentsRepo;
 
     @GetMapping("/community/{user_group}/{category_id}/{post_id}")
-    public String getPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID, Model model) {
+    public String getPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue(value="lrnznth_User_ID", required=false) String userID, Model model) {
+        if(userID == null) {
+            return "redirect:/login";
+        }
         // retrieve models
         Post post = postRepo.findByPostID(Long.parseLong(post_id));
         String category_name = post.getCategory().getName();

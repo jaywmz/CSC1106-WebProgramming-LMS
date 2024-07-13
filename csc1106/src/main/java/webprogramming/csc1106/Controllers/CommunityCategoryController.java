@@ -73,8 +73,11 @@ public class CommunityCategoryController {
     }
 
     @GetMapping("/community/instructors")
-    public String getInstructors(Model model, @CookieValue("lrnznth_User_ID") String userID) {
+    public String getInstructors(Model model, @CookieValue(value="lrnznth_User_ID", required=false) String userID) {
         // TO-DO: get recent posts from categories under instructor group and put in posts
+        if(userID == null) {
+            return "redirect:/login";
+        }
         
         // model.addAttribute("posts", posts);
         return "Community/community-instructors";
