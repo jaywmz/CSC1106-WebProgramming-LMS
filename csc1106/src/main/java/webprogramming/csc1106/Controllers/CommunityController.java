@@ -184,8 +184,8 @@ public class CommunityController {
 
             List<Object[]> categoryCounts = postRepo.findCategoryCountsInstructors();
             
-            Long totalCourseHelp = (Long) categoryCounts.get(0)[3];
-            Long totalTeaching = (Long) categoryCounts.get(1)[3];
+            Long totalCourseHelp = (Long) categoryCounts.get(0)[2];
+            Long totalTeaching = (Long) categoryCounts.get(1)[2];
             
             
             return new ResponseEntity<>(List.of(

@@ -27,9 +27,9 @@ public interface PostRepo extends JpaRepository<Post, Long>{
         "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCountsStudents();
 
-    @Query(value = "SELECT c.id, c.description, c.name, COUNT(p.category_id) FROM community_category c \r\n" + 
+    @Query(value = "SELECT c.id, c.name, COUNT(p.category_id) FROM community_category c \r\n" + 
         "LEFT JOIN post p ON c.id = p.category_id \r\n" + 
-        "WHERE c.description = 'instructors' \r\n" + 
+        "WHERE c.cat_group = 'instructors' \r\n" + 
         "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCountsInstructors();
 }   

@@ -94,12 +94,13 @@ public class CommunityNewPostController {
         }
         
         redirectAttributes.addFlashAttribute("successMessage", "Post created successfully!");
-
-        if(Integer.parseInt(category_id) <= 2){
+        
+        String catGroup = category.getGroup();
+        if("announcements".equals(catGroup)){
             return "redirect:/community/announcements";
-        }else if(Integer.parseInt(category_id) <= 8){
+        }else if("students".equals(catGroup)){
             return "redirect:/community/students/" + category_id;
-        }else if(Integer.parseInt(category_id) <= 10){
+        }else if("instructors".equals(catGroup)){
             return "redirect:/community/instructors/" + category_id;
         }else{
             return "redirect:/community/general/" + category_id; 
