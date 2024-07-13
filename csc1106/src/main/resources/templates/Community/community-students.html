@@ -143,83 +143,20 @@
 
       <div class="row align-items-top">
         <div class="card-group mb-4 gap-4">
-          <!-- General Card -->
-          <div class="card">
+
+          <!-- Category Card -->
+          <div class="card" th:each="category: ${categories}">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/students/4">General</a></h5>
-              <p class="card-text">Ask any questions about LearnZenith!</p>
-              <p class="card-text align-bottom" id="generalCount"></p>
+              <h5 class="card-title"><a th:href="@{'/community/students/' + ${category.id}}" th:text="${category.name}"></a></h5>
+              <p class="card-text" th:text="${category.description}"></p>
+              <!-- <p class="card-text align-bottom" id="generalCount"></p> -->
             </div>
           </div>
 
-          <!-- IT & Software Card -->
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><a href="/community/students/5">IT & Software</a></h5>
-              <p class="card-text">Ask questions regarding IT & Software</p>
-              <p class="card-text" id="itSoftwareCount"></p>
-            </div>  
-          </div>
-        
-          <!-- Business Card -->
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><a href="/community/students/6">Business</a></h5>
-              <p class="card-text">Ask questions regarding Business</p>
-              <p class="card-text" id="businessCount"></p>
-            </div>
-          </div>
-        
-          <!-- Finance & Accounting Card -->
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><a href="/community/students/7">Finance & Accounting</a></h5>
-              <p class="card-text">Ask questions regarding Finance & Accounting</p>
-              <p class="card-text" id="financeCount"></p>
-            </div>
-          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Browse the Student Community</h5>
-          <table class="table table-hover">
-            <colgroup>
-                <col style="width: 60%;">
-                <col style="width: 20%;">
-                <col style="width: 20%;">
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col">Posts</th>
-                <th scope="col">Last Post</th>
-              </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">
-                        <a href="/community/students/3">Introductions</a>
-                        <p class="fs-6 fw-normal">Introduce yourself to the LearnZenith community.</p>
-                    </th>
-                    <td><p class="card-text" id="introductionsCount"></p></td>
-                    <td><p class="card-text" id="lastIntroduction"></td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                      <a href="/community/students/8">Careers</a>
-                      <p class="fs-6 fw-normal">Discuss career opportunities and job openings.</p>
-                  </th>
-                  <td><p class="card-text" id="careersCount"></p></td>
-                  <td><p class="card-text" id="lastCareers"></td>
-              </tr>
-              </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
+      <!-- <div class="card">
         <div class="card-body">
           <h5 class="card-title">Recent Students posts</h5>
           <table class="table table-hover">
@@ -241,7 +178,7 @@
               </tbody>
         </table>
         </div>
-      </div>
+      </div> -->
 
     </section>
 

@@ -205,22 +205,18 @@
                     <th scope="col">Last Post</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody th:each="category: ${categories}">
                   <tr>
                     <th scope="row">
-                        <a href="/community/general/11">Off-Topic</a>
-                        <p class="fs-6 fw-normal mb-0">Discuss anything not related to Learning.</p>
+                        <a th:href="@{'/community/general/' + ${category.id} }" th:text="${category.name}"></a>
+                        <p class="fs-6 fw-normal mb-0" th:text="${category.description}">Discuss anything not related to Learning.</p>
                     </th>
-                    <td><p class="card-text" id="offTopicCount"></p></td>
-                    <td><p class="card-text" id="lastOffTopic"></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <a href="/community/general/12">Feedback</a>
-                      <p class="fs-6 fw-normal mb-0">Post any feedback regarding the website and the community hub here.</p>
-                    </th>
-                    <td><p class="card-text" id="feedbackCount"></p></td>
-                    <td><p class="card-text" id="lastFeedback"></td>
+                    <td>
+                      <!-- <p class="card-text" id="offTopicCount"></p> -->
+                    </td>
+                    <td>
+                      <!-- <p class="card-text" id="lastOffTopic"> </p>-->
+                    </td>
                   </tr>
                 </tbody>
               </table>

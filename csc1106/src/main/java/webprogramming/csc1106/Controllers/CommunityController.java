@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 
 
 import webprogramming.csc1106.Entities.*;
+import webprogramming.csc1106.Repositories.CategoryRepo;
 import webprogramming.csc1106.Repositories.PostRepo;
 import webprogramming.csc1106.Repositories.SubscriptionsRepo;
 import webprogramming.csc1106.Repositories.UserRepository;
@@ -33,11 +34,16 @@ public class CommunityController {
     private SubscriptionsRepo subRepo;
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private CategoryRepo categoryRepo;
     
     @GetMapping("/community")
-    public String getCommunityHome(Model model, @CookieValue("userId") String userID) {
+    public String getCommunityHome(Model model, @CookieValue("lrnznth_User_ID") String userID) {
         // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
+
+        // queries 'general' categories
+        List<CommunityCategory> categories = categoryRepo.findByGroup("general");
 
         // identify user
         Optional<User> user = userRepo.findById(Integer.parseInt(userID));
@@ -57,6 +63,7 @@ public class CommunityController {
         }
 
         model.addAttribute("posts", posts);
+        model.addAttribute("categories", categories);
 
         return "Community/community-home";
     }
@@ -177,8 +184,8 @@ public class CommunityController {
 
             List<Object[]> categoryCounts = postRepo.findCategoryCountsInstructors();
             
-            Long totalCourseHelp = (Long) categoryCounts.get(0)[2];
-            Long totalTeaching = (Long) categoryCounts.get(1)[2];
+            Long totalCourseHelp = (Long) categoryCounts.get(0)[3];
+            Long totalTeaching = (Long) categoryCounts.get(1)[3];
             
             
             return new ResponseEntity<>(List.of(

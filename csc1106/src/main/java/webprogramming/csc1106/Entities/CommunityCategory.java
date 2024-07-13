@@ -20,14 +20,19 @@ public class CommunityCategory {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @Column(name = "catGroup", nullable = true)
+    private String group;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Post> posts;
 
     // Constructors
     public CommunityCategory() {}
 
-    public CommunityCategory(String name) {
+    public CommunityCategory(String name, String description, String group) {
         this.name = name;
+        this.description = description;
+        this.group = group;
     }
 
     // Getters and setters
@@ -49,6 +54,10 @@ public class CommunityCategory {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getGroup(){
+        return group;
     }
 
     public List<Post> getPosts() {

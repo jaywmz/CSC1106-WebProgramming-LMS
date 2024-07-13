@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', async function(){
     }
 
     if(window.location.pathname === '/community'){
-        await getPostCountHome();
+        // await getPostCountHome();
     }else if(window.location.pathname === '/community/students'){
-        await getPostCountStudents();
+        // await getPostCountStudents();
     }else if(window.location.pathname === '/community/instructors'){
         await getPostCountInstructors();
     };

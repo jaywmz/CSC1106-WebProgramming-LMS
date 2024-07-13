@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webprogramming.csc1106.Entities.CategoryGroup;
+import webprogramming.csc1106.Entities.CommunityCategory;
+import webprogramming.csc1106.Repositories.CategoryRepo;
 import webprogramming.csc1106.Services.CategoryGroupService;
 
 import java.io.IOException;
@@ -17,6 +19,8 @@ public class MarketplaceCategoryGroupController {
 
     @Autowired
     private CategoryGroupService categoryGroupService;
+    @Autowired
+    private CategoryRepo categoryRepo;
 
     private static final Logger logger = Logger.getLogger(MarketplaceCategoryGroupController.class.getName());
 
@@ -31,6 +35,10 @@ public class MarketplaceCategoryGroupController {
     public String addOrUpdateCategory(CategoryGroup categoryGroup, @RequestParam("coverImageFile") MultipartFile coverImageFile, RedirectAttributes redirectAttributes) {
         try {
             categoryGroupService.addCategoryGroup(categoryGroup, coverImageFile);
+
+            CommunityCategory communityCategory = new CommunityCategory(categoryGroup.getName(), categoryGroup.getDescription(), "students");
+            categoryRepo.save(communityCategory);
+
             redirectAttributes.addFlashAttribute("successMessage", "Category group added/updated successfully.");
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload cover image. Please try again.");
