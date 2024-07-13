@@ -222,17 +222,17 @@
                     <th scope="col">Last Post</th>
                   </tr>
                 </thead>
-                <tbody th:each="category: ${categories}">
-                  <tr>
+                <tbody>
+                  <tr th:each="category: ${categories}">
                     <th scope="row">
                         <a th:href="@{'/community/general/' + ${category.id} }" th:text="${category.name}"></a>
                         <p class="fs-6 fw-normal mb-0" th:text="${category.description}">Discuss anything not related to Learning.</p>
                     </th>
                     <td>
-                      <!-- <p class="card-text" id="offTopicCount"></p> -->
+                      <p class="card-text" th:id="|${category.name}Count|"></p>
                     </td>
                     <td>
-                      <!-- <p class="card-text" id="lastOffTopic"> </p>-->
+                      <p class="card-text" th:id="|last${category.name}|"> </p>
                     </td>
                   </tr>
                 </tbody>

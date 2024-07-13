@@ -169,7 +169,8 @@
                 <span th:text="${#lists.size(category.posts)}" class="badge bg-light text-dark rounded-pill align-content-center"></span>
               </div>
               <p class="card-text" th:text="${category.description}"></p>
-            </a>
+              <p class="card-text align-bottom" th:id="|${category.id}Count|"id="generalCount"></p>
+            </div>
           </div>
         </div>
       </div>
