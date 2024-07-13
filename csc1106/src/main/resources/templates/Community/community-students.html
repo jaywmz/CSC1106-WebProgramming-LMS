@@ -29,6 +29,9 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
+  <!-- sort table script -->
+  <script type="text/javascript" src="/assets/js/sorttable.js"></script>
+
   <style>
     td a {
       display: block;
@@ -37,6 +40,18 @@
 
     a:hover {
       color: #4154f1;
+    }
+
+    #pageLoader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+      z-index: 999998;
     }
   </style>
 
@@ -50,6 +65,8 @@
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <iframe src="/loading" title="loading" id="pageLoader"></iframe>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -125,7 +142,7 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1 th:text="${category_name}"/>
+      <h1 th:text="${category_name}"></h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -137,48 +154,51 @@
 
     <section class="section">
       <div>
-        <h1>Students</h1>
+        <h1>Hi Students!</h1>
         <p>Welcome to the Students Community. Ask questions, share your knowledge and learn from others.</p>
       </div>
 
-      <div class="row align-items-top">
-        <div class="card-group mb-4 gap-4">
-
-          <!-- Category Card -->
-          <div class="card" th:each="category: ${categories}">
-            <div class="card-body">
-              <h5 class="card-title"><a th:href="@{'/community/students/' + ${category.id}}" th:text="${category.name}"></a></h5>
+      <!-- Student categories -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Categories</h5>
+          <div class="list-group">
+            <a class="list-group-item list-group-item-action pt-3 pb-3" th:each="category: ${categories}" th:href="@{'/community/students/' + ${category.id}}">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="fw-bold mb-1" th:text="${category.name}"></h5>
+                <span th:text="${#lists.size(category.posts)}" class="badge bg-light text-dark rounded-pill align-content-center"></span>
+              </div>
               <p class="card-text" th:text="${category.description}"></p>
               <p class="card-text align-bottom" th:id="|${category.id}Count|"id="generalCount"></p>
             </div>
           </div>
-
         </div>
       </div>
 
-      <!-- <div class="card">
+      <!-- Recent posts in student group -->
+      <div class="card">
         <div class="card-body">
           <h5 class="card-title">Recent Students posts</h5>
-          <table class="table table-hover">
+          <table class="table table-hover sortable">
             <thead>
-                <tr>
-                  <th scope="col" style="width:50%">Title</th>
-                  <th scope="col">Category</th>
-                  <th scope="col">Poster</th>
-                  <th scope="col">Posted at</th>
-                </tr>
-              </thead>
-              <tbody th:each="post: ${posts}">
-                <tr>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
-                </tr>
-              </tbody>
-        </table>
+              <tr>
+                <th scope="col" style="width:50%">Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Poster</th>
+                <th scope="col">Posted at</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="post: ${posts}">
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div> -->
+      </div>
 
     </section>
 

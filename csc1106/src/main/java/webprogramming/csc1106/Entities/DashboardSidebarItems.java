@@ -1,13 +1,5 @@
 package webprogramming.csc1106.Entities;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Random;
-import java.util.ArrayList;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -16,8 +8,8 @@ public class DashboardSidebarItems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "index", nullable = false)
-    private Integer index;
+    @Column(name = "itemid", nullable = false)
+    private Integer id;
 
     @Column(name = "name" , nullable = false)
     private String name;
@@ -31,18 +23,18 @@ public class DashboardSidebarItems {
     public DashboardSidebarItems() {}
 
     public DashboardSidebarItems(Integer index, String name, String icon, String urlRedirection) {
-        this.index = index;
+        this.id = index;
         this.name = name;
         this.icon = icon;
         this.urlRedirection = urlRedirection;
     }
 
     public Integer getIndex() {
-        return index;
+        return id;
     }
 
     public void setIndex(Integer index) {
-        this.index = index;
+        this.id = index;
     }
 
     public String getName() {

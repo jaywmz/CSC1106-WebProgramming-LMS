@@ -33,6 +33,18 @@
     .card-title {
       font-size: 20px;
     }
+
+    #pageLoader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+      z-index: 999998;
+    }
   </style>
 
   <!-- =======================================================
@@ -45,6 +57,8 @@
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <iframe src="/loading" title="loading" id="pageLoader"></iframe>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">

@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import webprogramming.csc1106.Entities.DashboardSidebarItems;
 
 public interface DashboardSidebarItemsRepository extends JpaRepository<DashboardSidebarItems, Integer>{    
-    DashboardSidebarItems findByIndex(Integer index);
 }

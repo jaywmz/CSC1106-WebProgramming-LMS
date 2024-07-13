@@ -30,18 +30,22 @@ public class CommunityPostController {
     private LikesRepo likesRepo;
     @Autowired
     private SubscriptionsRepo subsRepo;
-    @Autowired 
-    private AttachmentsRepo attachmentsRepo;
+    // @Autowired 
+    // private AttachmentsRepo attachmentsRepo;
 
     @GetMapping("/community/{user_group}/{category_id}/{post_id}")
-    public String getPost(@PathVariable String category_id, @PathVariable String post_id, @PathVariable String user_group, @CookieValue("lrnznth_User_Name") String username, Model model) {
+    public String getPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID, Model model) {
         // retrieve models
         Post post = postRepo.findByPostID(Long.parseLong(post_id));
         String category_name = post.getCategory().getName();
         List<PostAttachments> attachments = post.getAttachments();
-        User user = userRepo.findByUserName(username);
-        Optional<Likes> like = likesRepo.findById(new LikesID(user.getUserID(), post.getPostID()));
-        Optional<Subscription> sub = subsRepo.findById(new SubscribeID(user.getUserID(), post.getPostID()));
+        Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+        Optional<Likes> like = Optional.empty();
+        Optional<Subscription> sub = Optional.empty();
+        if (user.isPresent()) {
+            like = likesRepo.findById(new LikesID(user.get().getUserID(), post.getPostID()));
+            sub = subsRepo.findById(new SubscribeID(user.get().getUserID(), post.getPostID()));
+        }
 
         // extract urls from attachments list
         ArrayList<String> urls = new ArrayList<String>();
@@ -90,19 +94,23 @@ public class CommunityPostController {
     }
     
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/like")
-    public ResponseEntity<String> likePost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @RequestParam("username") String username) {
+    public ResponseEntity<String> likePost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
             // retrieve post object and increment like count
             Post likedPost = postRepo.findByPostID(Long.parseLong(post_id));
             likedPost.setLikes(likedPost.getLikes() + 1);
             
             // retrieve user object, create new like object and save to repo
-            User user = userRepo.findByUserName(username);
-            LikesID likesID = new LikesID(user.getUserID(), likedPost.getPostID());
-            Likes newLike = new Likes(likesID, user, likedPost);
-            
-            likesRepo.save(newLike);
-            postRepo.save(likedPost);
+            Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+            if (user.isPresent()) {
+                LikesID likesID = new LikesID(user.get().getUserID(), likedPost.getPostID());
+                Likes newLike = new Likes(likesID, user.get(), likedPost);
+                likesRepo.save(newLike);
+                postRepo.save(likedPost);
+            }
+            else {
+                throw new Exception("User does not exist");
+            }
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -111,17 +119,22 @@ public class CommunityPostController {
     }
     
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/unlike")
-    public ResponseEntity<String> unlikePost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @RequestParam("username") String username) {
+    public ResponseEntity<String> unlikePost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
             // retrieve post object and decrement like count
             Post unlikedPost = postRepo.findByPostID(Long.parseLong(post_id));
             unlikedPost.setLikes(unlikedPost.getLikes() - 1);
             postRepo.save(unlikedPost);
 
-            // retrieve user object, create likesID object and delete from repo by likesID(composite key)
-            User user = userRepo.findByUserName(username);
-            LikesID likeID = new LikesID(user.getUserID(), unlikedPost.getPostID());
-            likesRepo.deleteById(likeID);
+            // retrieve user object, create likesID object and delete from repo by likesID
+            Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+            if (user.isPresent()) {
+                LikesID likeID = new LikesID(user.get().getUserID(), unlikedPost.getPostID());
+                likesRepo.deleteById(likeID);
+            }
+            else {
+                throw new Exception("User does not exist");
+            }
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -130,20 +143,24 @@ public class CommunityPostController {
     }
 
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/subscribe")
-    public ResponseEntity<String> subPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @RequestParam("username") String username) {
+    public ResponseEntity<String> subPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
             // retrieve post object
             Post subbedPost = postRepo.findByPostID(Long.parseLong(post_id));
             
             // retrieve user object 
-            User user = userRepo.findByUserName(username);
+            Optional<User> user = userRepo.findById(Integer.parseInt(userID));
             
             // create new subscription object
-            SubscribeID subID = new SubscribeID(user.getUserID(), subbedPost.getPostID());
-            Subscription newSub = new Subscription(subID, user, subbedPost);
-            
-            // save to repo
-            subsRepo.save(newSub);
+            if (user.isPresent()) {
+                SubscribeID subID = new SubscribeID(user.get().getUserID(), subbedPost.getPostID());
+                Subscription newSub = new Subscription(subID, user.get(), subbedPost);
+                // save to repo
+                subsRepo.save(newSub);
+            }
+            else {
+                throw new Exception("User does not exist");
+            }
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -152,19 +169,23 @@ public class CommunityPostController {
     }
 
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/unsubscribe")
-    public ResponseEntity<String> unsubPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @RequestParam("username") String username) {
+    public ResponseEntity<String> unsubPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
             // retrieve post object
             Post unSubbedPost = postRepo.findByPostID(Long.parseLong(post_id));
             
             // retrieve user object by username
-            User user = userRepo.findByUserName(username);
+            Optional<User> user = userRepo.findById(Integer.parseInt(userID));
 
             // make subcription ID, the key to subscription table
-            SubscribeID subID = new SubscribeID(user.getUserID(), unSubbedPost.getPostID());
-
-            // remove subscription from subcription repo by subID
-            subsRepo.deleteById(subID);
+            if (user.isPresent()) {
+                SubscribeID subID = new SubscribeID(user.get().getUserID(), unSubbedPost.getPostID());
+                // remove subscription from subcription repo by subID
+                subsRepo.deleteById(subID);
+            }
+            else {
+                throw new Exception("User does not exist");
+            }
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -192,4 +213,5 @@ public class CommunityPostController {
         
         return "redirect:/community/{user_group}/{category_id}";
     }
+
 }   

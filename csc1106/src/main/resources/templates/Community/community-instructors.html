@@ -29,6 +29,9 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
+  <!-- sort table script -->
+  <script type="text/javascript" src="/assets/js/sorttable.js"></script>
+
   <!-- =======================================================
   * Template Name: LearnZenith
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -45,11 +48,25 @@
     a:hover {
       color: #4154f1;
     }
+
+    #pageLoader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+      z-index: 999998;
+    }
   </style>
 
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <iframe src="/loading" title="loading" id="pageLoader"></iframe>
 
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">

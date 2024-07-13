@@ -13,7 +13,7 @@ async function toggleLike(button, defaultText, activeText, defaultIcon, activeIc
     var buttonIcon = button.querySelector('i');
 
     if (button.classList.contains('active')) {
-        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/like?username=' + UserName, {
+        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/like', {
             method: 'POST',
         });
 
@@ -30,7 +30,7 @@ async function toggleLike(button, defaultText, activeText, defaultIcon, activeIc
             console.log("Error liking post");
         }
     } else {
-        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/unlike?username=' + UserName, {
+        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/unlike', {
             method: 'POST',
         });
 
@@ -62,7 +62,7 @@ async function toggleSubscribe(button, defaultText, activeText, defaultIcon, act
     var buttonIcon = button.querySelector('i');
 
     if (button.classList.contains('active')) {
-        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/subscribe?username=' + UserName, {
+        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/subscribe', {
             method: 'POST',
         });
 
@@ -79,7 +79,7 @@ async function toggleSubscribe(button, defaultText, activeText, defaultIcon, act
             console.log("Error subscribing to post");
         }
     } else {
-        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/unsubscribe?username=' + UserName, {
+        const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/unsubscribe', {
             method: 'POST',
         });
 

@@ -29,6 +29,9 @@
   <!-- Template Main CSS File -->
   <link href="/assets/css/dashboard-style.css" rel="stylesheet">
 
+  <!-- sort table script -->
+  <script type="text/javascript" src="/assets/js/sorttable.js"></script>
+
   <style>
     td a {
       display: block;
@@ -37,6 +40,18 @@
 
     a:hover {
       color: #4154f1;
+    }
+
+    #pageLoader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+      z-index: 999998;
     }
   </style>
 
@@ -50,6 +65,8 @@
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <iframe src="/loading" title="loading" id="pageLoader"></iframe>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -160,7 +177,7 @@
           <!-- Announcements Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/announcements">Announcements</a></h5>
+              <h5 class="card-title"><a class="stretched-link link-opacity-50-hover" href="/community/announcements">Announcements</a></h5>
               <p class="card-text">Stay up to date with the latest news and updates from the LearnZenith team.</p>
               <p class="card-text" id="announcementsCount"></p>
             </div>
@@ -169,7 +186,7 @@
           <!-- Students Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/students">Students</a></h5>
+              <h5 class="card-title"><a class="stretched-link link-opacity-50-hover" href="/community/students">Students</a></h5>
               <p class="card-text">Ask questions, share knowledge, and connect with other students.</p>
               <p class="card-text" id="studentsCount"></p>
             </div>  
@@ -178,7 +195,7 @@
           <!-- Instructors Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/instructors">Instructors</a></h5>
+              <h5 class="card-title"><a class="stretched-link link-opacity-50-hover" href="/community/instructors">Instructors</a></h5>
               <p class="card-text">Ask questions, share knowledge, and connect with other instructors.</p>
               <p class="card-text" id="instructorsCount"></p>
             </div>
@@ -226,8 +243,8 @@
           <!-- Recent threads card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Recent Posts</h5>
-              <table class="table table-hover">
+              <h5 class="card-title display-inline">Recent Posts</h5>
+              <table class="table table-hover" id="allPosts">
                 <thead>
                   <tr>
                     <th scope="col" style="width:50%">Title</th>

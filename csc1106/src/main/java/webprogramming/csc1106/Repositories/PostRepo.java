@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostRepo extends JpaRepository<Post, Long>{
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
     List<Post> findTop5ByOrderByTimestampDesc();
+    List<Post> findTop5ByOrderByLikesDesc();
     Post findByPostID(long id);
     List<Post> findTop5ByCategoryIdInOrderByTimestampDesc(List<Integer> categoryIds);
     @Transactional
@@ -32,4 +33,8 @@ public interface PostRepo extends JpaRepository<Post, Long>{
         "WHERE c.cat_group = 'instructors' \r\n" + 
         "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCountsInstructors();
+
+    List<Post> findByOrderByTimestampDesc();
+
+    List<Post> findByOrderByLikesDesc();
 }   
