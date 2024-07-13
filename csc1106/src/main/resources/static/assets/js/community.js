@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         await checkUserRole()
     }
 
-    if(window.location.pathname === '/community'){
+    if(window.location.pathname === '/community/home'){
         await getPostCountHome();
     }else if(window.location.pathname === '/community/students'){
         await getPostCountStudents();

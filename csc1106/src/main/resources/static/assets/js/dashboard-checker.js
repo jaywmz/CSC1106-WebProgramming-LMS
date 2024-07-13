@@ -389,7 +389,6 @@ async function redirectUserToCorrectDashboard(){
     }
     // If user is student or instructor
     else if(userRole === 'Student' || userRole === 'Instructor'){
-        console.log(urlSegment);
         if(!userRoute.includes(urlSegment)) return window.location.href = '/dashboard';
     }
 }

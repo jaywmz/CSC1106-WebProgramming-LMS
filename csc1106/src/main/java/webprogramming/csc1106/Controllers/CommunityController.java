@@ -36,7 +36,7 @@ public class CommunityController {
     @Autowired
     private CategoryRepo categoryRepo;
     
-    @GetMapping("/community")
+    @GetMapping("/community/home")
     public String getCommunityHome(Model model, @CookieValue(value="lrnznth_User_ID", required = false) String userID) {
         if(userID == null) {
             return "redirect:/login";
@@ -46,9 +46,8 @@ public class CommunityController {
 
         // queries 'general' categories
         List<CommunityCategory> categories = categoryRepo.findByGroup("general");
-
         // identify user
-            Optional<User> user = userRepo.findById(Integer.parseInt(userID));
+        Optional<User> user = userRepo.findById(Integer.parseInt(userID));
             
         // get list of subscribed posts from user 
         if (user.isPresent()) {
@@ -69,6 +68,11 @@ public class CommunityController {
 
         return "Community/community-home";
     }
+
+    @GetMapping("/community")
+    public String getCommunityLoading() {
+        return "Community/community-loading";
+    }
     
     @GetMapping("/community/search")
     public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model) {
@@ -82,7 +86,7 @@ public class CommunityController {
     }
 
     @GetMapping("/community/unauthorised")
-    public String getMethodName() {
+    public String getUnauthorisedPage() {
         return "Community/community-unauthorised";
     }
     
