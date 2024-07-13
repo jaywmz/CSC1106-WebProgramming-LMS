@@ -97,29 +97,43 @@ public class CommunityController {
             Long totalInstructors = 0L;
             Long totalOffTopic = 0L;
             Long totalFeedback = 0L;
+            Long totalIntroductions = 0L;
+            Long totalCareers = 0L;
             
             for (int i = 0; i < categoryCounts.size(); i++) 
             {
                 if("announcements".equals(categoryCounts.get(i)[1])) {
-                    totalAnnouncements += (Long) categoryCounts.get(i)[2];
+                    totalAnnouncements += (Long) categoryCounts.get(i)[3];
                 } else if("students".equals(categoryCounts.get(i)[1])) {
-                    totalStudents += (Long) categoryCounts.get(i)[2];
+                    totalStudents += (Long) categoryCounts.get(i)[3];
                 } else if("instructors".equals(categoryCounts.get(i)[1])) {
-                    totalInstructors += (Long) categoryCounts.get(i)[2];
-                } else if(categoryCounts.get(i)[0].equals(11L)) { // 10 is index of off-topic category
-                    totalOffTopic += (Long) categoryCounts.get(i)[2];
-                } else if(categoryCounts.get(i)[0].equals(12L)) { // 11 is index of feedback category 
-                    totalFeedback += (Long) categoryCounts.get(i)[2];
-                }
+                    totalInstructors += (Long) categoryCounts.get(i)[3];
+                } else if(categoryCounts.get(i)[2].equals("Off-Topic")) {
+                    totalOffTopic += (Long) categoryCounts.get(i)[3];
+                } else if(categoryCounts.get(i)[2].equals("Feedback")) {
+                    totalFeedback += (Long) categoryCounts.get(i)[3];
+                } else if(categoryCounts.get(i)[2].equals("Introductions")) { 
+                    totalIntroductions += (Long) categoryCounts.get(i)[3];
+                } else if(categoryCounts.get(i)[2].equals("Careers")) {
+                    totalCareers += (Long) categoryCounts.get(i)[3];
+                } 
             }
             
             Object lastOffTopic = 0;
             if(totalOffTopic > 0){
-                lastOffTopic = categoryCounts.get(10)[3];
+                lastOffTopic = categoryCounts.get(2)[4];
             }
-            Object lastFeeback = 0;
+            Object lastFeedback = 0;
             if(totalFeedback > 0){
-                lastFeeback = categoryCounts.get(11)[3];
+                lastFeedback = categoryCounts.get(3)[4];
+            }
+            Object lastIntroductions = 0;
+            if(totalIntroductions > 0){
+                lastIntroductions = categoryCounts.get(9)[4];
+            }
+            Object lastCareers = 0;
+            if(totalCareers > 0){
+                lastCareers = categoryCounts.get(10)[4];
             }
             
             return new ResponseEntity<>(List.of(
@@ -128,8 +142,12 @@ public class CommunityController {
                 totalInstructors, 
                 totalOffTopic, 
                 totalFeedback,
+                totalIntroductions,
+                totalCareers,
                 lastOffTopic,
-                lastFeeback
+                lastFeedback,
+                lastIntroductions,
+                lastCareers
                 ), HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e.getMessage());
