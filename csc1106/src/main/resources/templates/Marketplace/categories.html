@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories - LearnZenith</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <a href="/admin" class="btn btn-secondary mb-3">Back to Admin Dashboard</a>
+    <h2>Category Groups</h2>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    
+    <form th:action="@{/categories}" th:object="${categoryGroup}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}" />
+        <div class="form-group">
+            <label for="name">Category Group Name</label>
+            <input type="text" id="name" th:field="*{name}" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Category Group Description</label>
+            <textarea id="description" th:field="*{description}" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="coverImageFile">Cover Image</label>
+            <input type="file" id="coverImageFile" name="coverImageFile" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Add/Update Category Group</button>
+    </form>
+
+    <table class="table mt-5">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.name}"></td>
+            <td th:text="${category.description}"></td>
+            <td>
+                <a th:href="@{/edit-category/{id}(id=${category.id})}" class="btn btn-warning">Edit</a>
+                <form th:action="@{/delete-category/{id}(id=${category.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

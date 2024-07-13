@@ -3,10 +3,7 @@ package webprogramming.csc1106.Controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webprogramming.csc1106.Entities.CategoryGroup;
@@ -23,27 +20,26 @@ public class MarketplaceCategoryGroupController {
 
     private static final Logger logger = Logger.getLogger(MarketplaceCategoryGroupController.class.getName());
 
-    @GetMapping("/add-category")
-    public String showAddCategoryPage(Model model) {
+    @GetMapping("/categories")
+    public String showCategoriesPage(Model model) {
+        model.addAttribute("categories", categoryGroupService.getAllCategoryGroups());
         model.addAttribute("categoryGroup", new CategoryGroup());
-        return "Marketplace/add-category";
+        return "Marketplace/categories";
     }
 
-    @PostMapping("/add-category")
-    public String addCategory(CategoryGroup categoryGroup, @RequestParam("coverImageFile") MultipartFile coverImageFile, Model model, RedirectAttributes redirectAttributes) {
+    @PostMapping("/categories")
+    public String addOrUpdateCategory(CategoryGroup categoryGroup, @RequestParam("coverImageFile") MultipartFile coverImageFile, RedirectAttributes redirectAttributes) {
         try {
             categoryGroupService.addCategoryGroup(categoryGroup, coverImageFile);
-            redirectAttributes.addFlashAttribute("successMessage", "Category group added successfully.");
-            return "redirect:/market";
+            redirectAttributes.addFlashAttribute("successMessage", "Category group added/updated successfully.");
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "Failed to upload cover image. Please try again.");
-            logger.severe("Error adding category group: " + e.getMessage());
-            return "Marketplace/add-category";
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload cover image. Please try again.");
+            logger.severe("Error adding/updating category group: " + e.getMessage());
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to add category group. Please try again.");
-            logger.severe("Error adding category group: " + e.getMessage());
-            return "Marketplace/add-category";
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add/update category group. Please try again.");
+            logger.severe("Error adding/updating category group: " + e.getMessage());
         }
+        return "redirect:/categories";
     }
 
     @PostMapping("/delete-category/{id}")
@@ -55,6 +51,14 @@ public class MarketplaceCategoryGroupController {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete category group. Please try again.");
             logger.severe("Error deleting category group: " + e.getMessage());
         }
-        return "redirect:/market";
+        return "redirect:/categories";
+    }
+
+    @GetMapping("/edit-category/{id}")
+    public String editCategory(@PathVariable Long id, Model model) {
+        CategoryGroup categoryGroup = categoryGroupService.getCategoryGroupById(id);
+        model.addAttribute("categoryGroup", categoryGroup);
+        model.addAttribute("categories", categoryGroupService.getAllCategoryGroups());
+        return "Marketplace/categories";
     }
 }
