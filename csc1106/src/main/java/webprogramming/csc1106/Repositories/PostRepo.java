@@ -17,7 +17,7 @@ public interface PostRepo extends JpaRepository<Post, Long>{
     @Transactional
     void deleteByPostID(long id);
     
-    @Query(value = "SELECT c.id, c.description, COUNT(p.category_id), MAX(p.timestamp) FROM community_category c \r\n" + //
+    @Query(value = "SELECT c.id, c.description, COUNT(p.category_id), MAX(p.timestamp), c.name FROM community_category c \r\n" + //
                 "LEFT JOIN post p ON c.id = p.category_id \r\n" + //
                 "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCounts();
@@ -33,4 +33,8 @@ public interface PostRepo extends JpaRepository<Post, Long>{
         "WHERE c.description = 'instructors' \r\n" + 
         "GROUP BY c.id;", nativeQuery = true)
     List<Object[]> findCategoryCountsInstructors();
+
+    List<Post> findByOrderByTimestampDesc();
+
+    List<Post> findByOrderByLikesDesc();
 }   

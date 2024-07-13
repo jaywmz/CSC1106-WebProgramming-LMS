@@ -45,11 +45,25 @@
     a:hover {
       color: #4154f1;
     }
+
+    #pageLoader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+      z-index: 999998;
+    }
   </style>
 
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <iframe src="/loading" title="loading" id="pageLoader"></iframe>
 
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -170,22 +184,22 @@
           <h5 class="card-title">Recent Instructors posts</h5>
           <table class="table table-hover">
             <thead>
-                <tr>
-                  <th scope="col" style="width:50%">Title</th>
-                  <th scope="col">Category</th>
-                  <th scope="col">Poster</th>
-                  <th scope="col">Posted at</th>
-                </tr>
-              </thead>
-              <tbody th:each="post: ${posts}">
-                <tr>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
-                </tr>
-              </tbody>
-        </table>
+              <tr>
+                <th scope="col" style="width:50%">Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Poster</th>
+                <th scope="col">Posted at</th>
+              </tr>
+            </thead>
+            <tbody th:each="post: ${posts}">
+              <tr>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 

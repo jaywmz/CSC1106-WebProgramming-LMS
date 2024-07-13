@@ -2,12 +2,17 @@ package webprogramming.csc1106.Controllers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.azure.core.annotation.PathParam;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.CategoryRepo;
@@ -18,27 +23,26 @@ import org.springframework.ui.Model;
 
 @Controller
 public class CommunityCategoryController {
-
     @Autowired
     private CategoryRepo categoryRepo;
     @Autowired
     private PostRepo postRepo;
 
     // Method for returning views of general categories that are not within a group, such as Off-topic and Feedback
-    @GetMapping("/community/general/{category_id}")
-    public String getCategoryPosts(@PathVariable String category_id, Model model) {
-        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
+    @GetMapping("/community/general/{categoryName}")
+    public String getCategoryPosts(@PathVariable String categoryName, Model model) {
+        CommunityCategory category = categoryRepo.findByNameIgnoreCase(categoryName); // retrieve category object from db by name
         List<Post> posts = category.getPosts(); // get retrieved category's posts
         
         model.addAttribute("user_group", "general");
         model.addAttribute("category_name", category.getName()); // add category name to template model
-        model.addAttribute("category_id", category_id); // used for new post later
+        model.addAttribute("category_id", category.getId()); // used for new post later
         model.addAttribute("posts", posts); // add posts to template model
 
         return "Community/community-category";
     }
 
-    // Method for returning views of categoreis within a group, such as Announcement, Student, Instructor
+    // Method for returning views of categories within a group, such as Announcement, Student, Instructor
     @GetMapping("/community/{user_group}/{category_id}")
     public String getCategoryPosts(@PathVariable String user_group, @PathVariable String category_id, Model model) {
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
@@ -52,8 +56,32 @@ public class CommunityCategoryController {
         return "Community/community-category";
     }
 
+    // @PostMapping("/community/{user_group}/{categoryName}/sort")
+    // public String sortCategoryPosts(@PathVariable String user_group, @PathVariable String categoryName, @RequestParam("filter") String filter, Model model) {
+    //     List<Post> posts = new ArrayList<Post>();
+    //     if (filter.toLowerCase().contains("newest")) {
+    //         posts = postRepo.findByOrderByTimestampDesc();
+    //     }
+    //     else if (filter.toLowerCase().contains("toplikes")) {
+    //         posts = postRepo.findByOrderByLikesDesc();
+    //     }
+
+    //     CommunityCategory category = categoryRepo.findByNameIgnoreCase(categoryName); // retrieve category object from db by name
+        
+    //     model.addAttribute("user_group", user_group);
+    //     model.addAttribute("category_name", category.getName()); // add category name to template model
+    //     model.addAttribute("category_id", category.getId()); // used for new post later
+    //     model.addAttribute("posts", posts);
+
+    //     return "Community/community-category";
+    // }
+
     @GetMapping("/community/announcements")
     public String getAnnouncements(Model model) {
+        List<Integer> categoryIds = Arrays.asList(1, 2);
+        List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
+
+        model.addAttribute("posts", posts);
         return "Community/community-announce";
     }
 
@@ -74,11 +102,6 @@ public class CommunityCategoryController {
 
         model.addAttribute("posts", posts);
         return "Community/community-instructors";
-    }
-
-    @GetMapping("/community/general")
-    public String getGeneral(Model model) {
-        return "redirect:/community";
     }
     
 }

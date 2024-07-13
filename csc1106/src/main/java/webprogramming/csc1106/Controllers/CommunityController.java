@@ -1,34 +1,27 @@
 package webprogramming.csc1106.Controllers;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.http.HttpStatus;
-
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.PostRepo;
 import webprogramming.csc1106.Repositories.SubscriptionsRepo;
 import webprogramming.csc1106.Repositories.UserRepository;
-
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.thymeleaf.util.Validate;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import org.springframework.web.bind.annotation.ResponseBody;
-
 
 @Controller
 public class CommunityController {
@@ -94,29 +87,32 @@ public class CommunityController {
             Long totalInstructors = 0L;
             Long totalOffTopic = 0L;
             Long totalFeedback = 0L;
+            int offTopic = 0, feedback = 0;
             
             for (int i = 0; i < categoryCounts.size(); i++) 
             {
-                if("announcements".equals(categoryCounts.get(i)[1])) {
-                    totalAnnouncements += (Long) categoryCounts.get(i)[2];
+                if("announcements".equals(categoryCounts.get(i)[1])) { // categoryCounts.get(i)[1] gets the description of the i-th category
+                    totalAnnouncements += (Long) categoryCounts.get(i)[2]; // categoryCounts.get(i)[2] gets the count of posts under i-th category
                 } else if("students".equals(categoryCounts.get(i)[1])) {
                     totalStudents += (Long) categoryCounts.get(i)[2];
                 } else if("instructors".equals(categoryCounts.get(i)[1])) {
                     totalInstructors += (Long) categoryCounts.get(i)[2];
-                } else if(categoryCounts.get(i)[0].equals(11L)) { // 10 is index of off-topic category
+                } else if("Off-Topic".equals(categoryCounts.get(i)[4])) { // categoryCounts.get(i)[4] gets the name of the i-th category
+                    offTopic = i;
                     totalOffTopic += (Long) categoryCounts.get(i)[2];
-                } else if(categoryCounts.get(i)[0].equals(12L)) { // 11 is index of feedback category 
+                } else if("Feedback".equals(categoryCounts.get(i)[4])) { // 11 is index of feedback category 
+                    feedback = i;
                     totalFeedback += (Long) categoryCounts.get(i)[2];
                 }
             }
             
             Object lastOffTopic = 0;
             if(totalOffTopic > 0){
-                lastOffTopic = categoryCounts.get(10)[3];
+                lastOffTopic = categoryCounts.get(offTopic)[3];
             }
             Object lastFeeback = 0;
             if(totalFeedback > 0){
-                lastFeeback = categoryCounts.get(11)[3];
+                lastFeeback = categoryCounts.get(feedback)[3];
             }
             
             return new ResponseEntity<>(List.of(
@@ -192,20 +188,6 @@ public class CommunityController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
-
-    @SuppressWarnings({ "null", "rawtypes" })
-    @PostMapping("/community/sort/{filter}")
-    public ResponseEntity<List> postMethodName(@PathVariable String filter) {
-        try {
-            List<Post> posts = postRepo.findTop5ByOrderByLikesDesc();
-
-            return new ResponseEntity<>(posts, HttpStatus.OK);
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-    }
-    
 
     @PostMapping("/community-get-user-role")
     @ResponseBody

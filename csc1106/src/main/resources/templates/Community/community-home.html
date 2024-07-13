@@ -38,6 +38,18 @@
     a:hover {
       color: #4154f1;
     }
+
+    #pageLoader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: white;
+      z-index: 999998;
+    }
   </style>
 
   <!-- =======================================================
@@ -50,6 +62,8 @@
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <iframe src="/loading" title="loading" id="pageLoader"></iframe>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -208,7 +222,7 @@
                 <tbody>
                   <tr>
                     <th scope="row">
-                        <a href="/community/general/11">Off-Topic</a>
+                        <a href="/community/general/off-topic">Off-Topic</a>
                         <p class="fs-6 fw-normal mb-0">Discuss anything not related to Learning.</p>
                     </th>
                     <td><p class="card-text" id="offTopicCount"></p></td>
@@ -216,7 +230,7 @@
                   </tr>
                   <tr>
                     <th scope="row">
-                      <a href="/community/general/12">Feedback</a>
+                      <a href="/community/general/feedback">Feedback</a>
                       <p class="fs-6 fw-normal mb-0">Post any feedback regarding the website and the community hub here.</p>
                     </th>
                     <td><p class="card-text" id="feedbackCount"></p></td>
@@ -230,18 +244,7 @@
           <!-- Recent threads card -->
           <div class="card">
             <div class="card-body">
-              <div class="row">
-                <div class="col">  
-                  <h5 class="card-title display-inline">All Posts</h5>
-                </div>
-                <div class="col d-flex align-items-center">
-                  <select class="form-select form-select-sm" id="sortSelector">
-                    <option selected value="newest">Newest</option>
-                    <option value="topLikes">Top Likes</option>
-                  </select>
-                  <button class="btn btn-primary" onclick="sortBySelected()">Sort</button>
-                </div>
-              </div>
+              <h5 class="card-title display-inline">Recent Posts</h5>
               <table class="table table-hover" id="allPosts">
                 <thead>
                   <tr>
