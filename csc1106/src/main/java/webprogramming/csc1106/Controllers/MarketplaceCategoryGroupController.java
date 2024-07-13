@@ -57,4 +57,10 @@ public class MarketplaceCategoryGroupController {
         }
         return "redirect:/market";
     }
+
+    @GetMapping("/categories")
+    public String showCategoriesPage(Model model) {
+        model.addAttribute("categories", categoryGroupService.getAllCategoryGroups());
+        return "Marketplace/categories";
+    }
 }
