@@ -46,67 +46,122 @@
             <button type="button" class="btn btn-secondary mt-3" onclick="addSection()">Add Section</button>
 
             <button type="submit" class="btn btn-primary mt-3">Upload</button>
-            <a href="http://localhost:8080/coursesupload" class="btn btn-info mt-3">Back</a>
+            <a href="http://localhost:8080/coursesupload" class="btn btn-info mt-3">View All Courses</a>
             <a href="http://localhost:8080/market" class="btn btn-success mt-3">Go to Market</a>
         </form>
     </div>
 
     <script>
         let sectionCount = 0;
-        let lessonCount = 0;
+        let lessonCounts = {};
+
+        function generateUniqueId() {
+            return 'id-' + Math.random().toString(36).substr(2, 16);
+        }
 
         function addSection() {
             sectionCount++;
-            lessonCount = 0; // reset lesson count for each section
+            const uniqueSectionId = generateUniqueId();
+            lessonCounts[uniqueSectionId] = 0;
             const sectionHtml = `
-                <div class="card mt-3" id="section-${sectionCount}">
+                <div class="card mt-3" id="section-${uniqueSectionId}">
                     <div class="card-body">
                         <h4>Section ${sectionCount}</h4>
                         <div class="form-group">
-                            <label for="sections[${sectionCount - 1}].title">Section Title</label>
-                            <input type="text" id="sections[${sectionCount - 1}].title" name="sections[${sectionCount - 1}].title" class="form-control" required>
+                            <label for="section-title-${uniqueSectionId}">Section Title</label>
+                            <input type="text" id="section-title-${uniqueSectionId}" name="sections[${sectionCount - 1}].title" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="sections[${sectionCount - 1}].description">Section Description</label>
-                            <textarea id="sections[${sectionCount - 1}].description" name="sections[${sectionCount - 1}].description" class="form-control" required></textarea>
+                            <label for="section-description-${uniqueSectionId}">Section Description</label>
+                            <textarea id="section-description-${uniqueSectionId}" name="sections[${sectionCount - 1}].description" class="form-control" required></textarea>
                         </div>
                         <h5>Lessons</h5>
-                        <div id="lessons-container-${sectionCount}"></div>
-                        <button type="button" class="btn btn-secondary mt-3" onclick="addLesson(${sectionCount})">Add Lesson</button>
+                        <div id="lessons-container-${uniqueSectionId}"></div>
+                        <button type="button" class="btn btn-secondary mt-3" onclick="addLesson('${uniqueSectionId}', ${sectionCount - 1})">Add Lesson</button>
+                        <button type="button" class="btn btn-danger mt-3" onclick="removeSection('${uniqueSectionId}')">Remove Section</button>
                     </div>
                 </div>`;
-            $('#sections-container').append(sectionHtml);
+            document.getElementById('sections-container').insertAdjacentHTML('beforeend', sectionHtml);
+            renumberSections();
         }
 
-        function addLesson(sectionId) {
-            lessonCount++;
+        function addLesson(sectionId, sectionIndex) {
+            const uniqueLessonId = generateUniqueId();
+            const lessonIndex = lessonCounts[sectionId]++;
             const lessonHtml = `
-                <div class="form-group mt-2" id="section-${sectionId}-lesson-${lessonCount}">
-                    <label for="sections[${sectionId - 1}].lessons[${lessonCount - 1}].title">Lesson Title</label>
-                    <input type="text" id="sections[${sectionId - 1}].lessons[${lessonCount - 1}].title" name="sections[${sectionId - 1}].lessons[${lessonCount - 1}].title" class="form-control" required>
-                    <label for="sections[${sectionId - 1}].lessons[${lessonCount - 1}].file">Upload File</label>
-                    <input type="file" id="sections[${sectionId - 1}].lessons[${lessonCount - 1}].file" name="sections[${sectionId - 1}].lessons[${lessonCount - 1}].file" class="form-control" required>
+                <div class="form-group mt-2" id="lesson-${uniqueLessonId}">
+                    <label for="lesson-title-${uniqueLessonId}">Lesson Title</label>
+                    <input type="text" id="lesson-title-${uniqueLessonId}" name="sections[${sectionIndex}].lessons[${lessonIndex}].title" class="form-control" required>
+                    <label for="lesson-file-${uniqueLessonId}">Upload File</label>
+                    <input type="file" id="lesson-file-${uniqueLessonId}" name="sections[${sectionIndex}].lessons[${lessonIndex}].file" class="form-control">
+                    <button type="button" class="btn btn-danger mt-2" onclick="removeLesson('${uniqueLessonId}', ${sectionIndex})">Remove Lesson</button>
                 </div>`;
-            $(`#lessons-container-${sectionId}`).append(lessonHtml);
+            const container = document.getElementById(`lessons-container-${sectionId}`);
+            if (container) {
+                container.insertAdjacentHTML('beforeend', lessonHtml);
+            } else {
+                console.error(`Element with ID lessons-container-${sectionId} not found`);
+            }
         }
 
-        function validateForm() {
-            const fileInput = document.getElementById('coverImage');
-            const file = fileInput.files[0];
-            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'];
-
-            if (!file) {
-                alert('Please upload a cover image.');
-                return false;
+        function removeSection(sectionId) {
+            const sectionElement = document.getElementById(`section-${sectionId}`);
+            if (sectionElement) {
+                if (confirm("Are you sure you want to remove this section?")) {
+                    sectionElement.remove();
+                    renumberSections();
+                }
+            } else {
+                alert("There are no sections to remove.");
             }
-
-            if (file && !validImageTypes.includes(file.type)) {
-                alert('Invalid file type for cover image. Only images are allowed.');
-                return false;
-            }
-
-            return true;
         }
+
+        function removeLesson(lessonId, sectionIndex) {
+            const lessonElement = document.getElementById(`lesson-${lessonId}`);
+            if (lessonElement) {
+                if (confirm("Are you sure you want to remove this lesson?")) {
+                    lessonElement.remove();
+                }
+            } else {
+                alert("There are no lessons to remove.");
+            }
+        }
+
+        function renumberSections() {
+            const sections = document.querySelectorAll('#sections-container .card');
+            sections.forEach((section, index) => {
+                const sectionHeader = section.querySelector('h4');
+                if (sectionHeader) {
+                    sectionHeader.textContent = `Section ${index + 1}`;
+                }
+                const inputs = section.querySelectorAll('input, textarea');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        const newName = name.replace(/sections\[\d+\]/, `sections[${index}]`);
+                        input.setAttribute('name', newName);
+                    }
+                });
+                const buttons = section.querySelectorAll('button');
+                buttons.forEach(button => {
+                    const onclick = button.getAttribute('onclick');
+                    if (onclick) {
+                        const newOnclick = onclick.replace(/\(\d+\)/, `(${index})`);
+                        button.setAttribute('onclick', newOnclick);
+                    }
+                });
+            });
+            sectionCount = sections.length;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize lessonCount with the number of lessons per section
+            const sections = document.querySelectorAll('#sections-container .card');
+            sections.forEach((section, index) => {
+                const sectionId = section.id.replace('section-', '');
+                lessonCounts[sectionId] = section.querySelectorAll('.form-group.mt-2').length;
+            });
+        });
     </script>
 </body>
 </html>
