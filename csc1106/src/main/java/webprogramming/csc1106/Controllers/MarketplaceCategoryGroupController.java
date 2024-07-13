@@ -53,4 +53,12 @@ public class MarketplaceCategoryGroupController {
         }
         return "redirect:/categories";
     }
+
+    @GetMapping("/edit-category/{id}")
+    public String editCategory(@PathVariable Long id, Model model) {
+        CategoryGroup categoryGroup = categoryGroupService.getCategoryGroupById(id);
+        model.addAttribute("categoryGroup", categoryGroup);
+        model.addAttribute("categories", categoryGroupService.getAllCategoryGroups());
+        return "Marketplace/categories";
+    }
 }
