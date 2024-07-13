@@ -222,22 +222,18 @@
                     <th scope="col">Last Post</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody th:each="category: ${categories}">
                   <tr>
                     <th scope="row">
-                        <a href="/community/general/off-topic">Off-Topic</a>
-                        <p class="fs-6 fw-normal mb-0">Discuss anything not related to Learning.</p>
+                        <a th:href="@{'/community/general/' + ${category.id} }" th:text="${category.name}"></a>
+                        <p class="fs-6 fw-normal mb-0" th:text="${category.description}">Discuss anything not related to Learning.</p>
                     </th>
-                    <td><p class="card-text" id="offTopicCount"></p></td>
-                    <td><p class="card-text" id="lastOffTopic"></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <a href="/community/general/feedback">Feedback</a>
-                      <p class="fs-6 fw-normal mb-0">Post any feedback regarding the website and the community hub here.</p>
-                    </th>
-                    <td><p class="card-text" id="feedbackCount"></p></td>
-                    <td><p class="card-text" id="lastFeedback"></td>
+                    <td>
+                      <!-- <p class="card-text" id="offTopicCount"></p> -->
+                    </td>
+                    <td>
+                      <!-- <p class="card-text" id="lastOffTopic"> </p>-->
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -259,10 +255,10 @@
                 </thead>
                 <tbody th:each="post: ${posts}">
                   <tr>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
                   </tr>
                 </tbody>
               </table>
@@ -286,10 +282,10 @@
                 </thead>
                 <tbody th:each="post: ${subbedPosts}">
                   <tr>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                    <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
                   </tr>
                 </tbody>
               </table>

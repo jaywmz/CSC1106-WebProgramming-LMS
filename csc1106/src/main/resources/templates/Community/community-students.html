@@ -158,45 +158,22 @@
         <p>Welcome to the Students Community. Ask questions, share your knowledge and learn from others.</p>
       </div>
 
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Browse the Student Community</h5>
-          <table class="table table-hover">
-            <colgroup>
-                <col style="width: 60%;">
-                <col style="width: 20%;">
-                <col style="width: 20%;">
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col">Posts</th>
-                <th scope="col">Last Post</th>
-              </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">
-                        <a href="/community/students/">Introductions</a>
-                        <p class="fs-6 fw-normal">Introduce yourself to the LearnZenith community.</p>
-                    </th>
-                    <td><p class="card-text" id="introductionsCount"></p></td>
-                    <td><p class="card-text" id="lastIntroduction"></td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                      <a href="/community/students/">Careers</a>
-                      <p class="fs-6 fw-normal">Discuss career opportunities and job openings.</p>
-                  </th>
-                  <td><p class="card-text" id="careersCount"></p></td>
-                  <td><p class="card-text" id="lastCareers"></td>
-              </tr>
-              </tbody>
-          </table>
+      <div class="row align-items-top">
+        <div class="card-group mb-4 gap-4">
+
+          <!-- Category Card -->
+          <div class="card" th:each="category: ${categories}">
+            <div class="card-body">
+              <h5 class="card-title"><a th:href="@{'/community/students/' + ${category.id}}" th:text="${category.name}"></a></h5>
+              <p class="card-text" th:text="${category.description}"></p>
+              <!-- <p class="card-text align-bottom" id="generalCount"></p> -->
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="card">
+      <!-- <div class="card">
         <div class="card-body">
           <h5 class="card-title">Recent Students posts</h5>
           <table class="table table-hover">
@@ -210,15 +187,15 @@
               </thead>
               <tbody th:each="post: ${posts}">
                 <tr>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
                 </tr>
               </tbody>
         </table>
         </div>
-      </div>
+      </div> -->
 
     </section>
 

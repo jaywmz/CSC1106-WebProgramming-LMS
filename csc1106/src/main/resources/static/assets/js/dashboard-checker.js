@@ -363,7 +363,7 @@ async function redirectUserToCorrectDashboard(){
 
     // Get the true route
     // Example: "/dashboard", "/community", "course/123/...."
-    const urlSegment = currentUrl.split('/').slice(3).join('/');
+    const urlSegment = currentUrl.replace(/^https?:\/\/[^\/]+\//, '').split('/')[0];
     
     // If user is admin
     if(userRole === 'Admin'){
@@ -389,6 +389,7 @@ async function redirectUserToCorrectDashboard(){
     }
     // If user is student or instructor
     else if(userRole === 'Student' || userRole === 'Instructor'){
+        console.log(urlSegment);
         if(!userRoute.includes(urlSegment)) return window.location.href = '/dashboard';
     }
 }

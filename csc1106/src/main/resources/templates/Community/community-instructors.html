@@ -164,7 +164,7 @@
           <!-- Course Creation Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/instructors/9">Course Creation Help</a></h5>
+              <h5 class="card-title"><a href="/community/instructors/5">Course Creation Help</a></h5>
               <p class="card-text">Ask questions regarding course creation</p>
               <p class="card-text" id="courseHelpCount"></p>
             </div>
@@ -173,7 +173,7 @@
           <!-- Teaching Card -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><a href="/community/instructors/10">Teaching Help</a></h5>
+              <h5 class="card-title"><a href="/community/instructors/6">Teaching Help</a></h5>
               <p class="card-text">Ask fellow instructors questions regarding teaching</p>
               <p class="card-text" id="teachingCount"></p>
             </div>
@@ -187,22 +187,22 @@
           <h5 class="card-title">Recent Instructors posts</h5>
           <table class="table table-hover">
             <thead>
-              <tr>
-                <th scope="col" style="width:50%">Title</th>
-                <th scope="col">Category</th>
-                <th scope="col">Poster</th>
-                <th scope="col">Posted at</th>
-              </tr>
-            </thead>
-            <tbody th:each="post: ${posts}">
-              <tr>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getDescription()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
-              </tr>
-            </tbody>
-          </table>
+                <tr>
+                  <th scope="col" style="width:50%">Title</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Poster</th>
+                  <th scope="col">Posted at</th>
+                </tr>
+              </thead>
+              <tbody th:each="post: ${posts}">
+                <tr>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}"></a></td>
+                </tr>
+              </tbody>
+        </table>
         </div>
       </div>
 

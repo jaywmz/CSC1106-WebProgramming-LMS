@@ -52,7 +52,7 @@ public class CommunityNewPostController {
     }
 
     @PostMapping("/community/new-post")
-    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("userId") String userID, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
+    public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_ID") String userID, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
         // set post timestamp
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());

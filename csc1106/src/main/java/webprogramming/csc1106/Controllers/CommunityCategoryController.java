@@ -87,10 +87,13 @@ public class CommunityCategoryController {
 
     @GetMapping("/community/students")
     public String getStudents(Model model) {
-        List<Integer> categoryIds = Arrays.asList(3, 4, 5, 6, 7, 8);
-        List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
+        // List<Integer> categoryIds = Arrays.asList(3, 4, 5, 6, 7, 8);
+        // List<Post> posts = postRepo.findTop5ByCategoryIdInOrderByTimestampDesc(categoryIds);
 
-        model.addAttribute("posts", posts);
+        List<CommunityCategory> categories = categoryRepo.findByGroup("students");
+
+        // model.addAttribute("posts", posts);
+        model.addAttribute("categories", categories);
         return "Community/community-students";
     }
 
