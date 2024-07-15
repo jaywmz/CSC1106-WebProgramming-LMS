@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import com.paypal.api.payments.Payment;
-import com.paypal.base.rest.PayPalRESTException;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,21 +30,20 @@ import jakarta.servlet.http.HttpSession;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Securities.Encoding;
-import webprogramming.csc1106.Services.PayPalService;
 import webprogramming.csc1106.Services.UserService;
 
 @Controller
 public class UserController {
 
     private final UserRepository userRepository;
-    private final PayPalService payPalService;
+
     private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserRepository userRepository, PayPalService payPalService, UserService userService) {
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
-        this.payPalService = payPalService;
+
         this.userService = userService;
     }
 
@@ -155,7 +151,7 @@ public class UserController {
         }
     }
 
-    //Update user
+    // Update user
     @PostMapping("/updateuser")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         try {
@@ -178,118 +174,52 @@ public class UserController {
     }
 
     @PostMapping("/register")
-public String registerForm(@ModelAttribute User user, Model model) {
-    logger.debug("POST request received for registration form submission");
-    logger.debug("Received user registration form submission:");
-    logger.debug("User ID: {}", user.getUserID());
-    logger.debug("Role ID: {}", user.getRole().getRoleID());
-    logger.debug("Username: {}", user.getUserName());
-    logger.debug("User Password: {}", user.getUserPassword());
-    logger.debug("User Email: {}", user.getUserEmail());
-    logger.debug("Joined Date: {}", user.getJoinedDate());
-    logger.debug("Joined Time: {}", user.getJoinedTime());
+    public String registerForm(@ModelAttribute User user, Model model) {
+        logger.debug("POST request received for registration form submission");
+        logger.debug("Received user registration form submission:");
+        logger.debug("User ID: {}", user.getUserID());
+        logger.debug("Role ID: {}", user.getRole().getRoleID());
+        logger.debug("Username: {}", user.getUserName());
+        logger.debug("User Password: {}", user.getUserPassword());
+        logger.debug("User Email: {}", user.getUserEmail());
+        logger.debug("Joined Date: {}", user.getJoinedDate());
+        logger.debug("Joined Time: {}", user.getJoinedTime());
 
-    try {
-        // Set joinedDate and joinedTime
-        user.setJoinedDate(new Date(System.currentTimeMillis()));
-        user.setJoinedTime(new Time(System.currentTimeMillis()));
+        try {
+            // Set joinedDate and joinedTime
+            user.setJoinedDate(new Date(System.currentTimeMillis()));
+            user.setJoinedTime(new Time(System.currentTimeMillis()));
 
-        // Set initial balance to 1000
-        user.setUserBalance(new BigDecimal(1000));
+            // Set initial balance to 1000
+            user.setUserBalance(new BigDecimal(1000));
 
-        // Save user data
-        saveUser(user);
+            // Save user data
+            saveUser(user);
 
-        // Redirect to a success page or dashboard after successful registration
-        logger.debug("Redirecting to /login after successful registration");
-        return "redirect:/login";
-    } catch (Exception e) {
-        logger.error("Error during registration: " + e.getMessage(), e);
-        model.addAttribute("errorMessage", "An error occurred during registration. Please try again.");
-        return "User/pages-register";
+            // Redirect to a success page or dashboard after successful registration
+            logger.debug("Redirecting to /login after successful registration");
+            return "redirect:/login";
+        } catch (Exception e) {
+            logger.error("Error during registration: " + e.getMessage(), e);
+            model.addAttribute("errorMessage", "An error occurred during registration. Please try again.");
+            return "User/pages-register";
+        }
+    }
+
+    @GetMapping("/user/{userId}/balance")
+public ResponseEntity<Map<String, Object>> getUserBalance(@PathVariable int userId) {
+    Optional<User> optionalUser = userService.findById(userId);
+    if (optionalUser.isPresent()) {
+        User user = optionalUser.get();
+        Map<String, Object> response = new HashMap<>();
+        response.put("balance", user.getUserBalance());
+        return ResponseEntity.ok(response);
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 }
 
 
-    @GetMapping("/paypal/pay")
-    public RedirectView pay(@RequestParam("total") Double total, @RequestParam("currency") String currency, @RequestParam("userId") int userId) {
-        String cancelUrl = "http://localhost:8080/paypal/cancel";
-        String successUrl = "http://localhost:8080/paypal/success?userId=" + userId;
-        try {
-            Payment payment = payPalService.createPayment(total, currency, "paypal", "sale", "Top up eCredit", cancelUrl, successUrl);
-            for (com.paypal.api.payments.Links links : payment.getLinks()) {
-                if (links.getRel().equals("approval_url")) {
-                    return new RedirectView(links.getHref());
-                }
-            }
-        } catch (PayPalRESTException e) {
-            e.printStackTrace();
-        }
-        return new RedirectView(cancelUrl);
-    }
-
-    @GetMapping("/paypal/success")
-    public String success(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId, @RequestParam("userId") int userId, Model model) {
-        try {
-            logger.info("Executing payment with paymentId: " + paymentId + " and payerId: " + payerId);
-            Payment payment = payPalService.executePayment(paymentId, payerId);
-            logger.info("Payment executed with state: " + payment.getState());
-            
-            if (payment.getState().equals("approved")) {
-                // Update user's eCredit balance in the database
-                Optional<User> optionalUser = userRepository.findById(userId);
-                if (optionalUser.isPresent()) {
-                    User user = optionalUser.get();
-                    BigDecimal amount = new BigDecimal(payment.getTransactions().get(0).getAmount().getTotal());
-                    user.setUserBalance(user.getUserBalance().add(amount));
-                    userRepository.save(user);
-                    logger.info("User balance updated for userId: " + userId + " with amount: " + amount);
-    
-                    // Add attributes to model
-                    model.addAttribute("amount", amount);
-                    model.addAttribute("transactionId", paymentId);
-                    return "Marketplace/confirmation"; // Return confirmation view
-                } else {
-                    logger.error("User not found for userId: " + userId);
-                    model.addAttribute("message", "User not found.");
-                    return "Marketplace/error"; // Return error view
-                }
-            } else {
-                logger.error("Payment not approved. State: " + payment.getState());
-                model.addAttribute("message", "Payment not approved.");
-                return "Marketplace/error"; // Return error view
-            }
-        } catch (PayPalRESTException e) {
-            logger.error("PayPalRESTException: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("message", "PayPalRESTException: " + e.getMessage());
-            return "Marketplace/error"; // Return error view
-        } catch (Exception e) {
-            logger.error("Exception: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("message", "Exception: " + e.getMessage());
-            return "Marketplace/error"; // Return error view
-        }
-    }
-    
-    @GetMapping("/paypal/cancel")
-    public String cancel() {
-        return "Payment canceled!";
-    }
-    
-    @GetMapping("/user/{userId}/balance")
-    public ResponseEntity<Map<String, Object>> getUserBalance(@PathVariable int userId) {
-        Optional<User> optionalUser = userService.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            Map<String, Object> response = new HashMap<>();
-            response.put("balance", user.getUserBalance());
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-    
     @GetMapping("/user/{userId}/role")
     public ResponseEntity<Map<String, String>> getUserRole(@PathVariable int userId) {
         Optional<User> userOptional = userService.findById(userId);
@@ -297,14 +227,13 @@ public String registerForm(@ModelAttribute User user, Model model) {
             User user = userOptional.get();
             Map<String, String> response = new HashMap<>();
             response.put("role", user.getRole().getRoleName());
-            logger.info("User ID: " + userId + ", Role: " + user.getRole().getRoleName()); // Add this line for logging
+            logger.info("User ID: " + userId + ", Role: " + user.getRole().getRoleName());
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-    
-    
+
     private void saveUser(User user) {
         userRepository.save(user);
         logger.debug("User data saved to the database");

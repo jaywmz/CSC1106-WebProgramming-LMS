@@ -6,8 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loggedInUsername = document.getElementById('loggedInUsername');
     const uploadCourseLink = document.querySelector('.nav-item a[href="/upload"]');
     const viewCoursesLink = document.querySelector('.nav-item a[href="/coursesupload"]');
-    const currencySelect = document.getElementById('currency'); // Ensure this ID matches your HTML
-
+    
     // Display user name in the top right corner
     const userName = getCookie('lrnznth_User_Name');
     if (userName) {
@@ -15,19 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         loggedInUsername.textContent = 'Guest';
     }
-
-    // Fetch supported currencies from the server and populate the currency dropdown
-    fetch('/currencies')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(currency => {
-                let option = document.createElement('option');
-                option.value = currency;
-                option.text = currency;
-                currencySelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error fetching currencies:', error));
 
     sortBySelect.addEventListener('change', loadCourses);
     filterCategorySelect.addEventListener('change', loadCourses);
@@ -173,6 +159,59 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error fetching user role:', error);
             });
+
+        // Braintree integration
+        fetch('/braintree/client-token')
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (clientToken) {
+                // Ensure the container is empty before initializing the Drop-in UI
+                document.getElementById('dropin-container').innerHTML = '';
+
+                braintree.dropin.create({
+                    authorization: clientToken,
+                    container: '#dropin-container'
+                }, function (createErr, instance) {
+                    if (createErr) {
+                        console.error('Create Error', createErr);
+                        return;
+                    }
+
+                    document.querySelector('#submit-button').addEventListener('click', function (event) {
+                        event.preventDefault();
+
+                        if (confirm('Do you want to proceed with the payment?')) {
+                            document.querySelector('#submit-button').disabled = true;
+                            document.querySelector('#submit-button').innerText = 'Processing...';
+                            document.querySelector('.braintree-dropin').style.pointerEvents = 'none';
+                            document.querySelector('.braintree-dropin').style.opacity = '0.5';
+
+                            instance.requestPaymentMethod(function (err, payload) {
+                                if (err) {
+                                    console.error('Request Payment Method Error', err);
+                                    document.querySelector('#submit-button').disabled = false;
+                                    document.querySelector('#submit-button').innerText = 'Pay';
+                                    document.querySelector('.braintree-dropin').style.pointerEvents = '';
+                                    document.querySelector('.braintree-dropin').style.opacity = '';
+                                    return;
+                                }
+
+                                document.querySelector('#payment-method-nonce').value = payload.nonce;
+                                document.querySelector('#amount').value = document.querySelector('#topUpAmount').value;
+                                document.querySelector('#userId').value = userId;
+                                document.querySelector('#checkout-form').submit();
+                            });
+                        }
+                    });
+                });
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
     }
 
     // Initial load
@@ -196,15 +235,4 @@ document.addEventListener('DOMContentLoaded', function() {
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();
     }
-
-    window.redirectToPayPal = function() {
-        const userId = document.getElementById("userId").value;
-        const amount = document.getElementById("topUpAmount").value;
-        const currency = document.getElementById("currency").value;
-        if (amount && !isNaN(amount) && currency) {
-            window.location.href = `/paypal/pay?total=${amount}&currency=${currency}&userId=${userId}`;
-        } else {
-            alert("Please enter a valid amount and select a currency.");
-        }
-    };
 });

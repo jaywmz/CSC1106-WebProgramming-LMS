@@ -1,25 +1,13 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Fetch supported currencies from the server
-    fetch('/currencies')
-        .then(response => response.json())
-        .then(data => {
-            let currencySelect = document.getElementById('currency');
-            data.forEach(currency => {
-                let option = document.createElement('option');
-                option.value = currency;
-                option.text = currency;
-                currencySelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error fetching currencies:', error));
-
-    // Existing code...
+    // Fetch total approved courses
     fetch('/market/totalApprovedCourses')
         .then(response => response.json())
         .then(data => {
             document.getElementById('totalCourses').innerText = data;
-        });
+        })
+        .catch(error => console.error('Error fetching total courses:', error));
 
+    // Fetch marketplace categories
     fetch('/market/categories')
         .then(response => response.json())
         .then(data => {
@@ -42,8 +30,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 `;
                 categoriesContainer.appendChild(categoryElement);
             });
-        });
+        })
+        .catch(error => console.error('Error fetching categories:', error));
 
+    // Fetch user balance and role
     function getCookie(name) {
         let cookieArr = document.cookie.split(";");
         for (let i = 0; i < cookieArr.length; i++) {
@@ -60,34 +50,33 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("userId").value = userId;
 
         fetch(`/user/${userId}/balance`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
                 document.getElementById("currentBalance").innerText = `$${data.balance.toFixed(2)}`;
             })
-            .catch(error => {
-                console.error('Error fetching balance:', error);
-            });
+            .catch(error => console.error('Error fetching balance:', error));
 
         fetch(`/user/${userId}/role`)
             .then(response => response.json())
             .then(data => {
-            console.log('Fetched role:', data.role);  // Add this line for logging
-        if (data.role.toLowerCase() !== 'professor') {  // Ensure case-insensitive comparison
-            document.getElementById("uploadCourseLink").addEventListener("click", function(event) {
-                event.preventDefault();
-                showModal("You do not have the rights to upload a course.");
-            });
-            document.getElementById("viewCoursesLink").addEventListener("click", function(event) {
-                event.preventDefault();
-                showModal("You do not have the rights to view courses.");
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching user role:', error);
-    });
-
-        
+                console.log('Fetched role:', data.role);
+                if (data.role.toLowerCase() !== 'professor') {
+                    document.getElementById("uploadCourseLink").addEventListener("click", function(event) {
+                        event.preventDefault();
+                        showModal("You do not have the rights to upload a course.");
+                    });
+                    document.getElementById("viewCoursesLink").addEventListener("click", function(event) {
+                        event.preventDefault();
+                        showModal("You do not have the rights to view courses.");
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching user role:', error));
     }
 
     function showModal(message) {
@@ -97,15 +86,88 @@ document.addEventListener("DOMContentLoaded", function() {
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();
     }
-});
 
-function redirectToPayPal() {
-    const userId = document.getElementById("userId").value;
-    const amount = document.getElementById("topUpAmount").value;
-    const currency = document.getElementById("currency").value;
-    if (amount && !isNaN(amount) && currency) {
-        window.location.href = `/paypal/pay?total=${amount}&currency=${currency}&userId=${userId}`;
-    } else {
-        alert("Please enter a valid amount and select a currency.");
+    var braintreeInstance;
+    var form = document.querySelector('#checkout-form');
+
+    $('#topUpModal').on('shown.bs.modal', function () {
+        // Clear previous instance if exists
+        if (braintreeInstance) {
+            braintreeInstance.teardown(function (teardownErr) {
+                if (teardownErr) {
+                    console.error('Could not teardown previous Braintree instance:', teardownErr);
+                }
+                createBraintreeInstance();
+            });
+        } else {
+            createBraintreeInstance();
+        }
+    });
+
+    function createBraintreeInstance() {
+        fetch('/braintree/client-token')
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(function (clientToken) {
+                // Ensure the container is empty before initializing the Drop-in UI
+                document.getElementById('dropin-container').innerHTML = '';
+
+                braintree.dropin.create({
+                    authorization: clientToken,
+                    container: '#dropin-container'
+                }, function (createErr, instance) {
+                    if (createErr) {
+                        console.error('Create Error', createErr);
+                        return;
+                    }
+
+                    braintreeInstance = instance;
+
+                    document.querySelector('#submit-button').addEventListener('click', function (event) {
+                        event.preventDefault();
+
+                        if (confirm('Do you want to proceed with the payment?')) {
+                            document.querySelector('#submit-button').disabled = true;
+                            document.querySelector('#submit-button').innerText = 'Processing...';
+                            document.querySelector('.braintree-dropin').style.pointerEvents = 'none';
+                            document.querySelector('.braintree-dropin').style.opacity = '0.5';
+
+                            instance.requestPaymentMethod(function (err, payload) {
+                                if (err) {
+                                    console.error('Request Payment Method Error', err);
+                                    document.querySelector('#submit-button').disabled = false;
+                                    document.querySelector('#submit-button').innerText = 'Pay';
+                                    document.querySelector('.braintree-dropin').style.pointerEvents = '';
+                                    document.querySelector('.braintree-dropin').style.opacity = '';
+                                    return;
+                                }
+
+                                document.querySelector('#payment-method-nonce').value = payload.nonce;
+                                document.querySelector('#amount').value = document.querySelector('#topUpAmount').value;
+                                document.querySelector('#userId').value = userId;
+                                form.submit();
+                            });
+                        }
+                    });
+
+                    // Disable the "Choose another way to pay" button while processing
+                    instance.on('paymentMethodRequestable', function (event) {
+                        document.querySelector('.braintree-option__header').style.pointerEvents = 'none';
+                        document.querySelector('.braintree-option__header').style.opacity = '0.5';
+                    });
+
+                    instance.on('noPaymentMethodRequestable', function (event) {
+                        document.querySelector('.braintree-option__header').style.pointerEvents = '';
+                        document.querySelector('.braintree-option__header').style.opacity = '';
+                    });
+                });
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
     }
-}
+});
