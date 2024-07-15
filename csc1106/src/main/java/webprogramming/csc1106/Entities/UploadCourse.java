@@ -42,9 +42,6 @@ public class UploadCourse {
     @JsonManagedReference
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transactions> transactions = new ArrayList<>();
-
     @Transient
     private double averageRating;
 
@@ -140,14 +137,6 @@ public class UploadCourse {
 
     public void setCourseCategories(List<CourseCategory> courseCategories) {
         this.courseCategories = courseCategories;
-    }
-
-    public List<Transactions> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transactions> transactions) {
-        this.transactions = transactions;
     }
 
     public double getAverageRating() {

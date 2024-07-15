@@ -11,9 +11,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Optional;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
+
+import webprogramming.csc1106.Entities.Transactions;
 import webprogramming.csc1106.Entities.User;
+import webprogramming.csc1106.Repositories.TransactionsRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Services.BraintreePaymentService;
 
@@ -24,12 +32,14 @@ public class BraintreeController {
     private final BraintreeGateway braintreeGateway;
     private final BraintreePaymentService braintreePaymentService;
     private final UserRepository userRepository;
+    private final TransactionsRepository transactionsRepository;
 
     @Autowired
-    public BraintreeController(BraintreeGateway braintreeGateway, BraintreePaymentService braintreePaymentService, UserRepository userRepository) {
+    public BraintreeController(BraintreeGateway braintreeGateway, BraintreePaymentService braintreePaymentService, UserRepository userRepository, TransactionsRepository transactionsRepository) {
         this.braintreeGateway = braintreeGateway;
         this.braintreePaymentService = braintreePaymentService;
         this.userRepository = userRepository;
+        this.transactionsRepository = transactionsRepository;
     }
 
     @GetMapping("/client-token")
@@ -57,33 +67,55 @@ public class BraintreeController {
     }
 
     @PostMapping("/checkout")
-    public String checkout(@RequestParam("amount") String amount, @RequestParam("paymentMethodNonce") String paymentMethodNonce, @RequestParam("userId") int userId, Model model) {
-        try {
-            Result<Transaction> result = braintreePaymentService.createTransaction(amount, paymentMethodNonce);
-            if (result.isSuccess()) {
-                Transaction transaction = result.getTarget();
-                Optional<User> optionalUser = userRepository.findById(userId);
-                if (optionalUser.isPresent()) {
-                    User user = optionalUser.get();
-                    BigDecimal amountDecimal = new BigDecimal(amount);
-                    user.setUserBalance(user.getUserBalance().add(amountDecimal));
-                    userRepository.save(user);
-                    model.addAttribute("amount", amountDecimal);
-                    model.addAttribute("transactionId", transaction.getId());
-                    return "Marketplace/confirmation";
-                } else {
-                    model.addAttribute("message", "User not found.");
-                    return "Marketplace/error";
-                }
+public String checkout(@RequestParam("amount") String amount, @RequestParam("paymentMethodNonce") String paymentMethodNonce, @RequestParam("userId") int userId, Model model) {
+    try {
+        Result<Transaction> result = braintreePaymentService.createTransaction(amount, paymentMethodNonce);
+        if (result.isSuccess()) {
+            Transaction transaction = result.getTarget();
+            Optional<User> optionalUser = userRepository.findById(userId);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                BigDecimal amountDecimal = new BigDecimal(amount);
+                user.setUserBalance(user.getUserBalance().add(amountDecimal));
+                userRepository.save(user);
+
+                // Create a new Transactions record
+                Transactions transactions = new Transactions();
+                transactions.setAmount(amountDecimal);
+                transactions.setUser(user);
+                transactions.setPaymentStatus(transaction.getStatus().toString());
+                transactions.setTransactionId(transaction.getId());
+                transactions.setPaymentMethod(transaction.getCreditCard().getCardType());
+                Timestamp timestamp = Timestamp.from(Instant.now());
+                transactions.setTransactionTimestamp(timestamp);
+                
+                transactionsRepository.save(transactions);
+
+                // Format timestamp to 24-hour format in Singapore time zone
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH).withZone(ZoneId.of("Asia/Singapore"));
+                String formattedTimestamp = formatter.format(timestamp.toInstant());
+
+                model.addAttribute("amount", amountDecimal);
+                model.addAttribute("transactionId", transaction.getId());
+                model.addAttribute("cardType", transaction.getCreditCard().getCardType());
+                model.addAttribute("transactionTimestamp", formattedTimestamp);
+                return "Marketplace/confirmation";
             } else {
-                model.addAttribute("message", "Transaction failed: " + result.getMessage());
+                model.addAttribute("message", "User not found.");
                 return "Marketplace/error";
             }
-        } catch (Exception e) {
-            model.addAttribute("message", "Exception: " + e.getMessage());
+        } else {
+            model.addAttribute("message", "Transaction failed: " + result.getMessage());
             return "Marketplace/error";
         }
+    } catch (Exception e) {
+        model.addAttribute("message", "Exception: " + e.getMessage());
+        return "Marketplace/error";
     }
+}
+
+    
+    
 
     @GetMapping("/cancel")
     public String cancel() {
