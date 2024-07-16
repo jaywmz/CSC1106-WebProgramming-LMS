@@ -442,9 +442,10 @@
 
         // if role is admin, show the delete button (show options nav but hide edit button)
         if(data == 1){
+          if(document.getElementById("postOptionsButton").style.display != "block"){
             document.getElementById("postOptionsButton").style.display = "block";
             document.getElementById("editButton").style.display = "none";
-
+          }
         }
 
     } catch (error) {

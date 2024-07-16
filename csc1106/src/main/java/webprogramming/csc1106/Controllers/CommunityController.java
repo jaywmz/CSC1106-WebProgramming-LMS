@@ -73,6 +73,11 @@ public class CommunityController {
     public String getCommunityLoading() {
         return "Community/community-loading";
     }
+
+    @GetMapping("/community/general")
+    public String getGeneralRedirect(){
+        return "redirect:/community";
+    }
     
     @GetMapping("/community/search")
     public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model) {
