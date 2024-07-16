@@ -89,7 +89,6 @@ public class CommunityController {
     public String getUnauthorisedPage() {
         return "Community/community-unauthorised";
     }
-    
 
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
@@ -204,20 +203,13 @@ public class CommunityController {
 
     @PostMapping("/community-get-user-role")
     @ResponseBody
-    public String getUserRole(@CookieValue("lrnznth_User_ID") String userID) {
+    public int getUserRole(@CookieValue("lrnznth_User_ID") String userID) {
 
         User user = userRepo.findByUserId(Integer.parseInt(userID));
         Roles role = user.getRole();
         int roleId = role.getRoleID();
-        String instructorCheck;
 
-        if(roleId == 3){
-            instructorCheck = "no";
-        }else{
-            instructorCheck = "yes";
-        }
-
-        return instructorCheck;
+        return roleId;
     }
     
 }

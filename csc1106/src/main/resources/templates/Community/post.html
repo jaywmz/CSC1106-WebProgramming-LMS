@@ -218,21 +218,21 @@
                 </button>
               </div>
 
-              <nav class="header-nav ms-auto" aria-label="Navigation" id="editPostButton" style="display: none;">
+              <nav class="header-nav ms-auto" aria-label="Navigation" id="postOptionsButton" style="display: none;">
                 <ul class="d-flex align-items-center">
                   <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                       <span class="d-none d-md-block dropdown-toggle ps-2">Options</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                      <li>
+                      <li id="editButton">
                         <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#editModal">
                           <i class="bi bi-pencil-square"></i>
                           <span>Edit Post</span>
                         </a>
                       </li>
                       
-                      <li>
+                      <li id="editButton">
                         <hr class="dropdown-divider">
                       </li>
 
@@ -421,12 +421,42 @@
     function showButtonIfUserMatches() {
         const userCookieId = getCookie("lrnznth_User_Name");
         if(userCookieId === postUserId) {
-            document.getElementById("editPostButton").style.display = "block";
+            document.getElementById("postOptionsButton").style.display = "block";
         }
+    }
+
+    async function checkAdminRole(){
+      try{
+        const response = await fetch("/community-get-user-role", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.text();
+
+        // if role is admin, show the delete button (show options nav but hide edit button)
+        if(data == 1){
+            document.getElementById("postOptionsButton").style.display = "block";
+            document.getElementById("editButton").style.display = "none";
+
+        }
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation: ' + error.message);
+    }
     }
     
     // Call the function to check and show the button if user IDs match
     showButtonIfUserMatches();
+
+    // Call the function to check if the user is an admin
+    checkAdminRole();
     </script>
 
 </body>
