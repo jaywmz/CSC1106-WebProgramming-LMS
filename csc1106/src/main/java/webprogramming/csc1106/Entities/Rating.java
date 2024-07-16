@@ -23,16 +23,20 @@ public class Rating {
     @JsonBackReference
     private UploadCourse course;
 
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
+
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
     // Constructors
     public Rating() {}
 
-    public Rating(Double score, String comment, UploadCourse course) {
+    public Rating(Double score, String comment, UploadCourse course, Integer userId) {
         this.score = score;
         this.comment = comment;
         this.course = course;
+        this.userId = userId;
         this.timestamp = LocalDateTime.now(); // Set the current timestamp
     }
 
@@ -67,6 +71,14 @@ public class Rating {
 
     public void setCourse(UploadCourse course) {
         this.course = course;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getTimestamp() {

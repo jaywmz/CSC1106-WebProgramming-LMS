@@ -6,8 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loggedInUsername = document.getElementById('loggedInUsername');
     const uploadCourseLink = document.querySelector('.nav-item a[href="/upload"]');
     const viewCoursesLink = document.querySelector('.nav-item a[href="/coursesupload"]');
-    
-    // Display user name in the top right corner
+
     const userName = getCookie('lrnznth_User_Name');
     if (userName) {
         loggedInUsername.textContent = userName;
@@ -20,35 +19,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function loadCourses() {
         try {
-            var sortBy = sortBySelect.value;
-            var categoryId = filterCategorySelect.value || window.location.pathname.split("/").pop();
-    
-            // Show the loading spinner
+            const sortBy = sortBySelect.value;
+            const categoryId = filterCategorySelect.value || window.location.pathname.split("/").pop();
+
             if (spinner) {
                 spinner.style.display = 'inline-block';
             }
-    
-            // Clear the existing courses
+
             coursesContainer.innerHTML = '';
             coursesContainer.appendChild(spinner);
-    
+
             const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`);
-            
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
-    
+
             const data = await response.json();
             console.log('Fetched data:', data);
-    
-            // Remove spinner
+
             coursesContainer.innerHTML = '';
-    
+
             if (!Array.isArray(data)) {
                 console.error("Data is not an array: ", data);
                 return;
             }
-    
+
             data.forEach(course => {
                 let courseElement = document.createElement('div');
                 courseElement.classList.add('col-md-4', 'mb-4');
@@ -60,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="card-text">${course.description}</p>
                             <div class="course-rating">
                                 <span class="star">&#9733;</span>
-                                <span class="reviews">${course.averageRating} (${course.reviewCount} reviews)</span>
+                                <a href="#" class="reviews review-link" data-course-id="${course.id}">${course.averageRating} (${course.reviewCount} reviews)</a>
                             </div>
                             <p class="card-price"><strong>$${course.price}</strong></p>
                             <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
@@ -69,33 +64,101 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 coursesContainer.appendChild(courseElement);
             });
-    
-            // Hide the loading spinner
+
             if (spinner) {
                 spinner.style.display = 'none';
             }
-    
-            // Add event listeners to new Add to Cart buttons
+
             addCartEventListeners();
+            addReviewEventListeners();
         } catch(e) {
             console.error('Error loading courses:', e);
         }
     }
-    
-    // Add to Cart event listener
+
+    function addReviewEventListeners() {
+        const reviewLinks = document.querySelectorAll('.review-link');
+        reviewLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const courseId = event.target.getAttribute('data-course-id');
+                let userId = getCookie('lrnznth_User_ID');
+
+                if (!userId) {
+                    alert('Please login to review courses');
+                    return;
+                }
+
+                fetch(`/coursesubscriptions/check/${userId}/${courseId}`)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('reviewCourseId').value = courseId;
+                        const bootstrapModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+                        bootstrapModal.show();
+                        if (data !== 'Subscribed') {
+                            document.getElementById('reviewFormMessage').textContent = 'You need to subscribe to this course to leave a review';
+                            document.getElementById('submitReviewButton').disabled = true;
+                        } else {
+                            document.getElementById('reviewFormMessage').textContent = '';
+                            document.getElementById('submitReviewButton').disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking subscription:', error);
+                    });
+            });
+        });
+    }
+
+    document.getElementById('reviewForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const courseId = document.getElementById('reviewCourseId').value;
+        const rating = document.getElementById('reviewRating').value;
+        const comment = document.getElementById('reviewComment').value;
+        let userId = getCookie('lrnznth_User_ID');
+
+        fetch(`/courses/${courseId}/review`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                rating: rating,
+                comment: comment
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Review submitted successfully');
+                const bootstrapModal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
+                bootstrapModal.hide();
+                // Clear form fields
+                document.getElementById('reviewRating').value = '';
+                document.getElementById('reviewComment').value = '';
+                loadCourses();  // Reload courses to update reviews
+            } else {
+                alert('Failed to submit review');
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting review:', error);
+        });
+    });
+
     function addCartEventListeners() {
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(button => {
             button.addEventListener('click', async function(event) {
                 const courseId = event.target.getAttribute('data-course-id');
                 let userId = getCookie('lrnznth_User_ID');
-                
+
                 if (!userId) {
                     alert('Please login to add courses to cart');
                     return;
                 }
 
-                // Check if user is already subscribed to the course
                 const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
                 const subscriptionCheckData = await subscriptionCheck.text();
 
@@ -104,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                // Check if the course is already in user's cart
                 const cartCheck = await fetch(`/cartitems/check/${userId}/${courseId}`);
                 const cartCheckData = await cartCheck.text();
                 if(cartCheckData === 'In cart'){
@@ -112,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                // Add course to cart
                 const addResponse = await fetch(`/cartitems/add/${userId}/${courseId}`);
                 if (addResponse.status != 200) {
                     return alert("Failed to add course to cart");
@@ -127,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Check user role and adjust UI accordingly
     let userId = getCookie('lrnznth_User_ID');
     if (userId) {
         document.getElementById("userId").value = userId;
@@ -144,8 +204,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/user/${userId}/role`)
             .then(response => response.json())
             .then(data => {
-                console.log('Fetched role:', data.role);  // Add this line for logging
-                if (data.role.toLowerCase() !== 'professor' && data.role.toLowerCase() !== 'instructor') {  // Ensure case-insensitive comparison
+                console.log('Fetched role:', data.role);
+                if (data.role.toLowerCase() !== 'professor' && data.role.toLowerCase() !== 'instructor') {
                     uploadCourseLink.addEventListener("click", function(event) {
                         event.preventDefault();
                         showModal("You do not have the rights to upload a course.");
@@ -160,7 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error fetching user role:', error);
             });
 
-        // Braintree integration
         fetch('/braintree/client-token')
             .then(function (response) {
                 if (!response.ok) {
@@ -169,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.text();
             })
             .then(function (clientToken) {
-                // Ensure the container is empty before initializing the Drop-in UI
                 document.getElementById('dropin-container').innerHTML = '';
 
                 braintree.dropin.create({
@@ -214,7 +272,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Initial load
     loadCourses();
 
     function getCookie(name) {

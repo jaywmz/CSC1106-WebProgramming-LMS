@@ -6,49 +6,36 @@ import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.List; // Import the List class
+import org.springframework.web.bind.annotation.*;
+
+import webprogramming.csc1106.Entities.*;
+import webprogramming.csc1106.Repositories.*;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-
-import webprogramming.csc1106.Entities.CourseSubscriptionEntity;
-import webprogramming.csc1106.Entities.CourseCategory;
-import webprogramming.csc1106.Entities.CategoryGroup;
-import webprogramming.csc1106.Entities.CartItemEntity;
-import webprogramming.csc1106.Entities.UploadCourse;
-import webprogramming.csc1106.Entities.User;
-
-import webprogramming.csc1106.Repositories.CourseSubscriptionRepo;
-import webprogramming.csc1106.Repositories.CourseCategoryRepository;
-import webprogramming.csc1106.Repositories.CartItemsRepo;
-import webprogramming.csc1106.Repositories.UploadCourseRepository;
-import webprogramming.csc1106.Repositories.CategoryGroupRepository;
-import webprogramming.csc1106.Repositories.UserRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 public class CourseRestController {
     private final UserRepository userRepository;
     private final CourseSubscriptionRepo courseSubscriptionRepo;
     private final CourseCategoryRepository courseCategoryRepository;
-    private final CategoryGroupRepository categoryGroupRepository;
     private final CartItemsRepo cartItemsRepo;
     private final UploadCourseRepository uploadCourseRepository;
+    private final RatingRepository ratingRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(CourseRestController.class);
     @Autowired
-    public CourseRestController(UserRepository userRepository, CourseSubscriptionRepo courseSubscriptionRepo, CourseCategoryRepository courseCategoryRepository, CartItemsRepo cartItemsRepo, UploadCourseRepository uploadCourseRepository, CategoryGroupRepository categoryGroupRepository) {
+    public CourseRestController(UserRepository userRepository, CourseSubscriptionRepo courseSubscriptionRepo, 
+                                CourseCategoryRepository courseCategoryRepository, CartItemsRepo cartItemsRepo, 
+                                UploadCourseRepository uploadCourseRepository, RatingRepository ratingRepository) {
         this.courseSubscriptionRepo = courseSubscriptionRepo;
         this.courseCategoryRepository = courseCategoryRepository;
         this.cartItemsRepo = cartItemsRepo;
         this.uploadCourseRepository = uploadCourseRepository;
-        this.categoryGroupRepository = categoryGroupRepository;
         this.userRepository = userRepository;
+        this.ratingRepository = ratingRepository;
     }
 
 
@@ -121,7 +108,7 @@ public class CourseRestController {
         }
         return new ResponseEntity<>(cartItems, HttpStatus.OK);
     }
-    
+
     // Check if the course is already in cart
     @GetMapping("/cartitems/check/{userId}/{courseId}")
     public ResponseEntity<String> checkCartItem(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
@@ -194,7 +181,7 @@ public class CourseRestController {
         courseSub.setSubscriptionDate(Timestamp.from(Instant.now()));
         courseSub.setSubscriptionStatus("ongoing");
         courseSub.setCourseCategory(category.getCategoryGroup().getName());
-        
+
         courseSubscriptionRepo.save(courseSub);
 
         return ResponseEntity.ok("Added");
@@ -242,5 +229,27 @@ public class CourseRestController {
         }
         return new ResponseEntity<>("Subscribed", HttpStatus.OK);
     }
+  
+    // Add review for a course
+    @PostMapping("/courses/{courseId}/review")
+public ResponseEntity<String> addReview(@PathVariable Long courseId,
+                                        @RequestParam Integer userId,
+                                        @RequestParam Double rating,
+                                        @RequestParam String comment) {
+    try {
+        UploadCourse course = uploadCourseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+        Rating review = new Rating();
+        review.setCourse(course);
+        review.setUserId(userId);
+        review.setScore(rating);
+        review.setComment(comment);
+        review.setTimestamp(LocalDateTime.now());
+        ratingRepository.save(review);
+        return ResponseEntity.ok("Review submitted successfully.");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
+    }
+}
 
-}   
+}

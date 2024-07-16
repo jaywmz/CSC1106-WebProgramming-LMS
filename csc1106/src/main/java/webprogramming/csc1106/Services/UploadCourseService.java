@@ -72,6 +72,9 @@ public class UploadCourseService {
     @Autowired
     private AzureBlobService azureBlobService;
 
+    @Autowired
+    private CourseSubscriptionService courseSubscriptionService;
+
     public List<UploadCourse> getAllCourses() {
         List<UploadCourse> courses = courseRepository.findAll();
         courses.forEach(this::calculateRating);
@@ -382,19 +385,6 @@ public class UploadCourseService {
         return courses;
     }
 
-    private void calculateRating(UploadCourse course) {
-        List<Rating> ratings = ratingRepository.findByCourse(course);
-        if (ratings != null && !ratings.isEmpty()) {
-            double averageRating = ratings.stream().mapToDouble(Rating::getScore).average().orElse(0.0);
-            int reviewCount = ratings.size();
-            course.setAverageRating(averageRating);
-            course.setReviewCount(reviewCount);
-        } else {
-            course.setAverageRating(0.0);
-            course.setReviewCount(0);
-        }
-    }
-
     public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
             String contentType = coverImage.getContentType();
@@ -515,5 +505,61 @@ public class UploadCourseService {
 
     public List<CourseCategory> getCourseCategoriesByCourseIds(List<Long> courseIds) {
         return courseCategoryRepository.findByCourseIdIn(courseIds);
+    }
+
+    public boolean isUserSubscribed(Long courseId, Integer userId) {
+        return courseSubscriptionService.getSubscriptionsByUserId(userId)
+            .stream()
+            .anyMatch(subscription -> Long.valueOf(subscription.getCourseId()).equals(courseId));
+    }
+
+    public void addReview(Long courseId, Integer userId, double rating, String comment) {
+        Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
+        if (courseOpt.isPresent()) {
+            UploadCourse course = courseOpt.get();
+            Optional<Rating> existingReview = ratingRepository.findByCourseIdAndUserId(courseId, userId);
+            Rating review;
+            if (existingReview.isPresent()) {
+                review = existingReview.get();
+            } else {
+                review = new Rating();
+                review.setCourse(course);
+                review.setUserId(userId);
+            }
+            review.setScore(rating);
+            review.setComment(comment);
+            review.setTimestamp(LocalDateTime.now());
+            ratingRepository.save(review);
+            calculateRating(course);
+            courseRepository.save(course);
+        } else {
+            throw new RuntimeException("Course not found");
+        }
+    }
+
+    private void calculateRating(UploadCourse course) {
+        List<Rating> ratings = ratingRepository.findByCourse(course);
+        if (ratings != null && !ratings.isEmpty()) {
+            double averageRating = ratings.stream().mapToDouble(Rating::getScore).average().orElse(0.0);
+            int reviewCount = ratings.size();
+            course.setAverageRating(averageRating);
+            course.setReviewCount(reviewCount);
+        } else {
+            course.setAverageRating(0.0);
+            course.setReviewCount(0);
+        }
+    }
+
+    public List<UploadCourse> getCoursesByCategoryIdAndSort(Long categoryId, String sortField) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortField);
+        return courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
+    }
+
+    public List<UploadCourse> getCoursesByCategoryIdAndSortWithFilter(Long categoryId, String sortField, String filter) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortField);
+        List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
+        return courses.stream()
+                .filter(course -> course.getTitle().contains(filter) || course.getDescription().contains(filter))
+                .collect(Collectors.toList());
     }
 }
