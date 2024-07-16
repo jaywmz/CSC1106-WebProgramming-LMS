@@ -177,7 +177,8 @@ async function checkUserRole(){
 
         const data = await response.text();
 
-        if(data == "no"){
+        // if student, redirect to unauthorised page
+        if(data == 3){
             window.location.href = "/community/unauthorised";
         }
 

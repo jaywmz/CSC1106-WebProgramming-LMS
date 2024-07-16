@@ -76,6 +76,11 @@ public class CommunityController {
     public String getCommunityLoading() {
         return "Community/community-loading";
     }
+
+    @GetMapping("/community/general")
+    public String getGeneralRedirect(){
+        return "redirect:/community";
+    }
     
     @GetMapping("/community/search")
     public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model) {
@@ -92,7 +97,6 @@ public class CommunityController {
     public String getUnauthorisedPage() {
         return "Community/community-unauthorised";
     }
-    
 
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
@@ -207,20 +211,13 @@ public class CommunityController {
 
     @PostMapping("/community-get-user-role")
     @ResponseBody
-    public String getUserRole(@CookieValue("lrnznth_User_ID") String userID) {
+    public int getUserRole(@CookieValue("lrnznth_User_ID") String userID) {
 
         User user = userRepo.findByUserId(Integer.parseInt(userID));
         Roles role = user.getRole();
         int roleId = role.getRoleID();
-        String instructorCheck;
 
-        if(roleId == 3){
-            instructorCheck = "no";
-        }else{
-            instructorCheck = "yes";
-        }
-
-        return instructorCheck;
+        return roleId;
     }
     
 }
