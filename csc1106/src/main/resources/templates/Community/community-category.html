@@ -77,6 +77,18 @@
       z-index: 999998;
     }
 
+    /* Sortable tables */
+    table.sortable thead {
+      background-color:#eee;
+      color:#666666;
+      font-weight: bold;
+      cursor: default;
+    }
+
+    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after { 
+      content: " \25B4\25BE" 
+    }
+
   </style>
 
   <!-- =======================================================
@@ -221,7 +233,7 @@
                   <td style="padding: 0px; width: 10px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.postID}}" th:text="${post.likes}"></a></td>
                   <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.postID}}"  id="threadTitle" th:text="${post.title}"></a></td>
                   <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
-                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd MMM yyyy')}"></a></td>
+                  <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'dd/MM/yy')}"></a></td>
                   <td style="padding: 0px;"><a th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '/' + ${post.postID}}" th:text="${#dates.format(post.timestamp, 'hh:mm a')}"></a></td>
                 </tr>
               </tbody>

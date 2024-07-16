@@ -38,14 +38,17 @@ public class CommunityController {
     
     @GetMapping("/community/home")
     public String getCommunityHome(Model model, @CookieValue(value="lrnznth_User_ID", required = false) String userID) {
+        // check if cookie contains userID
         if(userID == null) {
             return "redirect:/login";
         }
+
         // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
 
         // queries 'general' categories
         List<CommunityCategory> categories = categoryRepo.findByGroup("general");
+
         // identify user
         Optional<User> user = userRepo.findById(Integer.parseInt(userID));
             

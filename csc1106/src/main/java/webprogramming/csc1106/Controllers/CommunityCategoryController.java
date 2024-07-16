@@ -24,9 +24,9 @@ public class CommunityCategoryController {
     private PostRepo postRepo;
 
     // Method for returning views of general categories that are not within a group, such as Off-topic and Feedback
-    @GetMapping("/community/general/{categoryName}")
-    public String getCategoryPosts(@PathVariable String categoryName, Model model) {
-        CommunityCategory category = categoryRepo.findByNameIgnoreCase(categoryName); // retrieve category object from db by name
+    @GetMapping("/community/general/{category_id}")
+    public String getCategoryPosts(@PathVariable String category_id, Model model) {
+        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
         List<Post> posts = category.getPosts(); // get retrieved category's posts
         
         model.addAttribute("user_group", "general");
@@ -83,4 +83,8 @@ public class CommunityCategoryController {
         return "Community/community-instructors";
     }
     
+    @GetMapping("/community/general")
+    public String getGeneral(Model model) {
+        return "redirect:/community";
+    }
 }
