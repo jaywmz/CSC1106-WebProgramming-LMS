@@ -72,6 +72,9 @@ document.addEventListener('click', async function(event) {
         if (event.target.href.includes("disposition=attachment")) {
             // replace 
             window.location.href = event.target.href.replace("disposition=attachment", "disposition=inline");
+        }else if(event.target.href.includes("community")){ // Check if the url link contains "community"
+            // Redirect to the community page
+            window.location.href = event.target.href;
         }
     }
 });
