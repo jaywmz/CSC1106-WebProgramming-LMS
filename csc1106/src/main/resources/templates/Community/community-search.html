@@ -205,10 +205,13 @@
           </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="max-width: 100%;">
           <div class="card-body">
               <h5 class="card-title" th:text="'Search results for \'' + ${search_term} + '\''"></h5>
-              <table class="table table-hover">
+              <div th:if="${#lists.isEmpty(posts)}">
+                <h2>No results found</h2>
+              </div>
+              <table class="table table-hover" th:unless="${#lists.isEmpty(posts)}">
                   <thead>
                       <tr>
                         <th scope="col" style="width:50%">Posts</th>
@@ -219,14 +222,14 @@
                       <tr>
                         <td style="padding: 0px;">
                           <div style="display: flex;">
-                            <div style="flex: 1;">
+                            <div style="flex: 1; max-width: 50%;" >
                                 <a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a>
-                                <p th:text="${post.content}" id="postDetails"></p> 
+                                <p th:text="${post.content}" id="postDetails" style="max-width:100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"></p> 
                             </div>
                             <div style="flex: 1; text-align: right;">
                                 <p th:text="${post.posterName}" id="posterName"></p>
                                 <p th:text="${#dates.format(post.timestamp, 'dd MMM hh:mm a')}" id="postDetails"></p>
-                                <p th:text="'in ' + ${post.getCategory().getName()} + ' category'" id="postDetails"></p>  
+                                <p id="postDetails">in <a style="display:inline; padding: 0px" th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()}}" th:text="${post.getCategory().getName()}"></a> category</p>
                             </div>
                         </div>
                         </td>

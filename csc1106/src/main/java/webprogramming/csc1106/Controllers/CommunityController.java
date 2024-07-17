@@ -78,9 +78,13 @@ public class CommunityController {
     }
     
     @GetMapping("/community/search")
-    public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model) {
+    public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model, @CookieValue(value="lrnznth_User_ID", required = false) String userID) {
+        // check if cookie contains userID
+        if(userID == null) {
+            return "redirect:/login";
+        }
+
         Page<Post> queriedPosts = postRepo.findAllByTitleContainingOrContentContainingOrderByTimestampDesc(key, key, PageRequest.of(page - 1, 5));
-        
         model.addAttribute("posts", queriedPosts.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("search_term", key);
