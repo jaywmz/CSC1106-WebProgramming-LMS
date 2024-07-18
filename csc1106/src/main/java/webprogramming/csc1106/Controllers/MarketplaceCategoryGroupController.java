@@ -53,7 +53,11 @@ public class MarketplaceCategoryGroupController {
     @PostMapping("/delete-category/{id}")
     public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
+            CommunityCategory communityCategory = categoryRepo.findByName(categoryGroupService.getCategoryGroupById(id).getName());
+            categoryRepo.delete(communityCategory);
+
             categoryGroupService.deleteCategoryGroup(id);
+
             redirectAttributes.addFlashAttribute("successMessage", "Category group deleted successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete category group. Please try again.");

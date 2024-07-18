@@ -98,7 +98,7 @@ public class MarketplaceUploadController {
     public String showPendingCourses(Model model) {
         List<UploadCourse> pendingCourses = courseService.getPendingCourses();
         model.addAttribute("pendingCourses", pendingCourses);
-        return "/Admin/pending-courses"; 
+        return "Admin/pending-courses"; 
     }
 
     // Approves a specific course by setting its approved status to true
