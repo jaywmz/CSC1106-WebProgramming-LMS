@@ -141,11 +141,11 @@ public class CommunityController {
             }
             Object lastIntroductions = 0;
             if(totalIntroductions > 0){
-                lastIntroductions = categoryCounts.get(9)[4];
+                lastIntroductions = categoryCounts.get(6)[4];
             }
             Object lastCareers = 0;
             if(totalCareers > 0){
-                lastCareers = categoryCounts.get(10)[4];
+                lastCareers = categoryCounts.get(7)[4];
             }
             
             return new ResponseEntity<>(List.of(
