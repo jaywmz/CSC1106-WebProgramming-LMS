@@ -56,6 +56,10 @@ public class CommunityCategory {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getGroup(){
         return group;
     }

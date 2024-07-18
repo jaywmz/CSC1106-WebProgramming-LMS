@@ -36,8 +36,15 @@ public class MarketplaceCategoryGroupController {
         try {
             categoryGroupService.addCategoryGroup(categoryGroup, coverImageFile);
 
-            CommunityCategory communityCategory = new CommunityCategory(categoryGroup.getName(), categoryGroup.getDescription(), "students");
-            categoryRepo.save(communityCategory);
+            if(categoryRepo.findByName(categoryGroup.getName()) != null) {
+                CommunityCategory communityCategory = categoryRepo.findByName(categoryGroup.getName());
+                communityCategory.setDescription(categoryGroup.getDescription());
+                communityCategory.setName(categoryGroup.getName());
+                categoryRepo.save(communityCategory);
+            }else{
+                CommunityCategory communityCategory = new CommunityCategory(categoryGroup.getName(), categoryGroup.getDescription(), "students");
+                categoryRepo.save(communityCategory);
+            }
 
             redirectAttributes.addFlashAttribute("successMessage", "Category group added/updated successfully.");
         } catch (IOException e) {
