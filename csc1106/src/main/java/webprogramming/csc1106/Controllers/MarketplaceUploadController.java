@@ -235,6 +235,17 @@ public class MarketplaceUploadController {
         model.addAttribute("categories", courseService.getAllCategories()); // For the filter dropdown
         return "Marketplace/category-page"; // Ensure this matches your Thymeleaf template name
     }
+    // New API endpoint to get category data as JSON
+    @GetMapping("/api/category/{id}")
+    @ResponseBody
+    public ResponseEntity<CategoryGroup> getCategoryById(@PathVariable("id") Long id) {
+        Optional<CategoryGroup> category = courseService.getCategoryById(id);
+        if (category.isPresent()) {
+            return ResponseEntity.ok(category.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
     // API endpoint to get courses by category ID with optional sorting
     @GetMapping("/category/{id}/courses")
@@ -248,14 +259,14 @@ public class MarketplaceUploadController {
                     .stream() // Convert the list to a stream
                     .filter(UploadCourse::isApproved) // Filter out unapproved courses
                     .collect(Collectors.toList()); // Collect the stream back to a list
-
+    
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
             logger.severe("Error fetching courses: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    
     @PostMapping("/cart/add")
     @ResponseBody
     public ResponseEntity<String> addToCart(@RequestParam Long courseId) {

@@ -62,24 +62,7 @@
 
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
-            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link active" th:href="@{/market}"><i class="bi bi-shop"></i><span>Marketplace</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/community}"><i class="bi bi-people shaded-icon"></i><span>Community</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/mylearning}"><i class="bi bi-book"></i><span>My Learning</span></a></li>
-            
-            <!-- User Section Label -->
-            <li class="menu-section">USER</li>
-            
-            <li class="nav-item"><a class="nav-link" th:href="@{/cart}"><i class="bi bi-cart shaded-icon"></i><span>My Cart</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/profile}"><i class="bi bi-person"></i><span>User</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>F.A.Q</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/contact}"><i class="bi bi-envelope"></i><span>Contact Us</span></a></li>
-            
-            <!-- Extra Section Label -->
-            <li class="menu-section">EXTRA (JUST FOR REFERENCE)</li>
-            
-            <li class="nav-item"><a class="nav-link" th:href="@{/blank-page}"><i class="bi bi-file-earmark"></i><span>BLANK PAGE</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="javascript:location.reload();"><i class="bi bi-arrow-clockwise"></i><span>Refresh SideBar</span></a></li>
+          
         </ul>
     </aside>
     
@@ -88,22 +71,25 @@
             <h1>Market Place</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a class="nav-link collapsed" th:href="@{/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Market Place</li>
+                    <li class="breadcrumb-item"><a class="nav-link collapsed" th:href="@{/market}">Market Place</a></li>
+                    <li class="breadcrumb-item active" id="breadcrumb-category"></li>
                 </ol>
             </nav>
         </div>
+        
 
         <section class="section">
             <div class="container mt-5">
-                <h2 th:text="${category.name}">Category Name</h2>
-                <p th:text="${category.description}">Category Description</p>
+                <h2 id="category-title" th:text="${category.name}">Category Name</h2>
+                <p id="category-description" th:text="${category.description}">Category Description</p>
                 <!-- Add filters here -->
                 <div class="filters mb-4">
                     <select id="filter-category" class="form-control">
-                        <option value="">All Categories</option>
-                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                        <option value="" disabled>Select Category</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${cat.id == category.id}"></option>
                     </select>
+                    
+                    
                     <select id="sort-by" class="form-control mt-2">
                         <option value="newest">Newest</option>
                         <option value="price-low-high">Price: Low to High</option>
@@ -136,6 +122,7 @@
     <!-- Template Main JS File -->
     <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script src="assets/js/category-page.js" th:src="@{/assets/js/category-page.js}"></script>
+    <script src="assets/js/dashboard-checker.js" th:src="@{/assets/js/dashboard-checker.js}"></script>
 
  <!-- Modal for Top Up -->
 <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
