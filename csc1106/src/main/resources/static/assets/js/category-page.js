@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterCategorySelect = document.getElementById('filter-category');
     const coursesContainer = document.getElementById('courses-list');
     const spinner = document.querySelector('.spinner-border');
+    const categoryTitle = document.getElementById('category-title');
+    const categoryDescription = document.getElementById('category-description');
     const loggedInUsername = document.getElementById('loggedInUsername');
     const uploadCourseLink = document.querySelector('.nav-item a[href="/upload"]');
     const viewCoursesLink = document.querySelector('.nav-item a[href="/coursesupload"]');
@@ -29,6 +31,16 @@ document.addEventListener('DOMContentLoaded', function() {
             coursesContainer.innerHTML = '';
             coursesContainer.appendChild(spinner);
 
+            // Fetch category data
+            const categoryResponse = await fetch(`/api/category/${categoryId}`);
+            if (!categoryResponse.ok) {
+                throw new Error('Network response was not ok ' + categoryResponse.statusText);
+            }
+            const categoryData = await categoryResponse.json();
+            categoryTitle.textContent = categoryData.name;
+            categoryDescription.textContent = categoryData.description;
+
+            // Fetch courses data
             const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
