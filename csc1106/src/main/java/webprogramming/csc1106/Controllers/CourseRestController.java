@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import webprogramming.csc1106.Entities.*;
 import webprogramming.csc1106.Repositories.*;
+import webprogramming.csc1106.Services.UploadCourseService;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -92,6 +93,25 @@ public class CourseRestController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(courseSubscription, HttpStatus.OK);
+    }
+
+    // Getting section and lesson from their IDs
+    @Autowired
+    private UploadCourseService uploadCourseService;
+
+    @GetMapping("/api/section/{sectionId}")
+    public ResponseEntity<Section> getSectionDetails(@PathVariable Long sectionId) {
+        Section section = uploadCourseService.getSectionById(sectionId);
+        if (section == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(section);
+    }
+
+    @GetMapping("/api/section/{sectionId}/lessons")
+    public ResponseEntity<List<Lesson>> getSectionLessons(@PathVariable Long sectionId) {
+        List<Lesson> lessons = uploadCourseService.getLessonsBySectionId(sectionId);
+        return ResponseEntity.ok(lessons);
     }
 
 

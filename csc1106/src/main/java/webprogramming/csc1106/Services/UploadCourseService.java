@@ -75,6 +75,12 @@ public class UploadCourseService {
     @Autowired
     private CourseSubscriptionService courseSubscriptionService;
 
+    @Autowired
+    private SectionService sectionService;
+
+    @Autowired
+    private LessonService lessonService;
+
     public List<UploadCourse> getAllCourses() {
         List<UploadCourse> courses = courseRepository.findAll();
         courses.forEach(this::calculateRating);
@@ -91,6 +97,18 @@ public class UploadCourseService {
         Optional<UploadCourse> course = courseRepository.findById(id);
         course.ifPresent(this::calculateRating);
         return course;
+    }
+
+    public Section getSectionById(Long sectionId) {
+        return sectionRepository.findById(sectionId).orElse(null);
+    }
+    
+    public List<Lesson> getLessonsBySectionId(Long sectionId) {
+        return lessonRepository.findBySectionId(sectionId);
+    }
+
+    public UploadCourse getCourseWithDetails(Long courseId) {
+        return courseRepository.findByIdWithDetails(courseId);
     }
 
     public long getTotalCourses() {

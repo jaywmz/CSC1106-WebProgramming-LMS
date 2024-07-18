@@ -6,8 +6,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import webprogramming.csc1106.Entities.Lesson;
 import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Services.UploadCourseService;
+import webprogramming.csc1106.Entities.Section;
+import webprogramming.csc1106.Entities.Lesson;
+import java.util.List;
 
 
 
@@ -88,6 +92,30 @@ public class RedirectionController {
                 .orElseThrow(() -> new RuntimeException("Course not found"));
         model.addAttribute("course", course);
         return "Course/coursepage";
+    }
+
+    @GetMapping("/sectionpage")
+    public String getSectionPage(@RequestParam("id") Long sectionId, Model model) {
+        System.out.println("Accessing section page with ID: " + sectionId);
+        Section section = courseService.getSectionById(sectionId);
+        if (section != null) {
+            System.out.println("Section found: " + section.getTitle());
+            List<Lesson> lessons = courseService.getLessonsBySectionId(sectionId);
+            System.out.println("Lessons found: " + lessons.size());
+            UploadCourse course = courseService.getCourseById(section.getCourse().getId()).orElse(null);
+            if (course != null) {
+                System.out.println("Course found: " + course.getTitle());
+            } else {
+                System.out.println("Course not found");
+            }
+            model.addAttribute("section", section);
+            model.addAttribute("lessons", lessons);
+            model.addAttribute("course", course);
+            return "Course/sectionpage";
+        } else {
+            System.out.println("Section not found");
+            return "redirect:/error";
+        }
     }
 
 }
