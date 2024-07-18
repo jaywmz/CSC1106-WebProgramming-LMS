@@ -47,6 +47,9 @@ public class User {
     @Column(name = "login_cookie", nullable = true)
     private String loginCookie;
 
+    @Column(name = "profile_picture", nullable = true)
+    private String profilePicture;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transactions> transactions = new ArrayList<>();
@@ -78,6 +81,7 @@ public class User {
         this.userBalance = userBalance;
         this.lastLogin = lastLogin;
         this.loginCookie = loginCookie;
+        this.profilePicture = null;
     }
 
     // Getters and setters
@@ -179,6 +183,14 @@ public class User {
 
     public List<Subscription> getSubscriptions() {
         return subscriptions;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     // Generate Random String with Numbers

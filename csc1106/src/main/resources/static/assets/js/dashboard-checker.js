@@ -11,9 +11,9 @@ let sideBarJSON = [
     {"index": 6, "name": "User", "icon": "bi bi-person-circle", "urlRedirection": "/userprofile"},
     {"index": 7, "name": "F.A.Q", "icon": "bi bi-info-square", "urlRedirection": "/faq"},
     {"index": 8, "name": "Contact Us", "icon": "bi bi-envelope", "urlRedirection": "/contact"},
-    {"index": 9, "name": "Extra (Just For Reference)", "icon": "nav-heading", "urlRedirection": null},
-    {"index": 10, "name": "BLANK PAGE", "icon": "bi bi-file-earmark-lock2", "urlRedirection": "/blank"},
-    {"index": 11, "name": "Refresh SideBar", "icon": "bi bi-arrow-repeat", "urlRedirection": "/refreshsidebar"}
+    // {"index": 9, "name": "Extra (Just For Reference)", "icon": "nav-heading", "urlRedirection": null},
+    // {"index": 10, "name": "BLANK PAGE", "icon": "bi bi-file-earmark-lock2", "urlRedirection": "/blank"},
+    // {"index": 11, "name": "Refresh SideBar", "icon": "bi bi-arrow-repeat", "urlRedirection": "/refreshsidebar"}
 ]
 
 

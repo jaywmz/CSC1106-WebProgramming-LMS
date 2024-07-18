@@ -3,13 +3,18 @@ package webprogramming.csc1106.Services;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Random;
+import java.io.IOException; // Add this import statement
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import jakarta.mail.Multipart;
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.RoleRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
+import webprogramming.csc1106.Services.AzureBlobService; // Add this import statement
 
 @Service
 public class UserService {
@@ -18,10 +23,13 @@ public class UserService {
 
     private final RoleRepository roleRepository;
 
+    private final AzureBlobService azureBlobService;
+
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, AzureBlobService azureBlobService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.azureBlobService = azureBlobService;
     }
 
     public User saveUser(User user) {
@@ -56,6 +64,52 @@ public class UserService {
 
     public BigDecimal getUserBalance(int userId) {
         return userRepository.findById(userId).map(User::getUserBalance).orElse(BigDecimal.ZERO);
+    }
+
+    public void updateUserBalance(int userId, BigDecimal newBalance) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setUserBalance(newBalance);
+            userRepository.save(user);
+        });
+    }
+
+    public String uploadProfilePicture(MultipartFile file, int userId) {
+
+        // Remove the existing profile picture from Azure Blob Storage
+        userRepository.findById(userId).ifPresent(user -> {
+            String existingPictureUrl = user.getProfilePicture();
+            if (existingPictureUrl != null) {
+                azureBlobService.deleteBlob(existingPictureUrl);
+            }
+        });
+
+        // Convert the MultipartFile to InputStream
+        InputStream fileInputStream = null;
+        try {
+            fileInputStream = file.getInputStream();
+            // Rest of the code that uses fileInputStream
+        } catch (IOException e) {
+            // Handle the exception or log the error
+            e.printStackTrace();
+        }
+
+        String pictureUrl = null;
+        try {
+            pictureUrl = azureBlobService.uploadToAzureBlob(fileInputStream, "profile-picture-" + userId + ".jpg");
+        } catch (IOException e) {
+            // Handle the exception or log the error
+            e.printStackTrace();
+        }
+
+        // Update the user's profile picture URL in the database
+        final String finalPictureUrl = pictureUrl;
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setProfilePicture(finalPictureUrl);
+            userRepository.save(user);
+        });
+
+        // Return the URL of the uploaded picture
+        return pictureUrl;
     }
 
     // Other service methods...

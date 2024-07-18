@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -31,6 +32,7 @@ import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.UserRepository;
 import webprogramming.csc1106.Securities.Encoding;
 import webprogramming.csc1106.Services.UserService;
+import webprogramming.csc1106.Services.AzureBlobService; // Add this import statement
 
 @Controller
 public class UserController {
@@ -38,13 +40,18 @@ public class UserController {
     private final UserRepository userRepository;
 
     private final UserService userService;
+
+    private final AzureBlobService azureBlobService;
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository, UserService userService, AzureBlobService azureBlobService) {
         this.userRepository = userRepository;
 
         this.userService = userService;
+
+        this.azureBlobService = azureBlobService;
     }
 
     @GetMapping("/login")
@@ -207,17 +214,17 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}/balance")
-public ResponseEntity<Map<String, Object>> getUserBalance(@PathVariable int userId) {
-    Optional<User> optionalUser = userService.findById(userId);
-    if (optionalUser.isPresent()) {
-        User user = optionalUser.get();
-        Map<String, Object> response = new HashMap<>();
-        response.put("balance", user.getUserBalance());
-        return ResponseEntity.ok(response);
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<Map<String, Object>> getUserBalance(@PathVariable int userId) {
+        Optional<User> optionalUser = userService.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("balance", user.getUserBalance());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
-}
 
 
     @GetMapping("/user/{userId}/role")
@@ -234,8 +241,43 @@ public ResponseEntity<Map<String, Object>> getUserBalance(@PathVariable int user
         }
     }
 
+    // Set User profile Picture
+    @PostMapping("/setprofilepicture")
+    public ResponseEntity<?> setProfilePicture(@RequestParam("file") MultipartFile file, @RequestParam("userId") int userId) {
+        try {
+            User user = userRepository.findById(userId).get();
+            String profilePictureUrl = userService.uploadProfilePicture(file, userId);
+            user.setProfilePicture(profilePictureUrl);
+            userRepository.save(user);
+            logger.debug("Profile picture URL saved to the database");
+            return ResponseEntity.ok(profilePictureUrl);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    // Get User profile Picture (Signed URL)
+    @GetMapping("/getprofilepicture/{userId}")
+    public ResponseEntity<String> getProfilePicture(@PathVariable int userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String profilePictureUrl = user.getProfilePicture();
+            if (profilePictureUrl == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            // Generate a signed URL for the profile picture
+            String signedUrl = azureBlobService.generateSasUrl(profilePictureUrl);
+            return ResponseEntity.ok(signedUrl);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     private void saveUser(User user) {
         userRepository.save(user);
         logger.debug("User data saved to the database");
     }
+
 }

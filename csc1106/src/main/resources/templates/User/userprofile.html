@@ -25,10 +25,10 @@
   <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="assets/css/loading.css" rel="stylesheet">
 
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
 
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
@@ -44,6 +44,23 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+    #user-profile-image:hover {
+      opacity: 0.7; /* Makes the image slightly transparent on hover */
+      cursor: pointer; /* Changes the cursor to indicate it's clickable */
+    }
+    .webcam-container {
+      display: flex;
+      justify-content: space-around; /* This will space out the video and canvas evenly */
+      align-items: center; /* This will vertically align the video and canvas in the middle */
+    }
+    
+    #webcam-feed, #canvas {
+      display: block; /* Override the inline style when showing them */
+      max-width: 45%; /* Adjust the size to fit side by side in the modal */
+      height: auto; /* Maintain aspect ratio */
+    }
+  </style>
 </head>
 
 <body>
@@ -68,7 +85,7 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            
             <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
           </a><!-- End Profile Iamge Icon -->
 
@@ -133,6 +150,53 @@
       </nav>
     </div><!-- End Page Title -->
 
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploadModalLabel">Upload Profile Picture</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- File Upload -->
+            <div class="mb-3" id="file-upload-div">
+              <label for="file-upload" class="form-label">Upload from your computer</label>
+              <input class="form-control" type="file" id="file-upload" accept="image/*">
+            </div>
+            <!-- Webcam Tips -->
+            <div class="mb-3" id="webcam-tips-div" style="display: none;">
+              <p style="color:blue;">
+                <strong>How to Take Picture?</strong>
+                <br>1. Click on the <strong>"Take Picture"</strong> and generate Preview
+                <br>2. Check the Preview and retake if necessary
+                <br>3. Click on "Save Changes" to upload the picture
+              </p>
+            </div>
+            <!-- Webcam Capture (Placeholder for actual implementation) -->
+            <div class="mb-3">
+              <label class="form-label">Or take a picture using webcam</label>
+              <br>
+              <button id="webcam-btn" class="btn btn-primary">Open Webcam</button>
+              <button id="take-picture-btn" class="btn btn-danger" style="display: none;">Take Picture</button>
+              <div class="webcam-container" style="display:flex;">
+                <!-- Video element for webcam video feed -->
+                <video id="webcam-feed" autoplay style="display:none;"></video>
+                <!-- Canvas element for capturing the image -->
+                <canvas id="canvas" style="display:none;"></canvas>
+              </div>
+              <img id="captured-img" src="#" alt="Captured Image" style="display: none;">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="uploadThisImageButton" type="button" class="btn btn-primary">Save changes</button>
+            <button id="uploadWebcamImageButton" type="button" class="btn btn-primary" style="display: none;">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- End Bootstrap Modal -->
+
     <section class="section profile">
       <div class="row">
 
@@ -141,7 +205,9 @@
           <div class="card">
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-              <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <img id="user-profile-image" src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+              </a>
               <h2 id="role-nice-card">-</h2>
               <br>
               <p><strong>Joined:</strong> <span id="joined-nice-card" style="color: blue;">-</span></p>
@@ -201,6 +267,26 @@
         </div>
       </div>
     </section>
+
+    <!-- ======= Loading Div ======= -->
+    <div class="loadingDiv" id="loading-div-hidden" style="display: none;">
+      <div class="scene">
+        <div class="cube-wrapper">
+          <div class="cube">
+            <div class="cube-faces">
+              <div class="cube-face shadow"></div>
+              <div class="cube-face bottom"></div>
+              <div class="cube-face top"></div>
+              <div class="cube-face left"></div>
+              <div class="cube-face right"></div>
+              <div class="cube-face back"></div>
+              <div class="cube-face front"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="loading-text" id="loading-text">Loading...</div>
+    </div>
 
   </main><!-- End #main -->
 
