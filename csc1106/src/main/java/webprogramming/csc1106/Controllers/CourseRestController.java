@@ -252,24 +252,25 @@ public class CourseRestController {
   
     // Add review for a course
     @PostMapping("/courses/{courseId}/review")
-public ResponseEntity<String> addReview(@PathVariable Long courseId,
-                                        @RequestParam Integer userId,
-                                        @RequestParam Double rating,
-                                        @RequestParam String comment) {
-    try {
-        UploadCourse course = uploadCourseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        Rating review = new Rating();
-        review.setCourse(course);
-        review.setUserId(userId);
-        review.setScore(rating);
-        review.setComment(comment);
-        review.setTimestamp(LocalDateTime.now());
-        ratingRepository.save(review);
-        return ResponseEntity.ok("Review submitted successfully.");
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
+    public ResponseEntity<String> addReview(@PathVariable Long courseId,
+                                            @RequestParam Integer userId,
+                                            @RequestParam Double rating,
+                                            @RequestParam String comment) {
+        try {
+            UploadCourse course = uploadCourseRepository.findById(courseId)
+                    .orElseThrow(() -> new RuntimeException("Course not found"));
+            Rating review = new Rating();
+            review.setCourse(course);
+            review.setUserId(userId);
+            review.setScore(rating);
+            review.setComment(comment);
+            review.setTimestamp(LocalDateTime.now());
+            ratingRepository.save(review);
+            return ResponseEntity.ok("Review submitted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
+        }
     }
-}
+    
 
 }

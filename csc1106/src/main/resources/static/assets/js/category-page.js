@@ -131,21 +131,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const rating = document.getElementById('reviewRating').value;
         const comment = document.getElementById('reviewComment').value;
         let userId = getCookie('lrnznth_User_ID');
-
+    
         fetch(`/courses/${courseId}/review`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify({
+            body: new URLSearchParams({
                 userId: userId,
                 rating: rating,
                 comment: comment
             })
         })
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
-            if (data.success) {
+            if (data === "Review submitted successfully.") {
                 alert('Review submitted successfully');
                 const bootstrapModal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
                 bootstrapModal.hide();
@@ -161,6 +161,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error submitting review:', error);
         });
     });
+    
+    
 
     function addCartEventListeners() {
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
