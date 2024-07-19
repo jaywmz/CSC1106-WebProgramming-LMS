@@ -1,29 +1,29 @@
 package webprogramming.csc1106.Services;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import webprogramming.csc1106.Entities.UploadCourse;
-import webprogramming.csc1106.Repositories.UploadCourseRepository;
 import webprogramming.csc1106.Entities.CourseCategory;
 import webprogramming.csc1106.Entities.CourseSubscriptionEntity;
+import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Repositories.CourseSubscriptionRepo;
-
-import java.util.List;
-import java.util.Optional;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import webprogramming.csc1106.Repositories.UploadCourseRepository;
 
 @Service
 public class CourseSubscriptionService {
 
     @Autowired
     private CourseSubscriptionRepo courseSubscriptionRepo;
+
+    @Autowired
+    private UploadCourseRepository UploadCourseRepository;
+
+
 
     public List<CourseSubscriptionEntity> getSubscriptionsByCourseIds(List<Long> courseIds) {
         return courseSubscriptionRepo.findByCourseIdIn(courseIds);
@@ -43,7 +43,7 @@ public class CourseSubscriptionService {
         CourseSubscriptionEntity existingSubscription = courseSubscriptionRepo.findByUserIdAndCourseIdAndSubscriptionStatus(userId, courseId, "free-ongoing");
         if (existingSubscription != null) {
             throw new RuntimeException("User already has a free-ongoing subscription for this course.");
-        }
+        }//
 
         // Check if user has less than 3 subscriptions
         if (currentSubscriptions < 3) {
@@ -117,7 +117,22 @@ public List<CourseSubscriptionEntity> getSubscriptionsByUserId(Integer userID) {
 }
 
 
-}
+ @Transactional
+    public List<UploadCourse> getCoursesByUserId(int userId) {
+        List<CourseSubscriptionEntity> subscriptions = courseSubscriptionRepo.findByUserId(userId);
+        List<UploadCourse> courses = new ArrayList<>();
 
+        for (CourseSubscriptionEntity subscription : subscriptions) {
+            UploadCourse course = UploadCourseRepository.findById(subscription.getCourseId()).orElse(null);
+            if (course != null) {
+                courses.add(course);
+            }
+        }
+
+        return courses;
+    }
+
+
+}
 
 
