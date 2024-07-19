@@ -209,8 +209,10 @@
                                 <ul class="lesson-details">
                                     <li th:each="file : ${lesson.files}">
                                         <div> 
-                                            <h4>File Name:</h4>
-                                            <span th:text="${file.fileName}">File Name</span>
+                                            <h4>File:</h4>
+                                            <ul class="list-group" th:if="${!section.lessons.empty}">
+                                                <a th:href="@{/serveFile(fileId=${file.id}, disposition='attachment')}" th:text="${file.fileName}">File Name</a>
+                                            </ul>
                                             <div class="btn-container">
                                                 <button type="button" th:attr="onclick='showDeleteFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ', ' + ${file.id} + ')'">Delete</button>
                                                 <button type="button" th:attr="onclick='showEditFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ', ' + ${file.id} + ')'">Edit</button>
@@ -222,7 +224,19 @@
                         </ul>
                     </li>
                 </ul>
-                <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'" th:if="${course.sections.size() == 0}">Add Section</button>
+                
+                <ul th:if="${course.sections.size() <= 0}">
+                    <li>
+                        <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'">Add Section</button>
+                    </li>
+                </ul>
+                <ul th:if="${course.sections.size() > 0}">
+                    <li>
+                        <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'">Add More Section</button>
+                    </li>
+                </ul>
+                
+                
             </li>
         </ul>
     </div>
