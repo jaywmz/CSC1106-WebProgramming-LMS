@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadCourseLink = document.querySelector('.nav-item a[href="/upload"]');
     const viewCoursesLink = document.querySelector('.nav-item a[href="/coursesupload"]');
     const breadcrumbCategoryName = document.getElementById('breadcrumb-category-name');
-    const loadingSpinner = document.getElementById('loadingSpinner'); // Add this line to select the spinner
 
     const userName = getCookie('lrnznth_User_Name');
     if (userName) {
@@ -159,8 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitButton = document.getElementById('submitReviewButton');
         submitButton.disabled = true;
         submitButton.innerText = 'Submitting...';
-        loadingSpinner.style.display = 'inline-block'; // Show the spinner
-
+    
         try {
             const response = await fetch(`/courses/${courseId}/review`, {
                 method: 'POST',
@@ -191,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('reviewComment').value = '';
                 
                 // Refresh the courses list to update the displayed rating and review count
-                await loadCourses(); // Ensure the latest data is loaded
+                loadCourses(); // Add a slight delay before calling loadCourses
             } else {
                 alert('Failed to submit review');
             }
@@ -200,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             submitButton.disabled = false;
             submitButton.innerText = 'Submit Review';
-            loadingSpinner.style.display = 'none'; // Hide the spinner
         }
     });
 
