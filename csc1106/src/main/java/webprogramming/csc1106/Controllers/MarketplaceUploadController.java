@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -250,6 +251,7 @@ public class MarketplaceUploadController {
         }
     }
 
+
     // API endpoint to get courses by category ID with optional sorting
     @GetMapping("/category/{id}/courses")
     @ResponseBody
@@ -262,12 +264,13 @@ public class MarketplaceUploadController {
                     .filter(UploadCourse::isApproved)
                     .peek(uploadCourseService::calculateRating) // Calculate rating before returning
                     .collect(Collectors.toList());
-    
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace(); // Log the error for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
         }
     }
+    
     
     @PostMapping("/cart/add")
     @ResponseBody

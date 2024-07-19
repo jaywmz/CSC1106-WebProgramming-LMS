@@ -1,6 +1,7 @@
 package webprogramming.csc1106.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "upload_course")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UploadCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

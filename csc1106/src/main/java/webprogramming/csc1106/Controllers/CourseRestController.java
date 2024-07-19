@@ -276,29 +276,30 @@ public class CourseRestController {
     }
     // Add an endpoint to fetch reviews for a course
     @GetMapping("/courses/{courseId}/reviews")
-    @ResponseBody
-    public ResponseEntity<List<Map<String, Object>>> getReviews(@PathVariable Long courseId) {
-        List<Rating> reviews = ratingRepository.findByCourseId(courseId);
-        List<Map<String, Object>> reviewsWithUserNames = new ArrayList<>();
+@ResponseBody
+public ResponseEntity<List<Map<String, Object>>> getReviews(@PathVariable Long courseId) {
+    List<Rating> reviews = ratingRepository.findByCourseId(courseId);
+    List<Map<String, Object>> reviewsWithUserNames = new ArrayList<>();
 
-        for (Rating review : reviews) {
-            Map<String, Object> reviewWithUserName = new HashMap<>();
-            reviewWithUserName.put("score", review.getScore());
-            reviewWithUserName.put("comment", review.getComment());
-            reviewWithUserName.put("timestamp", review.getTimestamp());
+    for (Rating review : reviews) {
+        Map<String, Object> reviewWithUserName = new HashMap<>();
+        reviewWithUserName.put("score", review.getScore());
+        reviewWithUserName.put("comment", review.getComment());
+        reviewWithUserName.put("timestamp", review.getTimestamp());
 
-            User user = review.getUser();
-            if (user != null) {
-                reviewWithUserName.put("userName", user.getUserName());
-            } else {
-                reviewWithUserName.put("userName", "Unknown");
-            }
-
-            reviewsWithUserNames.add(reviewWithUserName);
+        User user = review.getUser();
+        if (user != null) {
+            reviewWithUserName.put("userName", user.getUserName());
+        } else {
+            reviewWithUserName.put("userName", "Unknown");
         }
 
-        return ResponseEntity.ok(reviewsWithUserNames);
+        reviewsWithUserNames.add(reviewWithUserName);
     }
+
+    return ResponseEntity.ok(reviewsWithUserNames);
+}
+
  
     
 

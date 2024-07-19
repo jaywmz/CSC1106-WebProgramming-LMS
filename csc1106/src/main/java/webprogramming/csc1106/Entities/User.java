@@ -1,6 +1,8 @@
 package webprogramming.csc1106.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -12,6 +14,7 @@ import java.util.Random;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     
     @Id

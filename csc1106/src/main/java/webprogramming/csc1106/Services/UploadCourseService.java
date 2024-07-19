@@ -344,24 +344,25 @@ public class UploadCourseService {
     
       // Add or update review for a course
       @Async
-public void addReview(Long courseId, Integer userId, double rating, String comment) {
-    Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
-    Optional<User> userOpt = userRepository.findById(userId);
-    if (courseOpt.isPresent() && userOpt.isPresent()) {
-        UploadCourse course = courseOpt.get();
-        User user = userOpt.get();
-        Rating review = ratingRepository.findByCourseAndUser(course, user)
-            .orElse(new Rating(course, user, rating, comment, LocalDateTime.now()));
-        review.setScore(rating);
-        review.setComment(comment);
-        review.setTimestamp(LocalDateTime.now());
-        ratingRepository.save(review);
-        calculateRating(course);
-        courseRepository.save(course);
-    } else {
-        throw new RuntimeException("Course or User not found");
-    }
-}
+      public void addReview(Long courseId, Integer userId, double rating, String comment) {
+          Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
+          Optional<User> userOpt = userRepository.findById(userId);
+          if (courseOpt.isPresent() && userOpt.isPresent()) {
+              UploadCourse course = courseOpt.get();
+              User user = userOpt.get();
+              Rating review = ratingRepository.findByCourseAndUser(course, user)
+                  .orElse(new Rating(course, user, rating, comment, LocalDateTime.now()));
+              review.setScore(rating);
+              review.setComment(comment);
+              review.setTimestamp(LocalDateTime.now());
+              ratingRepository.save(review);
+              calculateRating(course);
+              courseRepository.save(course);
+          } else {
+              throw new RuntimeException("Course or User not found");
+          }
+      }
+      
     // Calculate ratings for a list of courses
     @Async
     private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {

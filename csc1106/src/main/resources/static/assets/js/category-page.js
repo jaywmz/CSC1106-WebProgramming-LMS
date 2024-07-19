@@ -93,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    
     function addReviewEventListeners() {
         const reviewLinks = document.querySelectorAll('.review-link');
         reviewLinks.forEach(link => {
@@ -149,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    document.getElementById('reviewForm').addEventListener('submit', function(event) {
+    document.getElementById('reviewForm').addEventListener('submit', async function(event) {
         event.preventDefault();
         const courseId = document.getElementById('reviewCourseId').value;
         const rating = document.getElementById('reviewRating').value;
@@ -160,38 +159,46 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true;
         submitButton.innerText = 'Submitting...';
     
-        fetch(`/courses/${courseId}/review`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                userId: userId,
-                rating: rating,
-                comment: comment
-            })
-        })
-        .then(response => response.text())
-        .then(data => {
+        try {
+            const response = await fetch(`/courses/${courseId}/review`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    userId: userId,
+                    rating: rating,
+                    comment: comment
+                })
+            });
+    
+            const data = await response.text();
             if (data === "Review submitted successfully.") {
                 alert('Review submitted successfully');
+                
+                // Fetch and display updated reviews
+                const reviewsResponse = await fetch(`/courses/${courseId}/reviews`);
+                const reviews = await reviewsResponse.json();
+                displayReviews(reviews);
+
                 const bootstrapModal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
                 bootstrapModal.hide();
+                
                 // Clear form fields
                 document.getElementById('reviewRating').value = '';
                 document.getElementById('reviewComment').value = '';
-                setTimeout(loadCourses, 2000); // Reload courses to update reviews
+                
+                // Refresh the courses list to update the displayed rating and review count
+                loadCourses();
             } else {
                 alert('Failed to submit review');
             }
-            submitButton.disabled = false;
-            submitButton.innerText = 'Submit Review';
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error submitting review:', error);
+        } finally {
             submitButton.disabled = false;
             submitButton.innerText = 'Submit Review';
-        });
+        }
     });
 
     function addCartEventListeners() {
