@@ -39,7 +39,6 @@ import webprogramming.csc1106.Repositories.SectionRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
 
-import org.springframework.scheduling.annotation.Async;
 
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -343,7 +342,7 @@ public class UploadCourseService {
     // ===================================================================================================
     
       // Add or update review for a course
-      @Async
+      
       public void addReview(Long courseId, Integer userId, double rating, String comment) {
           Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
           Optional<User> userOpt = userRepository.findById(userId);
@@ -364,13 +363,13 @@ public class UploadCourseService {
       }
       
     // Calculate ratings for a list of courses
-    @Async
+    
     private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {
         courses.forEach(this::calculateRating);
         return courses;
     }
     // Calculate rating for a course
-    @Async
+    
     public void calculateRating(UploadCourse course) {
         List<Rating> ratings = ratingRepository.findByCourse(course);
         if (ratings != null && !ratings.isEmpty()) {

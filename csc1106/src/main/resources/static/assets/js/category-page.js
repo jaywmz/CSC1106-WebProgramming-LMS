@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadCourseLink = document.querySelector('.nav-item a[href="/upload"]');
     const viewCoursesLink = document.querySelector('.nav-item a[href="/coursesupload"]');
     const breadcrumbCategoryName = document.getElementById('breadcrumb-category-name');
+    const loadingSpinner = document.getElementById('loadingSpinner'); // Add this line to select the spinner
 
     const userName = getCookie('lrnznth_User_Name');
     if (userName) {
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
             coursesContainer.appendChild(spinner);
     
             // Fetch category data
-            const categoryResponse = await fetch(`/api/category/${categoryId}`);
+            const categoryResponse = await fetch(`/api/category/${categoryId}`, { cache: "no-store" });
             if (!categoryResponse.ok) {
                 throw new Error('Network response was not ok ' + categoryResponse.statusText);
             }
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('breadcrumb-category').textContent = categoryData.name; // Update breadcrumb
     
             // Fetch courses data
-            const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`);
+            const response = await fetch(`/category/${categoryId}/courses?sortBy=${sortBy}`, { cache: "no-store" });
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
@@ -121,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
 
                         // Fetch and display reviews
-                        const reviewsResponse = await fetch(`/courses/${courseId}/reviews`);
+                        const reviewsResponse = await fetch(`/courses/${courseId}/reviews`, { cache: "no-store" });
                         const reviews = await reviewsResponse.json();
                         displayReviews(reviews);
                     })
@@ -158,7 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitButton = document.getElementById('submitReviewButton');
         submitButton.disabled = true;
         submitButton.innerText = 'Submitting...';
-    
+        loadingSpinner.style.display = 'inline-block'; // Show the spinner
+
         try {
             const response = await fetch(`/courses/${courseId}/review`, {
                 method: 'POST',
@@ -177,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Review submitted successfully');
                 
                 // Fetch and display updated reviews
-                const reviewsResponse = await fetch(`/courses/${courseId}/reviews`);
+                const reviewsResponse = await fetch(`/courses/${courseId}/reviews`, { cache: "no-store" });
                 const reviews = await reviewsResponse.json();
                 displayReviews(reviews);
 
@@ -189,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('reviewComment').value = '';
                 
                 // Refresh the courses list to update the displayed rating and review count
-                loadCourses();
+                await loadCourses(); // Ensure the latest data is loaded
             } else {
                 alert('Failed to submit review');
             }
@@ -198,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             submitButton.disabled = false;
             submitButton.innerText = 'Submit Review';
+            loadingSpinner.style.display = 'none'; // Hide the spinner
         }
     });
 
