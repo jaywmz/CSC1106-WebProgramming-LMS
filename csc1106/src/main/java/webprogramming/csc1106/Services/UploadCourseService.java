@@ -75,119 +75,49 @@ public class UploadCourseService {
     @Autowired
     private CourseSubscriptionService courseSubscriptionService;
 
- 
+    // Course Management Methods
+    // ===================================================================================================
 
+    // Get all courses with ratings calculated
     public List<UploadCourse> getAllCourses() {
         return calculateRatings(courseRepository.findAll());
     }
-
+    // Get all approved courses with ratings calculated
     public List<UploadCourse> getAllApprovedCourses() {
         return calculateRatings(courseRepository.findByIsApprovedTrue());
     }
-
+    // Get course by ID with rating calculated
     public Optional<UploadCourse> getCourseById(Long id) {
         Optional<UploadCourse> course = courseRepository.findById(id);
         course.ifPresent(this::calculateRating);
         return course;
     }
-
-    public Section getSectionById(Long sectionId) {
-        return sectionRepository.findById(sectionId).orElse(null);
-    }
-    
-    public List<Lesson> getLessonsBySectionId(Long sectionId) {
-        return lessonRepository.findBySectionId(sectionId);
-    }
-
+    // Get course with details
     public UploadCourse getCourseWithDetails(Long courseId) {
         return courseRepository.findByIdWithDetails(courseId);
     }
-
+    // Get total number of courses
     public long getTotalCourses() {
         return courseRepository.count();
     }
-
+    // Add new course
     public UploadCourse addCourse(UploadCourse course) {
         initializeCourseFields(course);
         return courseRepository.save(course);
     }
-
-    public Section addSection(Section section) {
-        return sectionRepository.save(section);
+    // Update existing course
+    public UploadCourse updateCourse(UploadCourse course) {
+        initializeCourseFields(course);
+        return courseRepository.save(course);
     }
-
-    public Lesson addLesson(Lesson lesson) {
-        return lessonRepository.save(lesson);
-    }
-
-    public FileResource addFileResource(FileResource fileResource) {
-        return fileResourceRepository.save(fileResource);
-    }
-
-    public CourseCategory addCourseCategory(CourseCategory courseCategory) {
-        return courseCategoryRepository.save(courseCategory);
-    }
-
-    public List<CategoryGroup> getAllCategories() {
-        return categoryGroupRepository.findAll();
-    }
-
-    public Optional<CategoryGroup> getCategoryById(Long id) {
-        logger.info("Fetching category by id: {}", id);
-        return categoryGroupRepository.findById(id);
-    }
-
-    public void clearCourseCategories(UploadCourse course) {
-        List<CourseCategory> courseCategories = courseCategoryRepository.findByCourse(course);
-        courseCategoryRepository.deleteAll(courseCategories);
-        course.getCourseCategories().clear();
-    }
-
+    // Delete course and associated resources
     public void deleteCourse(Long courseId) {
         UploadCourse course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
         deleteCourseResources(course);
         courseRepository.deleteById(courseId);
     }
-
-    public String uploadToAzureBlob(InputStream fileInputStream, String fileName) throws IOException {
-        return azureBlobService.uploadToAzureBlob(fileInputStream, fileName);
-    }
-
-    public String generateSasUrl(String blobUrl) {
-        return azureBlobService.generateSasUrl(blobUrl);
-    }
-
-    public InputStream downloadFileWithSas(String blobUrl) {
-        String sasUrl = azureBlobService.generateSasUrl(blobUrl);
-        BlobClient blobClient = new BlobClientBuilder()
-                .endpoint(sasUrl)
-                .buildClient();
-        return blobClient.openInputStream();
-    }
-
-    public Optional<FileResource> getFileResourceById(Long id) {
-        return fileResourceRepository.findById(id);
-    }
-
-    public UploadCourse addCourseWithFile(UploadCourse course, InputStream fileInputStream, String fileName) throws IOException {
-        String blobUrl = uploadToAzureBlob(fileInputStream, fileName);
-        blobUrl = generateSasUrl(blobUrl);
-        FileResource fileResource = new FileResource(fileName, blobUrl);
-        fileResource.setLesson(null);  // Ensure this does not break your business logic
-        fileResourceRepository.save(fileResource);
-        return addCourse(course);
-    }
-
-    public UploadCourse updateCourse(UploadCourse course) {
-        initializeCourseFields(course);
-        return courseRepository.save(course);
-    }
-
-    public void deleteBlob(String blobUrl) {
-        azureBlobService.deleteBlob(blobUrl);
-    }
-
+    // Process course upload with optional cover image and selected category
     public void processCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
             validateCoverImage(coverImage);
@@ -224,23 +154,7 @@ public class UploadCourseService {
             }
         }
     }
-
-    public List<UploadCourse> getPendingCourses() {
-        return courseRepository.findByIsApprovedFalse();
-    }
-
-    public List<UploadCourse> getApprovedCourses() {
-        return courseRepository.findByIsApprovedTrue();
-    }
-
-    public List<UploadCourse> getApprovedCoursesByCategoryId(Long categoryId) {
-        return courseRepository.findByCourseCategories_CategoryGroup_IdAndIsApprovedTrue(categoryId);
-    }
-
-    public List<UploadCourse> getApprovedCoursesByUserId(Integer userId) {
-        return courseRepository.findByUser_UserIdAndIsApprovedTrue(userId);
-    }
-
+    // Process course update with optional cover image and selected category
     public void processCourseUpdate(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
         if (!existingCourseOpt.isPresent()) {
@@ -298,7 +212,30 @@ public class UploadCourseService {
 
         updateCourse(existingCourse);
     }
+    // End of Course Management Methods
+    // ===================================================================================================
 
+
+    // Section and Lesson Management Methods
+    // ===================================================================================================
+
+    // Get section by ID
+    public Section getSectionById(Long sectionId) {
+        return sectionRepository.findById(sectionId).orElse(null);
+    }
+    // Get lessons by section ID
+    public List<Lesson> getLessonsBySectionId(Long sectionId) {
+        return lessonRepository.findBySectionId(sectionId);
+    }
+    // Add new section
+    public Section addSection(Section section) {
+        return sectionRepository.save(section);
+    }
+    // Add new lesson
+    public Lesson addLesson(Lesson lesson) {
+        return lessonRepository.save(lesson);
+    }
+    // Remove section by ID and associated lessons and files
     public void removeSection(Long sectionId, Long courseId) {
         Section section = sectionRepository.findById(sectionId)
             .orElseThrow(() -> new RuntimeException("Section not found"));
@@ -310,7 +247,7 @@ public class UploadCourseService {
             }
             lessonRepository.delete(lesson);
         }
-    
+
         // Remove the section itself
         sectionRepository.delete(section);
     
@@ -322,8 +259,7 @@ public class UploadCourseService {
             courseRepository.save(course);
         }
     }
-    
-
+    // Remove lesson by ID
     public void removeLesson(Long lessonId, Long courseId) {
         lessonRepository.deleteById(lessonId);
         Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
@@ -335,8 +271,110 @@ public class UploadCourseService {
             courseRepository.save(course);
         }
     }
+     // End of Section and Lesson Management Methods
+    // ================================================================================================
 
-    public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
+
+    // File Resource Management Methods
+    // ================================================================================================
+
+    // Upload file to Azure Blob Storage
+    public String uploadToAzureBlob(InputStream fileInputStream, String fileName) throws IOException {
+        return azureBlobService.uploadToAzureBlob(fileInputStream, fileName);
+    }
+    // Generate SAS URL for Azure Blob Storage
+    public String generateSasUrl(String blobUrl) {
+        return azureBlobService.generateSasUrl(blobUrl);
+    }
+    // Download file with SAS URL
+    public InputStream downloadFileWithSas(String blobUrl) {
+        String sasUrl = azureBlobService.generateSasUrl(blobUrl);
+        BlobClient blobClient = new BlobClientBuilder()
+                .endpoint(sasUrl)
+                .buildClient();
+        return blobClient.openInputStream();
+    }
+    // Get file resource by ID
+    public Optional<FileResource> getFileResourceById(Long id) {
+        return fileResourceRepository.findById(id);
+    }
+    // Add new file resource
+    public FileResource addFileResource(FileResource fileResource) {
+        return fileResourceRepository.save(fileResource);
+    }
+
+    // Add new course category
+    public CourseCategory addCourseCategory(CourseCategory courseCategory) {
+        return courseCategoryRepository.save(courseCategory);
+    }
+
+    // Get all category groups
+    public List<CategoryGroup> getAllCategories() {
+        return categoryGroupRepository.findAll();
+    }
+
+    // Get category group by ID
+    public Optional<CategoryGroup> getCategoryById(Long id) {
+        logger.info("Fetching category by id: {}", id);
+        return categoryGroupRepository.findById(id);
+    }
+
+    // Clear course categories
+    public void clearCourseCategories(UploadCourse course) {
+        List<CourseCategory> courseCategories = courseCategoryRepository.findByCourse(course);
+        courseCategoryRepository.deleteAll(courseCategories);
+        course.getCourseCategories().clear();
+    }
+     // End of File Resource Management Methods
+    // ===================================================================================================
+
+
+     // Rating Management Methods
+    // ===================================================================================================
+
+      // Add or update review for a course
+      public void addReview(Long courseId, Integer userId, double rating, String comment) {
+        Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
+        if (courseOpt.isPresent()) {
+            UploadCourse course = courseOpt.get();
+            Rating review = ratingRepository.findByCourseIdAndUserId(courseId, userId)
+                .orElse(new Rating(course, userId, rating, comment, LocalDateTime.now()));
+            review.setScore(rating);
+            review.setComment(comment);
+            review.setTimestamp(LocalDateTime.now());
+            ratingRepository.save(review);
+            calculateRating(course);
+            courseRepository.save(course);
+        } else {
+            throw new RuntimeException("Course not found");
+        }
+    }
+    // Calculate ratings for a list of courses
+    private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {
+        courses.forEach(this::calculateRating);
+        return courses;
+    }
+    // Calculate rating for a course
+    private void calculateRating(UploadCourse course) {
+        List<Rating> ratings = ratingRepository.findByCourse(course);
+        if (ratings != null && !ratings.isEmpty()) {
+            double averageRating = ratings.stream().mapToDouble(Rating::getScore).average().orElse(0.0);
+            int reviewCount = ratings.size();
+            course.setAverageRating(averageRating);
+            course.setReviewCount(reviewCount);
+        } else {
+            course.setAverageRating(0.0);
+            course.setReviewCount(0);
+        }
+    }
+    // End of Rating Management Methods
+    // ==========================================================================================================
+
+    // Course Filtering and Sorting Methods
+    // ====================================================================================================
+
+     // Get courses by category ID with ratings calculated
+     public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
         List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
         List<UploadCourse> courses = courseCategories.stream()
             .map(CourseCategory::getCourse)
@@ -344,13 +382,109 @@ public class UploadCourseService {
         return calculateRatings(courses);
     }
 
+    // Get filtered and sorted courses by category ID
     public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
         Sort sort = getSort(sortBy);
         List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
         courses.forEach(course -> course.setUser(null)); // Ensure user is not serialized
         return courses;
     }
+    // End of Course Filtering and Sorting Methods
+    // =================================================================================================
 
+
+    // Utility Methods
+    // =================================================================================================
+
+    // Delete resources associated with a course
+    private void deleteCourseResources(UploadCourse course) {
+        for (Section section : course.getSections()) {
+            for (Lesson lesson : section.getLessons()) {
+                for (FileResource file : lesson.getFiles()) {
+                    azureBlobService.deleteBlob(file.getFileUrl());
+                }
+            }
+        }
+        if (course.getCoverImageUrl() != null) {
+            azureBlobService.deleteBlob(course.getCoverImageUrl());
+        }
+    }
+    // Initialize course fields
+    private void initializeCourseFields(UploadCourse course) {
+        if (course.getSections() == null) {
+            course.setSections(new ArrayList<>());
+        }
+        if (course.getCourseCategories() == null) {
+            course.setCourseCategories(new ArrayList<>());
+        }
+    }
+    // Update basic fields of a course
+    private void updateCourseFields(UploadCourse existingCourse, UploadCourse newCourseData) {
+        existingCourse.setTitle(newCourseData.getTitle());
+        existingCourse.setDescription(newCourseData.getDescription());
+        existingCourse.setLecturer(newCourseData.getLecturer());
+        existingCourse.setPrice(newCourseData.getPrice());
+    }
+    // Get sorting criteria based on sortBy parameter
+    private Sort getSort(String sortBy) {
+        switch (sortBy) {
+            case "price-low-high":
+                return Sort.by(Sort.Direction.ASC, "price");
+            case "price-high-low":
+                return Sort.by(Sort.Direction.DESC, "price");
+            case "rating":
+                return Sort.by(Sort.Direction.DESC, "averageRating");
+            default:
+                return Sort.by(Sort.Direction.DESC, "price");
+        }
+    }
+    // Validate cover image file type
+    private void validateCoverImage(MultipartFile coverImage) {
+        String contentType = coverImage.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
+        }
+    }
+     // Delete blob from Azure Blob Storage
+     public void deleteBlob(String blobUrl) {
+        azureBlobService.deleteBlob(blobUrl);
+    }
+    //End of Utility Methods
+    // =================================================================================================
+
+
+     // Partner Management Methods
+    // =================================================================================================
+
+    // Add new partner certificate
+    public PartnerCertificate addPartnerCertificate(PartnerCertificate certificate) {
+        return partnerCertificateRepository.save(certificate);
+    }
+    // Add new partner publish
+    public PartnerPublish addPartnerPublish(PartnerPublish publish) {
+        return partnerPublishRepository.save(publish);
+    }
+    // Get courses by partner ID
+    public List<UploadCourse> getCoursesByPartnerId(Integer partnerId) {
+        List<PartnerPublish> publishes = partnerPublishRepository.findByPartnerPartnerId(partnerId);
+        return publishes.stream()
+                .map(PartnerPublish::getCourse)
+                .collect(Collectors.toList());
+    }
+    // Get partner publishes by partner ID
+    public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
+        return partnerPublishRepository.findByPartnerPartnerId(partnerId);
+    }
+    // Add course with file
+    public UploadCourse addCourseWithFile(UploadCourse course, InputStream fileInputStream, String fileName) throws IOException {
+        String blobUrl = uploadToAzureBlob(fileInputStream, fileName);
+        blobUrl = generateSasUrl(blobUrl);
+        FileResource fileResource = new FileResource(fileName, blobUrl);
+        fileResource.setLesson(null);  // Ensure this does not break your business logic
+        fileResourceRepository.save(fileResource);
+        return addCourse(course);
+    }
+    // Process partner course upload with optional cover image and selected category
     public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
             validateCoverImage(coverImage);
@@ -388,7 +522,7 @@ public class UploadCourseService {
         }
         return savedCourse;
     }
-
+    // Update course with optional cover image, category, and certificate details
     public void updateCourse(UploadCourse course, MultipartFile coverImage, Long categoryId, String certificateBlobUrl, String certificateTitle) throws IOException {
         Optional<UploadCourse> existingCourseOpt = getCourseById(course.getId());
         if (!existingCourseOpt.isPresent()) {
@@ -407,7 +541,6 @@ public class UploadCourseService {
             coverImageUrl = generateSasUrl(coverImageUrl);
             existingCourse.setCoverImageUrl(coverImageUrl);
         }
-
         // Update basic fields
         updateCourseFields(existingCourse, course);
 
@@ -436,120 +569,41 @@ public class UploadCourseService {
             // Save the updated PartnerPublish entity
             addPartnerPublish(publish);
         }
-
         updateCourse(existingCourse);
     }
-
-    public PartnerCertificate addPartnerCertificate(PartnerCertificate certificate) {
-        return partnerCertificateRepository.save(certificate);
+    // Get list of pending courses
+    public List<UploadCourse> getPendingCourses() {
+        return courseRepository.findByIsApprovedFalse();
     }
-
-    public PartnerPublish addPartnerPublish(PartnerPublish publish) {
-        return partnerPublishRepository.save(publish);
+    // Get list of approved courses
+    public List<UploadCourse> getApprovedCourses() {
+        return courseRepository.findByIsApprovedTrue();
     }
-
-    public List<UploadCourse> getCoursesByPartnerId(Integer partnerId) {
-        List<PartnerPublish> publishes = partnerPublishRepository.findByPartnerPartnerId(partnerId);
-        return publishes.stream()
-                .map(PartnerPublish::getCourse)
-                .collect(Collectors.toList());
+    // Get approved courses by category ID
+    public List<UploadCourse> getApprovedCoursesByCategoryId(Long categoryId) {
+        return courseRepository.findByCourseCategories_CategoryGroup_IdAndIsApprovedTrue(categoryId);
     }
-
-    public List<PartnerPublish> getPartnerPublishByPartnerId(Integer partnerId) {
-        return partnerPublishRepository.findByPartnerPartnerId(partnerId);
+    // Get approved courses by user ID
+    public List<UploadCourse> getApprovedCoursesByUserId(Integer userId) {
+        return courseRepository.findByUser_UserIdAndIsApprovedTrue(userId);
     }
-
+    // Get course categories by course IDs
     public List<CourseCategory> getCourseCategoriesByCourseIds(List<Long> courseIds) {
         return courseCategoryRepository.findByCourseIdIn(courseIds);
     }
-
+    // Check if user is subscribed to a course
     public boolean isUserSubscribed(Long courseId, Integer userId) {
         return courseSubscriptionService.getSubscriptionsByUserId(userId)
             .stream()
             .anyMatch(subscription -> Long.valueOf(subscription.getCourseId()).equals(courseId));
     }
-
-    public void addReview(Long courseId, Integer userId, double rating, String comment) {
-        Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
-        if (courseOpt.isPresent()) {
-            UploadCourse course = courseOpt.get();
-            Rating review = ratingRepository.findByCourseIdAndUserId(courseId, userId)
-                .orElse(new Rating(course, userId, rating, comment, LocalDateTime.now()));
-            review.setScore(rating);
-            review.setComment(comment);
-            review.setTimestamp(LocalDateTime.now());
-            ratingRepository.save(review);
-            calculateRating(course);
-            courseRepository.save(course);
-        } else {
-            throw new RuntimeException("Course not found");
-        }
-    }
-
-    private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {
-        courses.forEach(this::calculateRating);
-        return courses;
-    }
-
-    private void calculateRating(UploadCourse course) {
-        List<Rating> ratings = ratingRepository.findByCourse(course);
-        if (ratings != null && !ratings.isEmpty()) {
-            double averageRating = ratings.stream().mapToDouble(Rating::getScore).average().orElse(0.0);
-            int reviewCount = ratings.size();
-            course.setAverageRating(averageRating);
-            course.setReviewCount(reviewCount);
-        } else {
-            course.setAverageRating(0.0);
-            course.setReviewCount(0);
-        }
-    }
-
-    private void deleteCourseResources(UploadCourse course) {
-        for (Section section : course.getSections()) {
-            for (Lesson lesson : section.getLessons()) {
-                for (FileResource file : lesson.getFiles()) {
-                    azureBlobService.deleteBlob(file.getFileUrl());
-                }
-            }
-        }
-        if (course.getCoverImageUrl() != null) {
-            azureBlobService.deleteBlob(course.getCoverImageUrl());
-        }
-    }
-
-    private void initializeCourseFields(UploadCourse course) {
-        if (course.getSections() == null) {
-            course.setSections(new ArrayList<>());
-        }
-        if (course.getCourseCategories() == null) {
-            course.setCourseCategories(new ArrayList<>());
-        }
-    }
-
-    private void updateCourseFields(UploadCourse existingCourse, UploadCourse newCourseData) {
-        existingCourse.setTitle(newCourseData.getTitle());
-        existingCourse.setDescription(newCourseData.getDescription());
-        existingCourse.setLecturer(newCourseData.getLecturer());
-        existingCourse.setPrice(newCourseData.getPrice());
-    }
-
-    private Sort getSort(String sortBy) {
-        switch (sortBy) {
-            case "price-low-high":
-                return Sort.by(Sort.Direction.ASC, "price");
-            case "price-high-low":
-                return Sort.by(Sort.Direction.DESC, "price");
-            case "rating":
-                return Sort.by(Sort.Direction.DESC, "averageRating");
-            default:
-                return Sort.by(Sort.Direction.DESC, "price");
-        }
-    }
-
-    private void validateCoverImage(MultipartFile coverImage) {
-        String contentType = coverImage.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
-        }
-    }
+     // End of Partner Management Methods
+    // ====================================================================================================
 }
+
+
+
+  
+
+    
+
