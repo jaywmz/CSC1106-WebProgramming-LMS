@@ -124,12 +124,17 @@
 
       document.addEventListener('DOMContentLoaded', function() {
           const userIdString = getCookie('lrnznth_User_ID');
-  if (userIdString) {
-      const userId = parseInt(userIdString, 10); 
-      document.getElementById('userId').value = userId;
-  }
+          if (userIdString) {
+              const userId = parseInt(userIdString, 10); 
+              document.getElementById('userId').value = userId;
+          }
       });
-  </script>
+      
+ 
+
+
+
+    </script>
 </head>
 <body>
     <div class="container">
@@ -164,17 +169,18 @@
                         <td th:text="${course.price}"></td>
                         <td th:each="courseCategory : ${courseCategories}" th:if="${courseCategory.course.id == course.id}" th:text="${courseCategory.categoryGroup.name}"></td>
                         <td>
-                          <!-- Iterate through partnerPublishes to find corresponding course -->
                           <span th:each="partnerPublish : ${partnerPublishes}" th:if="${partnerPublish.course.id == course.id}">
-                              <!-- Display certificate image if available -->
-                              <img th:if="${partnerPublish != null and partnerPublish.certificate != null}" th:src="${partnerPublish.certificate.blobUrl}" alt="Certificate" style="max-width: 100px;height:auto;">
+                         
+    <a th:if="${partnerPublish != null and partnerPublish.certificate != null}" 
+    th:href="@{/partnership/serveCertificate(certificateId=${partnerPublish.certificate.certificateId})}" 
+    th:text="'View '" 
+
+    target="_blank"></a>
                           </span>
-                      </td>
-                          
+                        </td>
                         <td>
                             <a th:href="@{/partnership/partner/editCourse/{id}(id=${course.id})}" class="btn btn-primary btn-sm">Edit</a>
                             <a th:href="@{/partnership/partner/deleteCourse/{id}(id=${course.id})}" class="btn btn-danger btn-sm">Delete</a>
-              
                           </td>
                     </tr>
                     <tr th:if="${courses.isEmpty()}">
@@ -182,12 +188,11 @@
                     </tr>
                 </tbody>
                 <tr>
-                  <td colspan="8">
-                    <a href="/partner" class="btn btn-secondary">Go Back</a>
-                  </td>
                 </tr>
-
             </table>
+            <td colspan="8">
+              <a href="/partner" class="btn btn-secondary">Go Back</a>
+            </td>
         </div>
     </div>
 </body>
