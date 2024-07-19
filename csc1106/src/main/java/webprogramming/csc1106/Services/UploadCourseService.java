@@ -75,22 +75,14 @@ public class UploadCourseService {
     @Autowired
     private CourseSubscriptionService courseSubscriptionService;
 
-    @Autowired
-    private SectionService sectionService;
-
-    @Autowired
-    private LessonService lessonService;
+ 
 
     public List<UploadCourse> getAllCourses() {
-        List<UploadCourse> courses = courseRepository.findAll();
-        courses.forEach(this::calculateRating);
-        return courses;
+        return calculateRatings(courseRepository.findAll());
     }
 
     public List<UploadCourse> getAllApprovedCourses() {
-        List<UploadCourse> courses = courseRepository.findByIsApprovedTrue();
-        courses.forEach(this::calculateRating);
-        return courses;
+        return calculateRatings(courseRepository.findByIsApprovedTrue());
     }
 
     public Optional<UploadCourse> getCourseById(Long id) {
@@ -116,12 +108,7 @@ public class UploadCourseService {
     }
 
     public UploadCourse addCourse(UploadCourse course) {
-        if (course.getSections() == null) {
-            course.setSections(new ArrayList<>());
-        }
-        if (course.getCourseCategories() == null) {
-            course.setCourseCategories(new ArrayList<>());
-        }
+        initializeCourseFields(course);
         return courseRepository.save(course);
     }
 
@@ -159,17 +146,7 @@ public class UploadCourseService {
     public void deleteCourse(Long courseId) {
         UploadCourse course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
-        for (Section section : course.getSections()) {
-            for (Lesson lesson : section.getLessons()) {
-                for (FileResource file : lesson.getFiles()) {
-                    azureBlobService.deleteBlob(file.getFileUrl());
-                }
-            }
-        }
-        // Delete cover image blob
-        if (course.getCoverImageUrl() != null) {
-            azureBlobService.deleteBlob(course.getCoverImageUrl());
-        }
+        deleteCourseResources(course);
         courseRepository.deleteById(courseId);
     }
 
@@ -203,13 +180,7 @@ public class UploadCourseService {
     }
 
     public UploadCourse updateCourse(UploadCourse course) {
-        // Here we keep the sections check to avoid null pointer exceptions
-        if (course.getSections() == null) {
-            course.setSections(new ArrayList<>());
-        }
-        if (course.getCourseCategories() == null) {
-            course.setCourseCategories(new ArrayList<>());
-        }
+        initializeCourseFields(course);
         return courseRepository.save(course);
     }
 
@@ -219,10 +190,7 @@ public class UploadCourseService {
 
     public void processCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
-            String contentType = coverImage.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
-            }
+            validateCoverImage(coverImage);
             String coverImageUrl = uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
             coverImageUrl = generateSasUrl(coverImageUrl);
             course.setCoverImageUrl(coverImageUrl);
@@ -281,12 +249,8 @@ public class UploadCourseService {
 
         UploadCourse existingCourse = existingCourseOpt.get();
 
-        // Update cover image if a new one is provided
         if (coverImage != null && !coverImage.isEmpty()) {
-            String contentType = coverImage.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
-            }
+            validateCoverImage(coverImage);
             if (existingCourse.getCoverImageUrl() != null) {
                 deleteBlob(existingCourse.getCoverImageUrl());
             }
@@ -296,12 +260,8 @@ public class UploadCourseService {
         }
 
         // Update basic fields
-        existingCourse.setTitle(course.getTitle());
-        existingCourse.setDescription(course.getDescription());
-        existingCourse.setLecturer(course.getLecturer());
-        existingCourse.setPrice(course.getPrice());
+        updateCourseFields(existingCourse, course);
 
-        // Update the category
         clearCourseCategories(existingCourse);
         CategoryGroup categoryGroup = getCategoryById(selectedCategory)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -378,26 +338,14 @@ public class UploadCourseService {
 
     public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
         List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
-        List<UploadCourse> courses = new ArrayList<>();
-        for (CourseCategory courseCategory : courseCategories) {
-            UploadCourse course = courseCategory.getCourse();
-            calculateRating(course); // Calculate rating for each course
-            courses.add(course);
-        }
-        return courses;
+        List<UploadCourse> courses = courseCategories.stream()
+            .map(CourseCategory::getCourse)
+            .collect(Collectors.toList());
+        return calculateRatings(courses);
     }
 
     public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "price"); // Default sort by price descending
-
-        if ("price-low-high".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.ASC, "price");
-        } else if ("price-high-low".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.DESC, "price");
-        } else if ("rating".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.DESC, "averageRating");
-        }
-
+        Sort sort = getSort(sortBy);
         List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
         courses.forEach(course -> course.setUser(null)); // Ensure user is not serialized
         return courses;
@@ -405,10 +353,7 @@ public class UploadCourseService {
 
     public UploadCourse partnerprocessCourseUpload(UploadCourse course, MultipartFile coverImage, Long selectedCategory) throws IOException {
         if (coverImage != null && !coverImage.isEmpty()) {
-            String contentType = coverImage.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
-            }
+            validateCoverImage(coverImage);
             String coverImageUrl = uploadToAzureBlob(coverImage.getInputStream(), coverImage.getOriginalFilename());
             coverImageUrl = generateSasUrl(coverImageUrl);
             course.setCoverImageUrl(coverImageUrl);
@@ -454,10 +399,7 @@ public class UploadCourseService {
 
         // Update cover image if a new one is provided
         if (coverImage != null && !coverImage.isEmpty()) {
-            String contentType = coverImage.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
-            }
+            validateCoverImage(coverImage);
             if (existingCourse.getCoverImageUrl() != null) {
                 deleteBlob(existingCourse.getCoverImageUrl());
             }
@@ -467,12 +409,8 @@ public class UploadCourseService {
         }
 
         // Update basic fields
-        existingCourse.setTitle(course.getTitle());
-        existingCourse.setDescription(course.getDescription());
-        existingCourse.setLecturer(course.getLecturer());
-        existingCourse.setPrice(course.getPrice());
+        updateCourseFields(existingCourse, course);
 
-        // Update the category
         clearCourseCategories(existingCourse);
         CategoryGroup categoryGroup = getCategoryById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -535,15 +473,8 @@ public class UploadCourseService {
         Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
         if (courseOpt.isPresent()) {
             UploadCourse course = courseOpt.get();
-            Optional<Rating> existingReview = ratingRepository.findByCourseIdAndUserId(courseId, userId);
-            Rating review;
-            if (existingReview.isPresent()) {
-                review = existingReview.get();
-            } else {
-                review = new Rating();
-                review.setCourse(course);
-                review.setUserId(userId);
-            }
+            Rating review = ratingRepository.findByCourseIdAndUserId(courseId, userId)
+                .orElse(new Rating(course, userId, rating, comment, LocalDateTime.now()));
             review.setScore(rating);
             review.setComment(comment);
             review.setTimestamp(LocalDateTime.now());
@@ -553,6 +484,11 @@ public class UploadCourseService {
         } else {
             throw new RuntimeException("Course not found");
         }
+    }
+
+    private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {
+        courses.forEach(this::calculateRating);
+        return courses;
     }
 
     private void calculateRating(UploadCourse course) {
@@ -568,16 +504,52 @@ public class UploadCourseService {
         }
     }
 
-    public List<UploadCourse> getCoursesByCategoryIdAndSort(Long categoryId, String sortField) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortField);
-        return courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
+    private void deleteCourseResources(UploadCourse course) {
+        for (Section section : course.getSections()) {
+            for (Lesson lesson : section.getLessons()) {
+                for (FileResource file : lesson.getFiles()) {
+                    azureBlobService.deleteBlob(file.getFileUrl());
+                }
+            }
+        }
+        if (course.getCoverImageUrl() != null) {
+            azureBlobService.deleteBlob(course.getCoverImageUrl());
+        }
     }
 
-    public List<UploadCourse> getCoursesByCategoryIdAndSortWithFilter(Long categoryId, String sortField, String filter) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortField);
-        List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
-        return courses.stream()
-                .filter(course -> course.getTitle().contains(filter) || course.getDescription().contains(filter))
-                .collect(Collectors.toList());
+    private void initializeCourseFields(UploadCourse course) {
+        if (course.getSections() == null) {
+            course.setSections(new ArrayList<>());
+        }
+        if (course.getCourseCategories() == null) {
+            course.setCourseCategories(new ArrayList<>());
+        }
+    }
+
+    private void updateCourseFields(UploadCourse existingCourse, UploadCourse newCourseData) {
+        existingCourse.setTitle(newCourseData.getTitle());
+        existingCourse.setDescription(newCourseData.getDescription());
+        existingCourse.setLecturer(newCourseData.getLecturer());
+        existingCourse.setPrice(newCourseData.getPrice());
+    }
+
+    private Sort getSort(String sortBy) {
+        switch (sortBy) {
+            case "price-low-high":
+                return Sort.by(Sort.Direction.ASC, "price");
+            case "price-high-low":
+                return Sort.by(Sort.Direction.DESC, "price");
+            case "rating":
+                return Sort.by(Sort.Direction.DESC, "averageRating");
+            default:
+                return Sort.by(Sort.Direction.DESC, "price");
+        }
+    }
+
+    private void validateCoverImage(MultipartFile coverImage) {
+        String contentType = coverImage.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Invalid file type for cover image. Only images are allowed.");
+        }
     }
 }

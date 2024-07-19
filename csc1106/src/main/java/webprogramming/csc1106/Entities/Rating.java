@@ -32,12 +32,12 @@ public class Rating {
     // Constructors
     public Rating() {}
 
-    public Rating(Double score, String comment, UploadCourse course, Integer userId) {
-        this.score = score;
-        this.comment = comment;
+    public Rating(UploadCourse course, Integer userId, Double score, String comment, LocalDateTime timestamp) {
         this.course = course;
         this.userId = userId;
-        this.timestamp = LocalDateTime.now(); // Set the current timestamp
+        this.score = score;
+        this.comment = comment;
+        this.timestamp = timestamp;
     }
 
     // Getters and setters
