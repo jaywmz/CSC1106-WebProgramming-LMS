@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="card-text">${course.description}</p>
                             <div class="course-rating">
                                 <span class="star">&#9733;</span>
-                                <a href="#" class="reviews review-link" data-course-id="${course.id}">${course.averageRating} (${course.reviewCount} reviews)</a>
+                                <a href="#" class="reviews review-link" data-course-id="${course.id}">${course.averageRating.toFixed(1)} (${course.reviewCount} reviews)</a>
                             </div>
                             <p class="card-price"><strong>$${course.price}</strong></p>
                             <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
@@ -87,9 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
             addReviewEventListeners();
         } catch(e) {
             console.error('Error loading courses:', e);
+            if (spinner) {
+                spinner.style.display = 'none';
+            }
         }
     }
-    
 
     function addReviewEventListeners() {
         const reviewLinks = document.querySelectorAll('.review-link');
@@ -132,6 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const comment = document.getElementById('reviewComment').value;
         let userId = getCookie('lrnznth_User_ID');
     
+        const submitButton = document.getElementById('submitReviewButton');
+        submitButton.disabled = true;
+        submitButton.innerText = 'Submitting...';
+    
         fetch(`/courses/${courseId}/review`, {
             method: 'POST',
             headers: {
@@ -152,17 +158,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Clear form fields
                 document.getElementById('reviewRating').value = '';
                 document.getElementById('reviewComment').value = '';
-                loadCourses();  // Reload courses to update reviews
+                setTimeout(loadCourses, 2000); // Reload courses to update reviews
             } else {
                 alert('Failed to submit review');
             }
+            submitButton.disabled = false;
+            submitButton.innerText = 'Submit Review';
         })
         .catch(error => {
             console.error('Error submitting review:', error);
+            submitButton.disabled = false;
+            submitButton.innerText = 'Submit Review';
         });
     });
-    
-    
 
     function addCartEventListeners() {
         const addToCartButtons = document.querySelectorAll('.add-to-cart');

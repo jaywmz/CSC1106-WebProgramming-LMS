@@ -34,6 +34,9 @@ public class MarketplaceUploadController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private UploadCourseService uploadCourseService; // Ensure this line is added
 
     @GetMapping("/coursesupload")
     public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model, HttpSession session) {
@@ -253,16 +256,15 @@ public class MarketplaceUploadController {
     public ResponseEntity<List<UploadCourse>> getCoursesByCategory(
             @PathVariable("id") Long categoryId,
             @RequestParam(value = "sortBy", required = false) String sortBy) {
-        logger.info("Fetching courses with categoryId: " + categoryId + ", sortBy: " + sortBy);
         try {
-            List<UploadCourse> courses = courseService.getFilteredAndSortedCourses(categoryId, sortBy)
-                    .stream() // Convert the list to a stream
-                    .filter(UploadCourse::isApproved) // Filter out unapproved courses
-                    .collect(Collectors.toList()); // Collect the stream back to a list
+            List<UploadCourse> courses = uploadCourseService.getFilteredAndSortedCourses(categoryId, sortBy)
+                    .stream()
+                    .filter(UploadCourse::isApproved)
+                    .peek(uploadCourseService::calculateRating) // Calculate rating before returning
+                    .collect(Collectors.toList());
     
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
-            logger.severe("Error fetching courses: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CourseRestController {
@@ -26,6 +27,7 @@ public class CourseRestController {
     private final CartItemsRepo cartItemsRepo;
     private final UploadCourseRepository uploadCourseRepository;
     private final RatingRepository ratingRepository;
+    
 
     @Autowired
     public CourseRestController(UserRepository userRepository, CourseSubscriptionRepo courseSubscriptionRepo, 
@@ -57,16 +59,17 @@ public class CourseRestController {
 
     }
 
-    // Get the details of the course
+    // Get the details of the course with calculated ratings
     @GetMapping("/course/details/{id}")
     public ResponseEntity<UploadCourse> getCourseDetails(@PathVariable("id") int id) {
-        // Get the course details by course id
-        UploadCourse course = uploadCourseRepository.findById((long) id).orElse(null);
-
-        if (course == null) {
+        Optional<UploadCourse> courseOpt = uploadCourseService.getCourseById((long) id);
+        if (courseOpt.isPresent()) {
+            UploadCourse course = courseOpt.get();
+            uploadCourseService.calculateRating(course);
+            return new ResponseEntity<>(course, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
 
@@ -257,15 +260,7 @@ public class CourseRestController {
                                             @RequestParam Double rating,
                                             @RequestParam String comment) {
         try {
-            UploadCourse course = uploadCourseRepository.findById(courseId)
-                    .orElseThrow(() -> new RuntimeException("Course not found"));
-            Rating review = new Rating();
-            review.setCourse(course);
-            review.setUserId(userId);
-            review.setScore(rating);
-            review.setComment(comment);
-            review.setTimestamp(LocalDateTime.now());
-            ratingRepository.save(review);
+            uploadCourseService.addReview(courseId, userId, rating, comment);
             return ResponseEntity.ok("Review submitted successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");

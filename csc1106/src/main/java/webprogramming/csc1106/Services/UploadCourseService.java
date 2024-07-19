@@ -36,8 +36,12 @@ import webprogramming.csc1106.Repositories.PartnerPublishRepository;
 import webprogramming.csc1106.Repositories.RatingRepository;
 import webprogramming.csc1106.Repositories.SectionRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
+import org.springframework.scheduling.annotation.Async;
+
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @Service
+@EnableAsync
 public class UploadCourseService {
 
     private static final Logger logger = LoggerFactory.getLogger(UploadCourseService.class);
@@ -331,8 +335,9 @@ public class UploadCourseService {
 
      // Rating Management Methods
     // ===================================================================================================
-
+    
       // Add or update review for a course
+      @Async
       public void addReview(Long courseId, Integer userId, double rating, String comment) {
         Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
         if (courseOpt.isPresent()) {
@@ -350,12 +355,14 @@ public class UploadCourseService {
         }
     }
     // Calculate ratings for a list of courses
+    @Async
     private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {
         courses.forEach(this::calculateRating);
         return courses;
     }
     // Calculate rating for a course
-    private void calculateRating(UploadCourse course) {
+    @Async
+    public void calculateRating(UploadCourse course) {
         List<Rating> ratings = ratingRepository.findByCourse(course);
         if (ratings != null && !ratings.isEmpty()) {
             double averageRating = ratings.stream().mapToDouble(Rating::getScore).average().orElse(0.0);
@@ -374,6 +381,7 @@ public class UploadCourseService {
     // ====================================================================================================
 
      // Get courses by category ID with ratings calculated
+     
      public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
         List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
         List<UploadCourse> courses = courseCategories.stream()
@@ -383,6 +391,7 @@ public class UploadCourseService {
     }
 
     // Get filtered and sorted courses by category ID
+    
     public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
         Sort sort = getSort(sortBy);
         List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
