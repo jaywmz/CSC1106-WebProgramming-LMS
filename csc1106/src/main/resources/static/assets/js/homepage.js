@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     if (userCookie && userName){
         loginButton.innerHTML = "Dashboard";
-        loginButton.href = "/dashboard";
+        loginButton.href = "/mylearning";
     }else{
         loginButton.innerHTML = "Login";
         loginButton.href = "/login";

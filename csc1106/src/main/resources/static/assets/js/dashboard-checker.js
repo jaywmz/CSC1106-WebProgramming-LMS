@@ -2,10 +2,11 @@ let sidebarNav = document.getElementById('sidebar-nav');
 let currentUrl = window.location.href;
 
 let sideBarJSON = [
-    {"index": 0, "name": "Dashboard", "icon": "bi bi-grid", "urlRedirection": "/dashboard"},
+    // {"index": 0, "name": "Dashboard", "icon": "bi bi-grid", "urlRedirection": "/dashboard"},
+    {"index": 0, "name": "My Learning", "icon": "bi bi-vector-pen", "urlRedirection": "/mylearning"},
     {"index": 1, "name": "Marketplace", "icon": "bi bi-shop", "urlRedirection": "/market"},
     {"index": 2, "name": "Community", "icon": "bi bi-people-fill", "urlRedirection": "/community"},
-    {"index": 3, "name": "My Learning", "icon": "bi bi-vector-pen", "urlRedirection": "/mylearning"},
+    // {"index": 3, "name": "My Learning", "icon": "bi bi-vector-pen", "urlRedirection": "/mylearning"},
     {"index": 4, "name": "User", "icon": "nav-heading", "urlRedirection": null},
     {"index": 5, "name": "My Cart", "icon": "bi bi-cart-fill", "urlRedirection": "/cart"},
     {"index": 6, "name": "User", "icon": "bi bi-person-circle", "urlRedirection": "/userprofile"},
