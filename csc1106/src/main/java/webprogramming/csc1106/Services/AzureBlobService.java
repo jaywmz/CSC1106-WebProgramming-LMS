@@ -75,4 +75,13 @@ public class AzureBlobService {
 
         blobClient.delete();
     }
+
+    public InputStream downloadBlob(String blobUrl) {
+        BlobClient blobClient = new BlobClientBuilder()
+                .endpoint(blobUrl)
+                .credential(getStorageSharedKeyCredential())
+                .buildClient();
+
+        return blobClient.openInputStream();
+    }
 }
