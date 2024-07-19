@@ -93,10 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    
     function addReviewEventListeners() {
         const reviewLinks = document.querySelectorAll('.review-link');
         reviewLinks.forEach(link => {
-            link.addEventListener('click', function(event) {
+            link.addEventListener('click', async function(event) {
                 event.preventDefault();
                 const courseId = event.target.getAttribute('data-course-id');
                 let userId = getCookie('lrnznth_User_ID');
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 fetch(`/coursesubscriptions/check/${userId}/${courseId}`)
                     .then(response => response.text())
-                    .then(data => {
+                    .then(async data => {
                         document.getElementById('reviewCourseId').value = courseId;
                         const bootstrapModal = new bootstrap.Modal(document.getElementById('reviewModal'));
                         bootstrapModal.show();
@@ -119,11 +120,32 @@ document.addEventListener('DOMContentLoaded', function() {
                             document.getElementById('reviewFormMessage').textContent = '';
                             document.getElementById('submitReviewButton').disabled = false;
                         }
+
+                        // Fetch and display reviews
+                        const reviewsResponse = await fetch(`/courses/${courseId}/reviews`);
+                        const reviews = await reviewsResponse.json();
+                        displayReviews(reviews);
                     })
                     .catch(error => {
                         console.error('Error checking subscription:', error);
                     });
             });
+        });
+    }
+
+    function displayReviews(reviews) {
+        const reviewsContainer = document.getElementById('reviewsContainer');
+        reviewsContainer.innerHTML = ''; // Clear previous reviews
+        reviews.forEach(review => {
+            const reviewElement = document.createElement('div');
+            reviewElement.classList.add('review');
+            reviewElement.innerHTML = `
+                <p><strong>Username:</strong> ${review.userName}</p>
+                <p><strong>Rating:</strong> ${review.score}</p>
+                <p><strong>Comment:</strong> ${review.comment}</p>
+                <p><strong>Date:</strong> ${new Date(review.timestamp).toLocaleString('en-SG')}</p>
+            `;
+            reviewsContainer.appendChild(reviewElement);
         });
     }
 

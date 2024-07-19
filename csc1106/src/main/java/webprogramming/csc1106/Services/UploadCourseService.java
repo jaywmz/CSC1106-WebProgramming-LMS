@@ -27,6 +27,7 @@ import webprogramming.csc1106.Entities.PartnerPublish;
 import webprogramming.csc1106.Entities.Rating;
 import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.UploadCourse;
+import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.CategoryGroupRepository;
 import webprogramming.csc1106.Repositories.CourseCategoryRepository;
 import webprogramming.csc1106.Repositories.FileResourceRepository;
@@ -36,6 +37,8 @@ import webprogramming.csc1106.Repositories.PartnerPublishRepository;
 import webprogramming.csc1106.Repositories.RatingRepository;
 import webprogramming.csc1106.Repositories.SectionRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
+import webprogramming.csc1106.Repositories.UserRepository;
+
 import org.springframework.scheduling.annotation.Async;
 
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -78,6 +81,9 @@ public class UploadCourseService {
 
     @Autowired
     private CourseSubscriptionService courseSubscriptionService;
+
+   @Autowired
+    private UserRepository userRepository; 
 
     // Course Management Methods
     // ===================================================================================================
@@ -338,22 +344,24 @@ public class UploadCourseService {
     
       // Add or update review for a course
       @Async
-      public void addReview(Long courseId, Integer userId, double rating, String comment) {
-        Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
-        if (courseOpt.isPresent()) {
-            UploadCourse course = courseOpt.get();
-            Rating review = ratingRepository.findByCourseIdAndUserId(courseId, userId)
-                .orElse(new Rating(course, userId, rating, comment, LocalDateTime.now()));
-            review.setScore(rating);
-            review.setComment(comment);
-            review.setTimestamp(LocalDateTime.now());
-            ratingRepository.save(review);
-            calculateRating(course);
-            courseRepository.save(course);
-        } else {
-            throw new RuntimeException("Course not found");
-        }
+public void addReview(Long courseId, Integer userId, double rating, String comment) {
+    Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
+    Optional<User> userOpt = userRepository.findById(userId);
+    if (courseOpt.isPresent() && userOpt.isPresent()) {
+        UploadCourse course = courseOpt.get();
+        User user = userOpt.get();
+        Rating review = ratingRepository.findByCourseAndUser(course, user)
+            .orElse(new Rating(course, user, rating, comment, LocalDateTime.now()));
+        review.setScore(rating);
+        review.setComment(comment);
+        review.setTimestamp(LocalDateTime.now());
+        ratingRepository.save(review);
+        calculateRating(course);
+        courseRepository.save(course);
+    } else {
+        throw new RuntimeException("Course or User not found");
     }
+}
     // Calculate ratings for a list of courses
     @Async
     private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {

@@ -16,7 +16,10 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -252,6 +255,11 @@ public class CourseRestController {
         }
         return new ResponseEntity<>("Subscribed", HttpStatus.OK);
     }
+
+
+    // ===========================================================//
+    //                  Review REST API                           //
+    // ===========================================================//
   
     // Add review for a course
     @PostMapping("/courses/{courseId}/review")
@@ -266,6 +274,32 @@ public class CourseRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
         }
     }
+    // Add an endpoint to fetch reviews for a course
+    @GetMapping("/courses/{courseId}/reviews")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getReviews(@PathVariable Long courseId) {
+        List<Rating> reviews = ratingRepository.findByCourseId(courseId);
+        List<Map<String, Object>> reviewsWithUserNames = new ArrayList<>();
+
+        for (Rating review : reviews) {
+            Map<String, Object> reviewWithUserName = new HashMap<>();
+            reviewWithUserName.put("score", review.getScore());
+            reviewWithUserName.put("comment", review.getComment());
+            reviewWithUserName.put("timestamp", review.getTimestamp());
+
+            User user = review.getUser();
+            if (user != null) {
+                reviewWithUserName.put("userName", user.getUserName());
+            } else {
+                reviewWithUserName.put("userName", "Unknown");
+            }
+
+            reviewsWithUserNames.add(reviewWithUserName);
+        }
+
+        return ResponseEntity.ok(reviewsWithUserNames);
+    }
+ 
     
 
 }

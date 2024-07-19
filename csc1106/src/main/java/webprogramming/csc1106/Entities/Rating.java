@@ -23,8 +23,9 @@ public class Rating {
     @JsonBackReference
     private UploadCourse course;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
@@ -32,9 +33,9 @@ public class Rating {
     // Constructors
     public Rating() {}
 
-    public Rating(UploadCourse course, Integer userId, Double score, String comment, LocalDateTime timestamp) {
+    public Rating(UploadCourse course, User user, Double score, String comment, LocalDateTime timestamp) {
         this.course = course;
-        this.userId = userId;
+        this.user = user;
         this.score = score;
         this.comment = comment;
         this.timestamp = timestamp;
@@ -73,12 +74,12 @@ public class Rating {
         this.course = course;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getTimestamp() {
