@@ -158,20 +158,50 @@
                     <div class="col-lg-4 col-md-6" th:each="course : ${courses}"
                          th:data-price="${course.price}"
                          th:data-rating="${course.averageRating}">
-                        <div class="card mb-3">
-                            <div class="card card-custom">
-                                <img th:src="@{${course.coverImageUrl}}" class="card-img-top" alt="Course Image">
-                                <div class="card-body">
-                                    <h5 class="card-title" th:text="${course.title}"></h5>
-                                    <p class="card-text course-description" th:text="${course.description}"></p>
-                                    <div class="course-rating">
-                                        <span class="star">&#9733;</span>
-                                        <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'"></span>
+                        <div class="card mb-3 card-custom" data-bs-toggle="modal" th:data-bs-target="'#courseModal' + ${course.id}">
+                            <img th:src="@{${course.coverImageUrl}}" class="card-img-top" alt="Course Image">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${course.title}"></h5>
+                                <p class="card-text course-description" th:text="${course.description}"></p>
+                                <div class="course-rating">
+                                    <span class="star">&#9733;</span>
+                                    <span class="reviews" th:text="${course.averageRating} + ' (' + ${course.reviewCount} + ' reviews)'"></span>
+                                </div>
+                                <p class="card-price"><strong th:text="'$' + ${course.price}"></strong></p>
+                                <div class="btn-container">
+                                    <button class="btn btn-primary subscribe-btn" th:data-course-id="${course.id}">Subscribe</button>
+                                    <button class="btn btn-secondary unsubscribe-btn" th:data-course-id="${course.id}">Unsubscribe</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                        <div class="modal fade" th:id="'courseModal' + ${course.id}" tabindex="-1" aria-labelledby="courseModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" th:text="${course.title}" id="courseModalLabel"></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <p class="card-price"><strong th:text="'$' + ${course.price}"></strong></p>
-                                    <div class="btn-container">
-                                        <button class="btn btn-primary subscribe-btn" th:data-course-id="${course.id}">Subscribe</button>
-                                        <button class="btn btn-secondary unsubscribe-btn" th:data-course-id="${course.id}">Unsubscribe</button>
+                                    <div class="modal-body">
+                                        <h6 style="font-weight: bold;">Sections</h6>
+                                        <ul>
+                                            <li th:each="section : ${course.sections}">
+                                                <span th:text="${section?.title}">Section Title</span>
+                                                <br>
+                                                <span th:text="${section?.description}">Section Description</span>
+                                                <br>
+                                                <ul class="list-group" th:if="${section?.lessons?.size() > 0}">
+                                                    <li class="list-group-item" th:each="lesson : ${section.lessons}">
+                                                        <span th:text="${lesson?.title}">Lesson Title</span>
+                                                        <ul th:if="${lesson?.files?.size() > 0}">
+                                                            <li th:each="file : ${lesson.files}">
+                                                                <span th:text="${file?.fileName}">File name</span>    
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -179,11 +209,31 @@
                     </div>
                 </div>
             </div>
+            <button><a href="/partner" class="btn btn-secondary">Go Back</a></button>
         </section>
     </main>
 
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/apexcharts/apexcharts.min.js" th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script src="assets/vendor/chart.js/chart.umd.js" th:src="@{/assets/vendor/chart.js/chart.umd.js}"></script>
+    <script src="assets/vendor/echarts/echarts.min.js" th:src="@{/assets/vendor/echarts/echarts.min.js}"></script>
+    <script src="assets/vendor/quill/quill.min.js" th:src="@{/assets/vendor/quill/quill.min.js}"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
+    <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
+    <!-- Template Main JS File -->
+    <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
+    
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js" th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js" th:src="@{/assets/vendor/tinymce/tinymce.min.js}"></script>
+    <script src="assets/vendor/php-email-form/validate.js" th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
+    <script src="assets/js/dashboard-main.js" th:src="@{/assets/js/dashboard-main.js}"></script>
     <script>
-        function truncateText(selector, maxLength) {
+         function truncateText(selector, maxLength) {
             const elements = document.querySelectorAll(selector);
             elements.forEach(element => {
                 if (element.textContent.length > maxLength) {
@@ -196,115 +246,103 @@
             truncateText('.course-description', 60); // Adjust the character limit as needed
         });
 
-        $(document).ready(function() {
-            // Fetch user information using AJAX
-            $.ajax({
-                url: '/api/getLoggedInUser',
-                type: 'GET',
-                success: function(response) {
-                    // Display the logged-in user's username
-                    $('#loggedInUsername').text(response.username);
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = getCookie('lrnznth_User_ID');
+    if (userId) {
+        const userId = parseInt(userId, 10); 
+        document.getElementById('userId').value = userId;
+    }
+        });
 
-                    // Call the function to check subscriptions after the username is set
-                    checkSubscriptions();
-                },
-                error: function(error) {
-                    console.error('Error fetching logged-in user:', error);
+        $(document).ready(function () {
+
+            function getCookie(name) {
+                let nameEQ = name + "=";
+                let ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) {
+                        let cookieValue = c.substring(nameEQ.length, c.length);
+                        return decodeURIComponent(cookieValue);
+                    }
                 }
-            });
-
-            function checkSubscriptions() {
-                $('.subscribe-btn').each(function() {
-                    const courseId = $(this).data('course-id');
-                    const subscribeBtn = $(this);
-                    const unsubscribeBtn = subscribeBtn.siblings('.unsubscribe-btn');
-
-                    $.ajax({
-                        url: '/api/checkSubscription',
-                        type: 'GET',
-                        data: { courseId: courseId },
-                        success: function(response) {
-                            if (response.subscribed) {
-                                subscribeBtn.hide();
-                                unsubscribeBtn.show();
-                            } else {
-                                subscribeBtn.show();
-                                unsubscribeBtn.hide();
-                            }
-                        },
-                        error: function(error) {
-                            console.error('Error checking subscription status:', error);
-                        }
-                    });
-                });
+                return null;
             }
 
-            $('.subscribe-btn').click(function() {
-                const courseId = $(this).data('course-id');
-                const subscribeBtn = $(this);
-                const unsubscribeBtn = subscribeBtn.siblings('.unsubscribe-btn');
+            function filterAndSortCourses() {
+                let sortBy = $('#sort-by').val();
+                let courses = $('#courses-list .col-lg-4');
 
-                $.ajax({
-                    url: '/api/subscribeCourse',
-                    type: 'POST',
-                    data: { courseId: courseId },
-                    success: function(response) {
-                        if (response.success) {
-                            subscribeBtn.hide();
-                            unsubscribeBtn.show();
-                        } else {
-                            console.error('Error subscribing to course:', response.error);
+                if (sortBy) {
+                    courses.sort(function (a, b) {
+                        let aValue, bValue;
+
+                        if (sortBy === 'price-low-high') {
+                            aValue = parseFloat($(a).data('price'));
+                            bValue = parseFloat($(b).data('price'));
+                            return aValue - bValue;
+                        } else if (sortBy === 'price-high-low') {
+                            aValue = parseFloat($(a).data('price'));
+                            bValue = parseFloat($(b).data('price'));
+                            return bValue - aValue;
+                        } else if (sortBy === 'rating') {
+                            aValue = parseFloat($(a).data('rating'));
+                            bValue = parseFloat($(b).data('rating'));
+                            return bValue - aValue;
+                        } else if (sortBy === 'newest') {
+                            aValue = new Date($(a).data('newest'));
+                            bValue = new Date($(b).data('newest'));
+                            return bValue - aValue;
                         }
-                    },
-                    error: function(error) {
-                        console.error('Error subscribing to course:', error);
-                    }
-                });
+                        return 0;
+                    }).appendTo('#courses-list');
+                }
+            }
+
+            $('#sort-by').on('change', function () {
+                filterAndSortCourses();
             });
 
-            $('.unsubscribe-btn').click(function() {
-                const courseId = $(this).data('course-id');
-                const unsubscribeBtn = $(this);
-                const subscribeBtn = unsubscribeBtn.siblings('.subscribe-btn');
+            // Initially call the filter and sort function
+            filterAndSortCourses();
 
-                $.ajax({
-                    url: '/api/unsubscribeCourse',
-                    type: 'POST',
-                    data: { courseId: courseId },
-                    success: function(response) {
-                        if (response.success) {
-                            unsubscribeBtn.hide();
-                            subscribeBtn.show();
-                        } else {
-                            console.error('Error unsubscribing from course:', response.error);
-                        }
-                    },
-                    error: function(error) {
-                        console.error('Error unsubscribing from course:', error);
-                    }
-                });
-            });
+             // Subscribe button click handler
+        $('.subscribe-btn').on('click', function() {
+            let courseId = $(this).data('course-id');
+            let userId = getCookie('lrnznth_User_ID');
+            if (userId) {
+                $.post(`/partnership/partner/subscribe/${courseId}`, { userId: userId })
+                    .done(function(response) {
+                        alert(response.message || response);
+                        location.reload();
+                    })
+                    .fail(function(xhr) {
+                        alert(xhr.responseText);
+                    });
+            } else {
+                alert("User not logged in.");
+            }
+        });
 
-            // Sorting functionality
-            $('#sort-by').change(function() {
-                const sortBy = $(this).val();
-                const coursesList = $('#courses-list');
-                const courses = coursesList.children('div');
+        // Unsubscribe button click handler
+        $('.unsubscribe-btn').on('click', function() {
+            let courseId = $(this).data('course-id');
+            let userId = getCookie('lrnznth_User_ID');
+            if (userId) {
+                $.post(`/partnership/partner/unsubscribe/${courseId}`, { userId: userId })
+                    .done(function(response) {
+                        alert(response.message || response);
+                        location.reload();
+                    })
+                    .fail(function(xhr) {
+                        alert(xhr.responseText);
+                    });
+            } else {
+                alert("User not logged in.");
+            }
+        });
 
-                courses.sort(function(a, b) {
-                    if (sortBy === 'newest') {
-                        return $(b).data('timestamp') - $(a).data('timestamp');
-                    } else if (sortBy === 'price-low-high') {
-                        return $(a).data('price') - $(b).data('price');
-                    } else if (sortBy === 'price-high-low') {
-                        return $(b).data('price') - $(a).data('price');
-                    } else if (sortBy === 'rating') {
-                        return $(b).data('rating') - $(a).data('rating');
-                    }
-                });
-
-                coursesList.append(courses);
-            });
         });
     </script>
 </body>
