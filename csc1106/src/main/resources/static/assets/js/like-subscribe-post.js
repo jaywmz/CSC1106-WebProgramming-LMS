@@ -6,42 +6,39 @@ async function toggleLike(button, defaultText, activeText, defaultIcon, activeIc
     const postID = pathArray[3];
     const categoryID = pathArray[2];
     const userGroup = pathArray[1];
-    const UserName = getCookie('lrnznth_User_Name');
     
     button.classList.toggle('active');
     var buttonText = button.querySelector('span');
     var buttonIcon = button.querySelector('i');
 
     if (button.classList.contains('active')) {
+        buttonText.textContent = activeText;
+        buttonIcon.classList.remove(defaultIcon);
+        buttonIcon.classList.add(activeIcon);
+        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+        
         const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/like', {
             method: 'POST',
         });
 
-        const responseText = await response.text();
-
         if(response.status === 200) {
-            buttonText.textContent = activeText;
-            buttonIcon.classList.remove(defaultIcon);
-            buttonIcon.classList.add(activeIcon);
-            likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
-            return responseText;
+            console.log("Post liked")
         }
         else {
             console.log("Error liking post");
         }
     } else {
+        buttonText.textContent = defaultText;
+        buttonIcon.classList.remove(activeIcon);
+        buttonIcon.classList.add(defaultIcon);
+        likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+
         const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/unlike', {
             method: 'POST',
         });
 
-        const responseText = await response.text();
-
         if(response.status === 200) {
-            buttonText.textContent = defaultText;
-            buttonIcon.classList.remove(activeIcon);
-            buttonIcon.classList.add(defaultIcon);
-            likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
-            return responseText;
+            console.log("Post unliked")
         }
         else {
             console.log("Error unliking post");
@@ -55,45 +52,40 @@ async function toggleSubscribe(button, defaultText, activeText, defaultIcon, act
     const postID = pathArray[3];
     const categoryID = pathArray[2];
     const userGroup = pathArray[1];
-    const UserName = getCookie('lrnznth_User_Name');
     
     button.classList.toggle('active');
     var buttonText = button.querySelector('span');
     var buttonIcon = button.querySelector('i');
 
     if (button.classList.contains('active')) {
+        buttonText.textContent = activeText;
+        buttonIcon.classList.remove(defaultIcon);
+        buttonIcon.classList.add(activeIcon);
+        
         const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/subscribe', {
             method: 'POST',
         });
 
-        const responseText = await response.text();
-
         if(response.status === 200) {
-            buttonText.textContent = activeText;
-            buttonIcon.classList.remove(defaultIcon);
-            buttonIcon.classList.add(activeIcon);
-            // likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
-            return responseText;
+            console.log("Post subscribed")
         }
         else {
             console.log("Error subscribing to post");
         }
     } else {
+        buttonText.textContent = defaultText;
+        buttonIcon.classList.remove(activeIcon);
+        buttonIcon.classList.add(defaultIcon);
+        
         const response = await fetch('/community/' + userGroup + '/' + categoryID + '/' + postID + '/unsubscribe', {
             method: 'POST',
         });
 
-        const responseText = await response.text();
-
         if(response.status === 200) {
-            buttonText.textContent = defaultText;
-            buttonIcon.classList.remove(activeIcon);
-            buttonIcon.classList.add(defaultIcon);
-            // likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
-            return responseText;
+            console.log("Post unsubscribed")
         }
         else {
-            console.log("Error unliking post");
+            console.log("Error unsubscribing post");
         }
     }
 }

@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -34,6 +35,9 @@ public class MarketplaceUploadController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private UploadCourseService uploadCourseService; // Ensure this line is added
 
     @GetMapping("/coursesupload")
     public String showCoursesPage(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model, HttpSession session) {
@@ -247,30 +251,23 @@ public class MarketplaceUploadController {
         }
     }
 
+
     // API endpoint to get courses by category ID with optional sorting
     @GetMapping("/category/{id}/courses")
     @ResponseBody
     public ResponseEntity<List<UploadCourse>> getCoursesByCategory(
             @PathVariable("id") Long categoryId,
             @RequestParam(value = "sortBy", required = false) String sortBy) {
-        logger.info("Fetching courses with categoryId: " + categoryId + ", sortBy: " + sortBy);
         try {
-            List<UploadCourse> courses = courseService.getFilteredAndSortedCourses(categoryId, sortBy)
-                    .stream() // Convert the list to a stream
-                    .filter(UploadCourse::isApproved) // Filter out unapproved courses
-                    .collect(Collectors.toList()); // Collect the stream back to a list
-    
+            List<UploadCourse> courses = uploadCourseService.getFilteredAndSortedCourses(categoryId, sortBy)
+                    .stream()
+                    .filter(UploadCourse::isApproved)
+                    .peek(uploadCourseService::calculateRating) // Calculate rating before returning
+                    .collect(Collectors.toList());
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
-            logger.severe("Error fetching courses: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace(); // Log the error for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
         }
-    }
-    
-    @PostMapping("/cart/add")
-    @ResponseBody
-    public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
-        // Add your logic to add the course to the cart
-        return ResponseEntity.ok("Course added to cart successfully.");
     }
 }

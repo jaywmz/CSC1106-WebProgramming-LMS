@@ -1,6 +1,8 @@
 package webprogramming.csc1106.Controllers;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +13,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -514,21 +519,19 @@ public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model 
     @PostMapping("/partner/uploadCourse")
 public String uploadCourse(@ModelAttribute UploadCourse course,
                            @RequestParam("coverImage1") MultipartFile coverImage1,
-                           @RequestParam("coverImage2") MultipartFile coverImage2,
                            @RequestParam("category") Long categoryId,
-                           @RequestParam("certificateTitle") String certificateTitle,@RequestParam("userId") int userId) {
+                           @RequestParam("certificate") MultipartFile certFile ,@RequestParam("userId") int userId) {
     try {
         logger.info("Attempting to upload course for user ID: " + userId);
-        // Upload file to Azure Blob Storage and get Blob URL
-        String blobUrl1 = azureBlobService.uploadToAzureBlob(coverImage1.getInputStream(), coverImage1.getOriginalFilename());
-        String blobUrl2 = azureBlobService.uploadToAzureBlob(coverImage2.getInputStream(), coverImage2.getOriginalFilename());
 
-        blobUrl2 = azureBlobService.generateSasUrl(blobUrl2);
+        String fileName = certFile.getOriginalFilename();
+        String blobUrl = azureBlobService.uploadToAzureBlob(certFile.getInputStream(), fileName);
+        blobUrl = azureBlobService.generateSasUrl(blobUrl);
 
         // Create a new PartnerCertificate entity
         PartnerCertificate certificate = new PartnerCertificate();
-        certificate.setCertificateName(certificateTitle);
-        certificate.setBlobUrl(blobUrl2); // Set Blob URL
+        certificate.setCertificateName(fileName);
+        certificate.setBlobUrl(blobUrl); // Set Blob URL
         certificate.setIssueDate(LocalDateTime.now());
 
         // Save the PartnerCertificate entity
@@ -575,6 +578,24 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
         return "error-page"; // Redirect to an error page or handle differently
     }
 }
+
+@GetMapping("/serveCertificate")
+public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certificateId") Integer certificateId) throws IOException {
+    PartnerCertificate certificate = partnerCertificateRepository.findById(certificateId)
+            .orElseThrow(() -> new RuntimeException("Certificate not found"));
+
+    InputStream fileInputStream = azureBlobService.downloadBlob(certificate.getBlobUrl());
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + certificate.getCertificateName() + "\"");
+    headers.setContentType(MediaType.APPLICATION_PDF); // Assuming PDF, adjust if different type
+
+    return ResponseEntity.ok()
+            .headers(headers)
+            .body(new InputStreamResource(fileInputStream));
+}
+
+
 
 @GetMapping("/partner/editCourse/{id}")
     public String editCourse(@PathVariable("id") Long id, Model model) {
@@ -649,6 +670,16 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
             return "Partnership/category-page";
         }
 
+        @GetMapping("/course/{courseId}/details")
+        @ResponseBody
+        public UploadCourse getCourseDetails(@PathVariable Long courseId,Model model) {
+            
+            Optional<UploadCourse> courses = courseService.getCourseById(courseId);
+            model.addAttribute("courses", courses);
+            return courses.get();
+        }
+
+
          // Subscribe to a course
     @PostMapping("/partner/subscribe/{courseId}")
     @ResponseBody
@@ -662,7 +693,7 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-
+//
     // Unsubscribe from a course
     @PostMapping("/partner/unsubscribe/{courseId}")
     @ResponseBody
@@ -681,18 +712,8 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
     
     @GetMapping("/partner/partnerSubscriptions")
 public String partnerSubscriptions(@RequestParam("userId") int userId, Model model) {
-    User user = userRepository.findById(userId).get();
-    
-    // get all courses
-    List<UploadCourse> courses = uploadCourseService.getAllCourses();
-    // Pass courses and course subscriptions to the view
+    List<UploadCourse> courses = courseSubscriptionService.getCoursesByUserId(userId);
     model.addAttribute("courses", courses);
-
-    //fetch courseSubscription by user id
-    List<CourseSubscriptionEntity> courseSubscriptions = courseSubscriptionService.getSubscriptionsByUserId(user.getUserID());
-
-    // Pass course subscriptions to the view
-    model.addAttribute("subscriptions", courseSubscriptions);
     
     return "Partnership/partnerSubscriptions";
 }
@@ -701,11 +722,3 @@ public String partnerSubscriptions(@RequestParam("userId") int userId, Model mod
 
 
 }
-
-
-
-
-
-
-
-

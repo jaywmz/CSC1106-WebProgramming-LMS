@@ -1,11 +1,14 @@
 package webprogramming.csc1106.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rating")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +26,9 @@ public class Rating {
     @JsonBackReference
     private UploadCourse course;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
@@ -32,12 +36,12 @@ public class Rating {
     // Constructors
     public Rating() {}
 
-    public Rating(Double score, String comment, UploadCourse course, Integer userId) {
+    public Rating(UploadCourse course, User user, Double score, String comment, LocalDateTime timestamp) {
+        this.course = course;
+        this.user = user;
         this.score = score;
         this.comment = comment;
-        this.course = course;
-        this.userId = userId;
-        this.timestamp = LocalDateTime.now(); // Set the current timestamp
+        this.timestamp = timestamp;
     }
 
     // Getters and setters
@@ -73,12 +77,12 @@ public class Rating {
         this.course = course;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getTimestamp() {

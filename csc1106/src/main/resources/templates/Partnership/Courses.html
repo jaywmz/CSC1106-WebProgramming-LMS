@@ -28,7 +28,6 @@
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
-            border: 1px solid #ccc;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             background-color: #fff;
@@ -47,7 +46,6 @@
             padding: 8px;
             margin: 8px 0;
             background-color: #f9f9f9;
-            border: 1px solid #ddd;
             border-radius: 4px;
         }
         
@@ -57,16 +55,14 @@
             align-items: center;
             height: auto;
             padding: 10px;
-            background-color: #e0f7fa;
+            background-color: white;
         }
 
         .section-details, .lesson-details {
             padding: 8px;
             background-color: #f1f1f1;
-            border: 1px solid #ccc;
             border-radius: 4px;
             margin-top: 10px;
-            border-color: #00796b;
         }
 
         form {
@@ -82,7 +78,6 @@
         
         input[type="text"], input[type="file"] {
             padding: 8px;
-            border: 1px solid #ccc;
             border-radius: 4px;
         }
         
@@ -90,7 +85,7 @@
             padding: 10px;
             border: none;
             border-radius: 4px;
-            background-color: #28a745;
+            background-color: rgb(0, 140, 248);
             color: white;
             cursor: pointer;
             font-size: 16px;
@@ -98,7 +93,7 @@
         }
         
         button:hover {
-            background-color: #218838;
+            background-color: #888;
         }
 
         .modal {
@@ -117,7 +112,6 @@
             background-color: #fff;
             margin: 15% auto;
             padding: 20px;
-            border: 1px solid #888;
             width: 80%;
             max-width: 400px;
             border-radius: 8px;
@@ -174,16 +168,19 @@
     </header>
 
     <div class="container">
-        <h1>Courses</h1>
+        <br>
+        
         <ul>
             <li th:each="course : ${courses}">
                 
-                <h2>Course Title:</h2>
-                <h2 th:text="${course.title}">Course Title</h2>
+                <div class="pagetitle">
+                    <h1>Courses</h1>
+                </div>
+                    <h2 th:text="${course.title}">Course Title</h2>
                 <ul th:if="${course.sections.size() > 0}">
                     <li th:each="section : ${course.sections}">
                         <div class="section-title">
-                            <h3>Section:</h3>
+                            <h4 style="font-weight: bold">Section:</h4>
                             <div class="btn-container">
                                 <button type="button" th:attr="onclick='showEditSectionModal(' + ${section.id} + ', ' + ${course.id} + ')'">Edit Section</button>
                                 <button type="button" th:attr="onclick='showDeleteSectionModal(' + ${section.id} + ', ' + ${course.id} + ')'">Delete Section</button>
@@ -191,14 +188,14 @@
                             </div>
                         </div>
                         <div class="section-details">
-                            <h4>Section - Title and Description:</h4>
+                            <h5>Section - Title and Description:</h5>
                             <p th:text="${section.title}">Section Title</p>
                             <p th:text="${section.description}">Section Description</p>
                         </div>
                         <ul>
                             <li th:each="lesson : ${section.lessons}">
                                 <div class="lesson-title">
-                                    <h4>Lesson Title:</h4>
+                                    <h5 style="font-weight: bold">Lesson Title:</h5>
                                     <span th:text="${lesson.title}">Lesson Title</span>
                                     <div class="btn-container">
                                         <button type="button" th:attr="onclick='showDeleteLessonModal(' + ${lesson.id} + ', ' + ${course.id} + ')'">Delete Lesson</button>
@@ -209,8 +206,10 @@
                                 <ul class="lesson-details">
                                     <li th:each="file : ${lesson.files}">
                                         <div> 
-                                            <h4>File Name:</h4>
-                                            <span th:text="${file.fileName}">File Name</span>
+                                            <h5>File:</h5>
+                                            <ul class="list-group" th:if="${!section.lessons.empty}">
+                                                <a th:href="@{/serveFile(fileId=${file.id}, disposition='attachment')}" th:text="${file.fileName}">File Name</a>
+                                            </ul>
                                             <div class="btn-container">
                                                 <button type="button" th:attr="onclick='showDeleteFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ', ' + ${file.id} + ')'">Delete</button>
                                                 <button type="button" th:attr="onclick='showEditFilesModal(' + ${lesson.id} + ', ' + ${course.id} + ', ' + ${file.id} + ')'">Edit</button>
@@ -222,9 +221,24 @@
                         </ul>
                     </li>
                 </ul>
-                <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'" th:if="${course.sections.size() == 0}">Add Section</button>
+                
+                <ul th:if="${course.sections.size() <= 0}">
+                    <li>
+                        <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'">Add Section</button>
+                    </li>
+                </ul>
+                <ul th:if="${course.sections.size() > 0}">
+                    <li>
+                        <button type="button" th:attr="onclick='showAddSectionModal(' + ${course.id} + ')'">Add More Section</button>
+                    </li>
+                </ul>
+                
+                
             </li>
         </ul>
+        <div>
+            <a href="/partner" class="btn btn-secondary">Go Back</a>
+        </div>
     </div>
 
 
@@ -368,6 +382,7 @@
             </form>
         </div>
     </div>
+    
 
     <script>
         function showAddSectionModal(courseId) {
@@ -445,7 +460,6 @@
 
         const userId = getCookie('lrnznth_User_ID');
     </script>
-    <button><a href="/partner" class="btn btn-secondary">Go Back</a></button>
     <footer id="footer" class="footer">
         <div class="copyright">
             &copy; 2024 Copyright <strong><span>LearnZenith</span></strong>. All Rights Reserved

@@ -16,7 +16,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class CourseRestController {
@@ -26,6 +30,7 @@ public class CourseRestController {
     private final CartItemsRepo cartItemsRepo;
     private final UploadCourseRepository uploadCourseRepository;
     private final RatingRepository ratingRepository;
+    
 
     @Autowired
     public CourseRestController(UserRepository userRepository, CourseSubscriptionRepo courseSubscriptionRepo, 
@@ -57,16 +62,17 @@ public class CourseRestController {
 
     }
 
-    // Get the details of the course
+    // Get the details of the course with calculated ratings
     @GetMapping("/course/details/{id}")
     public ResponseEntity<UploadCourse> getCourseDetails(@PathVariable("id") int id) {
-        // Get the course details by course id
-        UploadCourse course = uploadCourseRepository.findById((long) id).orElse(null);
-
-        if (course == null) {
+        Optional<UploadCourse> courseOpt = uploadCourseService.getCourseById((long) id);
+        if (courseOpt.isPresent()) {
+            UploadCourse course = courseOpt.get();
+            uploadCourseService.calculateRating(course);
+            return new ResponseEntity<>(course, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
 
@@ -249,27 +255,52 @@ public class CourseRestController {
         }
         return new ResponseEntity<>("Subscribed", HttpStatus.OK);
     }
+
+
+    // ===========================================================//
+    //                  Review REST API                           //
+    // ===========================================================//
   
     // Add review for a course
     @PostMapping("/courses/{courseId}/review")
-public ResponseEntity<String> addReview(@PathVariable Long courseId,
-                                        @RequestParam Integer userId,
-                                        @RequestParam Double rating,
-                                        @RequestParam String comment) {
-    try {
-        UploadCourse course = uploadCourseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        Rating review = new Rating();
-        review.setCourse(course);
-        review.setUserId(userId);
-        review.setScore(rating);
-        review.setComment(comment);
-        review.setTimestamp(LocalDateTime.now());
-        ratingRepository.save(review);
-        return ResponseEntity.ok("Review submitted successfully.");
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
+    public ResponseEntity<String> addReview(@PathVariable Long courseId,
+                                            @RequestParam Integer userId,
+                                            @RequestParam Double rating,
+                                            @RequestParam String comment) {
+        try {
+            uploadCourseService.addReview(courseId, userId, rating, comment);
+            return ResponseEntity.ok("Review submitted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
+        }
     }
+    // Add an endpoint to fetch reviews for a course
+    @GetMapping("/courses/{courseId}/reviews")
+@ResponseBody
+public ResponseEntity<List<Map<String, Object>>> getReviews(@PathVariable Long courseId) {
+    List<Rating> reviews = ratingRepository.findByCourseId(courseId);
+    List<Map<String, Object>> reviewsWithUserNames = new ArrayList<>();
+
+    for (Rating review : reviews) {
+        Map<String, Object> reviewWithUserName = new HashMap<>();
+        reviewWithUserName.put("score", review.getScore());
+        reviewWithUserName.put("comment", review.getComment());
+        reviewWithUserName.put("timestamp", review.getTimestamp());
+
+        User user = review.getUser();
+        if (user != null) {
+            reviewWithUserName.put("userName", user.getUserName());
+        } else {
+            reviewWithUserName.put("userName", "Unknown");
+        }
+
+        reviewsWithUserNames.add(reviewWithUserName);
+    }
+
+    return ResponseEntity.ok(reviewsWithUserNames);
 }
+
+ 
+    
 
 }

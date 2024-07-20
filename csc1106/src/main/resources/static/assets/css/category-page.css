@@ -256,3 +256,12 @@ h2 {
 .sidebar-nav .nav-link i.bi-cart {
     color: #6c757d !important; /* Grey color for Community and Cart icons */
 }
+.reviews-container {
+    max-height: 200px; /* Set this value to the desired height */
+    overflow-y: auto;
+}
+.reviews-scroll {
+    max-height: 300px; /* Adjust this height as needed */
+    overflow-y: auto;
+    padding-right: 10px; /* To avoid content getting hidden behind the scrollbar */
+}

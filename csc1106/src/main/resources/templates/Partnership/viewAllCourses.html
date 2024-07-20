@@ -4,28 +4,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View All Uploaded Courses</title>
-    <meta name="description" content="View all courses uploaded by partners">
-    <meta name="keywords" content="courses, partners, uploaded courses">
-  
-    <!-- Favicon and Apple Touch Icon -->
-    <link rel="icon" href="assets/img/favicon.png">
-    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Nunito:300,400,600|Poppins:300,400,500,600&display=swap" rel="stylesheet">
-  
-    <!-- Vendor CSS -->
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
-    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-  
-    <!-- Custom Styles -->
-    <link href="assets/css/dashboard-style.css" rel="stylesheet">
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" th:href="@{/assets/img/favicon.png}">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}">
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.snow.css}">
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
+    <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
       /* Custom Styles for View All Uploaded Courses */
       body {
@@ -124,20 +121,52 @@
 
       document.addEventListener('DOMContentLoaded', function() {
           const userIdString = getCookie('lrnznth_User_ID');
-  if (userIdString) {
-      const userId = parseInt(userIdString, 10); 
-      document.getElementById('userId').value = userId;
-  }
+          if (userIdString) {
+              const userId = parseInt(userIdString, 10); 
+              document.getElementById('userId').value = userId;
+          }
       });
-  </script>
+      
+ 
+
+
+
+    </script>
 </head>
+<header id="header" class="header fixed-top d-flex align-items-center">
+  <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center" th:href="@{/index.html}">
+          <img src="assets/img/logo.png" alt="" th:src="@{/assets/img/logo.png}">
+          <span class="d-none d-lg-block">LearnZenith</span>
+      </a>
+  </div>
+  <nav class="header-nav ms-auto" aria-label="Navigation">
+      <ul class="d-flex align-items-center">
+          <li class="nav-item dropdown pe-3 nav-profile">
+              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                  <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" th:src="@{/assets/img/profile-img.jpg}">
+                  <span class="d-none d-md-block dropdown-toggle ps-2" id="loggedInUsername">|</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                  <li><a class="dropdown-item d-flex align-items-center" href="/userprofile" th:href="@{/userprofile}"><i class="bi bi-person"></i><span>My Profile</span></a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item d-flex align-items-center" href="/faq" th:href="@{/faq}"><i class="bi bi-question-circle"></i><span>Need Help?</span></a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item d-flex align-items-center" href="/logout" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
+              </ul>
+          </li>
+      </ul>
+  </nav>
+</header>
 <body>
     <div class="container">
-        <div class="pagetitle">
-            <h1>All Courses Uploaded by Partner</h1>
-        </div>
+        
         
         <div class="card">
+          <br>
+          <div class="pagetitle">
+            <h1>All Courses Uploaded by Partner</h1>
+          </div>
             <table class="table">
                 <thead>
                     <tr>
@@ -164,17 +193,18 @@
                         <td th:text="${course.price}"></td>
                         <td th:each="courseCategory : ${courseCategories}" th:if="${courseCategory.course.id == course.id}" th:text="${courseCategory.categoryGroup.name}"></td>
                         <td>
-                          <!-- Iterate through partnerPublishes to find corresponding course -->
                           <span th:each="partnerPublish : ${partnerPublishes}" th:if="${partnerPublish.course.id == course.id}">
-                              <!-- Display certificate image if available -->
-                              <img th:if="${partnerPublish != null and partnerPublish.certificate != null}" th:src="${partnerPublish.certificate.blobUrl}" alt="Certificate" style="max-width: 100px;height:auto;">
+                         
+    <a th:if="${partnerPublish != null and partnerPublish.certificate != null}" 
+    th:href="@{/partnership/serveCertificate(certificateId=${partnerPublish.certificate.certificateId})}" 
+    th:text="'View '" 
+
+    target="_blank"></a>
                           </span>
-                      </td>
-                          
+                        </td>
                         <td>
                             <a th:href="@{/partnership/partner/editCourse/{id}(id=${course.id})}" class="btn btn-primary btn-sm">Edit</a>
                             <a th:href="@{/partnership/partner/deleteCourse/{id}(id=${course.id})}" class="btn btn-danger btn-sm">Delete</a>
-              
                           </td>
                     </tr>
                     <tr th:if="${courses.isEmpty()}">
@@ -182,11 +212,10 @@
                     </tr>
                 </tbody>
                 <tr>
-                  <td colspan="8">
-                    <a href="/partner" class="btn btn-secondary">Go Back</a>
-                  </td>
                 </tr>
-
+                <td colspan="8">
+                  <a href="/partner" class="btn btn-secondary">Go Back</a>
+                </td>
             </table>
         </div>
     </div>

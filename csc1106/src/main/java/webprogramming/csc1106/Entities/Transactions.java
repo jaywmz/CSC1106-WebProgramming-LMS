@@ -2,7 +2,6 @@ package webprogramming.csc1106.Entities;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
