@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,11 +39,7 @@ import webprogramming.csc1106.Repositories.SectionRepository;
 import webprogramming.csc1106.Repositories.UploadCourseRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
 
-
-import org.springframework.scheduling.annotation.EnableAsync;
-
 @Service
-@EnableAsync
 public class UploadCourseService {
 
     private static final Logger logger = LoggerFactory.getLogger(UploadCourseService.class);
@@ -81,7 +77,7 @@ public class UploadCourseService {
     @Autowired
     private CourseSubscriptionService courseSubscriptionService;
 
-   @Autowired
+    @Autowired
     private UserRepository userRepository; 
 
     // Course Management Methods
@@ -342,7 +338,6 @@ public class UploadCourseService {
     // ===================================================================================================
     
       // Add or update review for a course
-      
       public void addReview(Long courseId, Integer userId, double rating, String comment) {
           Optional<UploadCourse> courseOpt = courseRepository.findById(courseId);
           Optional<User> userOpt = userRepository.findById(userId);
@@ -363,13 +358,11 @@ public class UploadCourseService {
       }
       
     // Calculate ratings for a list of courses
-    
     private List<UploadCourse> calculateRatings(List<UploadCourse> courses) {
         courses.forEach(this::calculateRating);
         return courses;
     }
     // Calculate rating for a course
-    
     public void calculateRating(UploadCourse course) {
         List<Rating> ratings = ratingRepository.findByCourse(course);
         if (ratings != null && !ratings.isEmpty()) {
@@ -389,7 +382,6 @@ public class UploadCourseService {
     // ====================================================================================================
 
      // Get courses by category ID with ratings calculated
-     
      public List<UploadCourse> getCoursesByCategoryId(Long categoryId) {
         List<CourseCategory> courseCategories = courseCategoryRepository.findByCategoryGroupId(categoryId);
         List<UploadCourse> courses = courseCategories.stream()
@@ -397,13 +389,40 @@ public class UploadCourseService {
             .collect(Collectors.toList());
         return calculateRatings(courses);
     }
-
     // Get filtered and sorted courses by category ID
-    
     public List<UploadCourse> getFilteredAndSortedCourses(Long categoryId, String sortBy) {
-        Sort sort = getSort(sortBy);
-        List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId, sort);
-        courses.forEach(course -> course.setUser(null)); // Ensure user is not serialized
+        List<UploadCourse> courses = courseRepository.findByCourseCategories_CategoryGroup_Id(categoryId);
+        calculateRatings(courses);
+
+        if (sortBy != null) {
+            switch (sortBy) {
+                case "price-low-high":
+                    courses.sort(Comparator.comparingDouble(UploadCourse::getPrice));
+                    break;
+                case "price-high-low":
+                    courses.sort(Comparator.comparingDouble(UploadCourse::getPrice).reversed());
+                    break;
+                case "rating-low-high":
+                    courses.sort(Comparator.comparingDouble(UploadCourse::getAverageRating));
+                    break;
+                case "rating-high-low":
+                    courses.sort(Comparator.comparingDouble(UploadCourse::getAverageRating).reversed());
+                    break;
+                case "reviews-low-high":
+                    courses.sort(Comparator.comparingInt(UploadCourse::getReviewCount));
+                    break;
+                case "reviews-high-low":
+                    courses.sort(Comparator.comparingInt(UploadCourse::getReviewCount).reversed());
+                    break;
+                case "newest":
+                    courses.sort(Comparator.comparing(UploadCourse::getCreatedDate).reversed());
+                    break;
+                default:
+                    courses.sort(Comparator.comparing(UploadCourse::getCreatedDate).reversed());
+                    break;
+            }
+        }
+        
         return courses;
     }
     // End of Course Filtering and Sorting Methods
@@ -434,6 +453,7 @@ public class UploadCourseService {
         if (course.getCourseCategories() == null) {
             course.setCourseCategories(new ArrayList<>());
         }
+        course.setCreatedDate(LocalDateTime.now());
     }
     // Update basic fields of a course
     private void updateCourseFields(UploadCourse existingCourse, UploadCourse newCourseData) {
@@ -442,19 +462,7 @@ public class UploadCourseService {
         existingCourse.setLecturer(newCourseData.getLecturer());
         existingCourse.setPrice(newCourseData.getPrice());
     }
-    // Get sorting criteria based on sortBy parameter
-    private Sort getSort(String sortBy) {
-        switch (sortBy) {
-            case "price-low-high":
-                return Sort.by(Sort.Direction.ASC, "price");
-            case "price-high-low":
-                return Sort.by(Sort.Direction.DESC, "price");
-            case "rating":
-                return Sort.by(Sort.Direction.DESC, "averageRating");
-            default:
-                return Sort.by(Sort.Direction.DESC, "price");
-        }
-    }
+
     // Validate cover image file type
     private void validateCoverImage(MultipartFile coverImage) {
         String contentType = coverImage.getContentType();
@@ -617,10 +625,3 @@ public class UploadCourseService {
      // End of Partner Management Methods
     // ====================================================================================================
 }
-
-
-
-  
-
-    
-

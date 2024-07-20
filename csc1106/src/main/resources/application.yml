@@ -2,7 +2,7 @@ spring:
   application:
     name: csc1106
   datasource:
-    url: jdbc:mysql://learnzenith.mysql.database.azure.com:3306/WebDB?ssl-mode=REQUIRED
+    url: jdbc:mysql://learnzenith.mysql.database.azure.com:3306/WebDB?ssl-mode=REQUIRED&serverTimezone=Asia/Singapore
     username: grp7
     password: Naim6oo3!!!!!
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,4 +28,3 @@ braintree:
   merchant-id: 9t9qws2ps7bqd9nk
   public-key: kk8n84r6hf7jzpc5
   private-key: 5076e5310b1c5f98cd0396db30375de8
-

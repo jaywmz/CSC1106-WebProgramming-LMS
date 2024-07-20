@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import java.util.List;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "upload_course")
@@ -57,6 +59,14 @@ public class UploadCourse {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+
+    @Column(name = "created_date", nullable = false)
+    private LocalDateTime createdDate;
+
+    @PrePersist
+    protected void onCreate() {
+        createdDate = LocalDateTime.now();
+    }
 
     public UploadCourse() {}
 
@@ -171,5 +181,13 @@ public class UploadCourse {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 }

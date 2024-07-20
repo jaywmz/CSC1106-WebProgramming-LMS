@@ -270,12 +270,4 @@ public class MarketplaceUploadController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
         }
     }
-    
-    
-    @PostMapping("/cart/add")
-    @ResponseBody
-    public ResponseEntity<String> addToCart(@RequestParam Long courseId) {
-        // Add your logic to add the course to the cart
-        return ResponseEntity.ok("Course added to cart successfully.");
-    }
 }
