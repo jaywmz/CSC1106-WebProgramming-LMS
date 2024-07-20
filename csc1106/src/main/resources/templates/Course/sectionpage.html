@@ -27,6 +27,29 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/dashboard-style.css" rel="stylesheet">
+  <style>
+    .pdf-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+    }
+    .pdf-viewer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .text-preview {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 1rem;
+    }
+</style>
 </head>
 <body class="toggle-sidebar">
     <!-- ======= Header ======= -->
@@ -45,8 +68,11 @@
             <h1 th:text="${section.title}">Section Title</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/coursepage(id=${course.id})}">Course</a></li>
+                    <li class="breadcrumb-item"><a onclick="window.location.href='/'" href="javascript:void(0);">Home</a></li>
+                    <li class="breadcrumb-item"><a onclick="window.location.href='/market'" href="javascript:void(0);">Courses</a></li>
+                    <li class="breadcrumb-item">
+                        <a th:onclick="'window.location.href=\'/coursepage?id=' + ${course.id} + '\''" href="javascript:void(0);" th:text="${course.title}">Course Title</a>
+                    </li>
                     <li class="breadcrumb-item active" th:text="${section.title}">Section Title</li>
                 </ol>
             </nav>
@@ -75,9 +101,20 @@
                                          th:aria-labelledby="'heading' + ${lessonStat.index}" data-bs-parent="#lessonAccordion">
                                         <div class="accordion-body">
                                             <ul class="list-unstyled">
-                                                <li th:each="file : ${lesson.files}">
+                                                <li th:each="file : ${lesson.files}" class="mb-3">
+                                                    <div th:if="${file.fileName.toLowerCase().endsWith('.pdf')}">
+                                                        <h6 th:text="${file.fileName}">PDF File Name</h6>
+                                                        <div class="pdf-container mb-2">
+                                                            <iframe th:src="@{/serveFile(fileId=${file.id}, disposition='inline')}"
+                                                                    width="100%" height="400px" class="pdf-viewer"></iframe>
+                                                        </div>
+                                                    </div>
+                                                    <div th:if="${file.fileName.toLowerCase().endsWith('.txt')}">
+                                                        <h6 th:text="${file.fileName}">Text File Name</h6>
+                                                        <pre class="text-preview mb-2" th:text="${file.content}" style="max-height: 200px; overflow-y: auto; white-space: pre-wrap;"></pre>
+                                                    </div>
                                                     <a th:href="@{/serveFile(fileId=${file.id}, disposition='attachment')}" 
-                                                       th:text="${file.fileName}">File Name</a>
+                                                       class="btn btn-primary btn-sm">Download</a>
                                                 </li>
                                             </ul>
                                         </div>

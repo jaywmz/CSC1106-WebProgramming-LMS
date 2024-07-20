@@ -11,6 +11,8 @@ import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Services.UploadCourseService;
 import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.Lesson;
+
+import java.io.IOException;
 import java.util.List;
 
 
@@ -96,7 +98,6 @@ public class RedirectionController {
 
     @GetMapping("/sectionpage")
     public String getSectionPage(@RequestParam("id") Long sectionId, Model model) {
-        System.out.println("Accessing section page with ID: " + sectionId);
         Section section = courseService.getSectionById(sectionId);
         if (section != null) {
             System.out.println("Section found: " + section.getTitle());
@@ -108,6 +109,29 @@ public class RedirectionController {
             } else {
                 System.out.println("Course not found");
             }
+
+            // Process file resources
+            for (Lesson lesson : lessons) {
+                for (FileResource file : lesson.getFiles()) {
+                    String fileName = file.getFileName().toLowerCase();
+                    if (fileName.endsWith(".pdf")) {
+                        file.setFileType("pdf");
+                    } else if (fileName.endsWith(".txt")) {
+                        file.setFileType("text");
+                        try {
+                            String content = courseService.getFileContent(file.getId());
+                            file.setContent(content);
+                        } catch (IOException e) {
+                            System.err.println("Error reading text file content: " + e.getMessage());
+                            // Set a default message or leave content null
+                            file.setContent("Error loading file content.");
+                        }
+                    } else {
+                        file.setFileType("other");
+                    }
+                }
+            }
+
             model.addAttribute("section", section);
             model.addAttribute("lessons", lessons);
             model.addAttribute("course", course);

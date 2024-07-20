@@ -56,15 +56,15 @@
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1 th:text="${course.title}">Course Title</h1>
+      <h1 id="course-title" th:text="${course.title}">Course Title</h1>
       <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item">Courses</li>
-          <li class="breadcrumb-item active" th:text="${course.title}">Course Title</li>
-        </ol>
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a onclick="window.location.href='/'" href="javascript:void(0);">Home</a></li>
+              <li class="breadcrumb-item"><a onclick="window.location.href='/market'" href="javascript:void(0);">Courses</a></li>
+              <li class="breadcrumb-item active" th:text="${course.title}">Course Title</li>
+          </ol>
       </nav>
-    </div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
     <section class="section">
       <div class="row">
@@ -88,7 +88,7 @@
           </div>
 
           <div th:if="${!course.sections.empty}">
-            <div id="courseContent" class="accordion">
+            <div id="courseContent" class="accordion mb-4">
                 <div th:each="section, sectionStat : ${course.sections}" class="accordion-item">
                     <h2 class="accordion-header" th:id="'heading' + ${sectionStat.index}">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${sectionStat.index}" aria-expanded="true" th:aria-controls="'collapse' + ${sectionStat.index}">
@@ -110,6 +110,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="card">
+          <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; padding: 10px">
+              <h5 class="card-title" style="margin: 0;">Have a question? Ask in our LearnZenith Community!</h5>
+              <a href="/community/students" class="btn btn-primary" style="width: auto;">View Community</a>
+          </div>
+      </div>
 
         </div>
 
@@ -149,13 +156,6 @@
                 <p>No categories assigned.</p>
               </div>
             </div>
-          </div>
-
-          <div class="card">
-              <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; padding: 10px">
-                  <h5 class="card-title" style="margin: 0;">Have a question? Ask in our LearnZenith Community!</h5>
-                  <a href="/community/students" class="btn btn-primary" style="width: auto;">View Community</a>
-              </div>
           </div>
 
         </div>

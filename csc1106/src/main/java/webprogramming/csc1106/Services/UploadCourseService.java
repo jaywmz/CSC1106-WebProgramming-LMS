@@ -2,6 +2,7 @@ package webprogramming.csc1106.Services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -442,6 +443,16 @@ public class UploadCourseService {
             }
         }
         return savedCourse;
+    }
+
+    public String getFileContent(Long fileId) throws IOException {
+        FileResource fileResource = getFileResourceById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+        if (fileResource.getFileName().toLowerCase().endsWith(".txt")) {
+            InputStream inputStream = downloadFileWithSas(fileResource.getFileUrl());
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
+        return null;
     }
 
     public void updateCourse(UploadCourse course, MultipartFile coverImage, Long categoryId, String certificateBlobUrl, String certificateTitle) throws IOException {
