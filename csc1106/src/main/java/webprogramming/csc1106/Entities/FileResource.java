@@ -29,7 +29,29 @@ public class FileResource {
         this.fileUrl = fileUrl;
     }
 
+    @Transient
+    private String fileType;
+
+    @Transient
+    private String content;
+
     // Getters and Setters
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
     public Long getId() {
         return id;
     }

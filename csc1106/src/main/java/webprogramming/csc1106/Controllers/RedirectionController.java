@@ -11,6 +11,7 @@ import webprogramming.csc1106.Entities.UploadCourse;
 import webprogramming.csc1106.Services.UploadCourseService;
 import webprogramming.csc1106.Entities.Section;
 import webprogramming.csc1106.Entities.Lesson;
+import webprogramming.csc1106.Entities.FileResource;
 
 import java.io.IOException;
 import java.util.List;
