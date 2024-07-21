@@ -359,7 +359,8 @@ async function redirectUserToCorrectDashboard(){
         'mylearning',
         'cart',
         'userprofile',
-        'contact'
+        'contact',
+        'faq'
     ];
 
     // Get the true route
@@ -390,7 +391,7 @@ async function redirectUserToCorrectDashboard(){
     }
     // If user is student or instructor
     else if(userRole === 'Student' || userRole === 'Instructor'){
-        if(!userRoute.includes(urlSegment)) return window.location.href = '/dashboard';
+        if(!userRoute.includes(urlSegment)) return window.location.href = '/mylearning';
     }
 }
 
