@@ -248,12 +248,12 @@ public class CourseRestController {
 
     // Check the courseSubscription to see if the user had subscribed to the course
     @GetMapping("/coursesubscriptions/check/{userId}/{courseId}")
-    public ResponseEntity<String> checkCourseSubscription(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
+    public ResponseEntity<?> checkCourseSubscription(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
         CourseSubscriptionEntity courseSubscription = courseSubscriptionRepo.findByCourseIdAndUserId(courseId, userId);
         if (courseSubscription == null) {
-            return new ResponseEntity<>("Not subscribed", HttpStatus.OK);
+            return ResponseEntity.badRequest().body("Not subscribed");
         }
-        return new ResponseEntity<>("Subscribed", HttpStatus.OK);
+        return ResponseEntity.ok(courseSubscription);
     }
 
 
@@ -274,33 +274,49 @@ public class CourseRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to submit review.");
         }
     }
+    
     // Add an endpoint to fetch reviews for a course
     @GetMapping("/courses/{courseId}/reviews")
-@ResponseBody
-public ResponseEntity<List<Map<String, Object>>> getReviews(@PathVariable Long courseId) {
-    List<Rating> reviews = ratingRepository.findByCourseId(courseId);
-    List<Map<String, Object>> reviewsWithUserNames = new ArrayList<>();
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getReviews(@PathVariable Long courseId) {
+        List<Rating> reviews = ratingRepository.findByCourseId(courseId);
+        List<Map<String, Object>> reviewsWithUserNames = new ArrayList<>();
 
-    for (Rating review : reviews) {
-        Map<String, Object> reviewWithUserName = new HashMap<>();
-        reviewWithUserName.put("score", review.getScore());
-        reviewWithUserName.put("comment", review.getComment());
-        reviewWithUserName.put("timestamp", review.getTimestamp());
+        for (Rating review : reviews) {
+            Map<String, Object> reviewWithUserName = new HashMap<>();
+            reviewWithUserName.put("score", review.getScore());
+            reviewWithUserName.put("comment", review.getComment());
+            reviewWithUserName.put("timestamp", review.getTimestamp());
 
-        User user = review.getUser();
-        if (user != null) {
-            reviewWithUserName.put("userName", user.getUserName());
-        } else {
-            reviewWithUserName.put("userName", "Unknown");
+            User user = review.getUser();
+            if (user != null) {
+                reviewWithUserName.put("userName", user.getUserName());
+            } else {
+                reviewWithUserName.put("userName", "Unknown");
+            }
+
+            reviewsWithUserNames.add(reviewWithUserName);
         }
 
-        reviewsWithUserNames.add(reviewWithUserName);
+        return ResponseEntity.ok(reviewsWithUserNames);
     }
 
-    return ResponseEntity.ok(reviewsWithUserNames);
-}
-
  
-    
+    // ===========================================================//
+    //                  Course REST API                           //
+    // ===========================================================//
+
+    // Mark course as completed
+    @PostMapping("/coursesubscriptions/complete/{userId}/{courseId}")
+    public ResponseEntity<String> completeCourse(@PathVariable("userId") int userId, @PathVariable("courseId") int courseId) {
+        CourseSubscriptionEntity courseSubscription = courseSubscriptionRepo.findByCourseIdAndUserId(courseId, userId);
+        if (courseSubscription == null) {
+            return ResponseEntity.badRequest().body("Course not found");
+        }
+        courseSubscription.setSubscriptionStatus("completed");
+        courseSubscription.setCompletedDate(Timestamp.from(Instant.now()));
+        courseSubscriptionRepo.save(courseSubscription);
+        return ResponseEntity.ok("Course completed");
+    }
 
 }

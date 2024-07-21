@@ -3,6 +3,7 @@ const courseId = queryParams.get('id');
 const userId = getCookie('lrnznth_User_ID');
 const iframe = document.querySelector('iframe[src="/loading"]');
 let addCartButton = document.getElementById('add-to-cart-button');
+let markCompleteButton = document.getElementById('mark-complete-button');
 let contentCard = document.getElementById('course-content-card');
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,6 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cartCheck = await fetch(`/cartitems/check/${userId}/${courseId}`);
     const cartCheckData = await cartCheck.text();
     if(cartCheckData === 'In cart'){
+        addCartButton.style.display = 'block';
+        markCompleteButton.style.display = 'none';
+
         addCartButton.innerHTML = 'Already In Cart';
         addCartButton.disabled = true;
         // Course In user cart (not buy yet)
@@ -23,15 +27,56 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Check if user is already subscribed to the course
     const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
-    const subscriptionCheckData = await subscriptionCheck.text();
-    if(subscriptionCheckData === 'Subscribed'){
+    // Check the response status
+    if (subscriptionCheck.status === 200) {
+        // If the response status is 200, the user is subscribed to the course
+        const subscriptionCheckData = await subscriptionCheck.json();
+
         // Hide the Add to Cart button as the user bought this course
         addCartButton.style.display = 'none';
+
+        // Show the Mark Complete button
+        markCompleteButton.style.display = 'block';
+
+        if(subscriptionCheckData.subscriptionStatus ==="ongoing"){
+            markCompleteButton.innerHTML = 'Mark Complete';
+            markCompleteButton.disabled = false;
+
+            // Add event listener to Mark Complete button
+            markCompleteButton.addEventListener('click', async function(event) {
+                const markCompleteResponse = await fetch(`/coursesubscriptions/complete/${userId}/${courseId}`, {
+                    method: 'POST'
+                });
+
+                if (markCompleteResponse.status === 200) {
+                    const markCompleteData = await markCompleteResponse.text();
+                    if (markCompleteData === "Course completed"){
+                        markCompleteButton.innerHTML = `Completed on ${new Date().toLocaleDateString('en-GB')}`;
+                        markCompleteButton.disabled = true;
+                    } else {
+                        alert("Failed to mark course as completed\n Please try again later");
+                    }
+                } else {
+                    alert("Failed to mark course as completed\n Please try again later");
+                }
+            });
+
+        }else if (subscriptionCheckData.subscriptionStatus ==="completed"){
+            const dateOnly = new Date(subscriptionCheckData.completedDate).toLocaleDateString('en-GB');
+            markCompleteButton.innerHTML = `Completed on ${dateOnly}`;
+            markCompleteButton.disabled = true;
+        }
+
         // Remove the Loading Iframe
         iframe.remove();
     }
+    
     // User not subscribe to the course
     else{
+        console.log("User not subscribe to the course");
+        addCartButton.style.display = 'block';
+        markCompleteButton.style.display = 'none';
+
         // Delete the content card div
         if (contentCard) contentCard.remove();
         // Remove the Loading Iframe

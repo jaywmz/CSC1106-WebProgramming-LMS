@@ -62,19 +62,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 let courseElement = document.createElement('div');
                 courseElement.classList.add('col-md-4', 'mb-4');
                 courseElement.innerHTML = `
-                    <div class="card card-custom">
-                        <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
-                        <div class="card-body">
-                            <h5 class="card-title">${course.title}</h5>
-                            <p class="card-text">${course.description}</p>
-                            <div class="course-rating">
-                                <span class="star">&#9733;</span>
-                                <a href="#" class="reviews review-link" data-course-id="${course.id}">${course.averageRating.toFixed(1)} (${course.reviewCount} reviews)</a>
+                    <a href="/coursepage?id=${course.id}" style="text-decoration:none;color:inherit;" target="_blank">
+                        <div class="card card-custom">
+                            <img src="${course.coverImageUrl}" class="card-img-top" alt="Course Image">
+                            <div class="card-body">
+                                <h5 class="card-title">${course.title}</h5>
+                                <p class="card-text">${course.description}</p>
+                                <div class="course-rating">
+                                    <span class="star">&#9733;</span>
+                                    <a href="#" class="reviews review-link" data-course-id="${course.id}">${course.averageRating.toFixed(1)} (${course.reviewCount} reviews)</a>
+                                </div>
+                                <p class="card-price"><strong>$${course.price}</strong></p>
+                                <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                             </div>
-                            <p class="card-price"><strong>$${course.price}</strong></p>
-                            <button class="btn btn-primary add-to-cart" data-course-id="${course.id}">Add to Cart</button>
                         </div>
-                    </div>
+                    </a>
                 `;
                 coursesContainer.appendChild(courseElement);
             });
@@ -214,9 +216,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 const subscriptionCheck = await fetch(`/coursesubscriptions/check/${userId}/${courseId}`);
-                const subscriptionCheckData = await subscriptionCheck.text();
 
-                if(subscriptionCheckData === 'Subscribed'){
+                if(subscriptionCheck.status === 200){
                     alert('You have already subscribed to this course');
                     return;
                 }
