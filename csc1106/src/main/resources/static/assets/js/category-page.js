@@ -109,12 +109,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 fetch(`/coursesubscriptions/check/${userId}/${courseId}`)
-                    .then(response => response.text())
-                    .then(async data => {
+                    .then(async response => {
                         document.getElementById('reviewCourseId').value = courseId;
                         const bootstrapModal = new bootstrap.Modal(document.getElementById('reviewModal'));
                         bootstrapModal.show();
-                        if (data !== 'Subscribed') {
+                        if(response.status !== 200){
                             document.getElementById('reviewFormMessage').textContent = 'You need to subscribe to this course to leave a review';
                             document.getElementById('submitReviewButton').disabled = true;
                         } else {
@@ -126,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const reviewsResponse = await fetch(`/courses/${courseId}/reviews`, { cache: "no-store" });
                         const reviews = await reviewsResponse.json();
                         displayReviews(reviews);
+
                     })
                     .catch(error => {
                         console.error('Error checking subscription:', error);
