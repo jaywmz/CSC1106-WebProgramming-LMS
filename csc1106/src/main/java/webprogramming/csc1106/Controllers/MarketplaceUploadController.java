@@ -138,14 +138,15 @@ public class MarketplaceUploadController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + fileResource.getFileName() + "\"");
-        headers.setContentType(getMediaTypeForFileName(fileResource.getFileName()));
+        
+        MediaType mediaType = getMediaTypeForFileName(fileResource.getFileName());
+        headers.setContentType(mediaType);
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(new InputStreamResource(fileInputStream)); // Return the file as a response entity
+                .body(new InputStreamResource(fileInputStream));
     }
 
-    // Determines the media type for a file based on its name
     private MediaType getMediaTypeForFileName(String fileName) {
         String mimeType = URLConnection.guessContentTypeFromName(fileName);
         if (mimeType == null) {

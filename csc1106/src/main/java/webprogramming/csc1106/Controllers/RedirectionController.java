@@ -106,32 +106,18 @@ public class RedirectionController {
     public String getSectionPage(@RequestParam("id") Long sectionId, Model model) {
         Section section = courseService.getSectionById(sectionId);
         if (section != null) {
-            System.out.println("Section found: " + section.getTitle());
             List<Lesson> lessons = courseService.getLessonsBySectionId(sectionId);
-            System.out.println("Lessons found: " + lessons.size());
             UploadCourse course = courseService.getCourseById(section.getCourse().getId()).orElse(null);
-            if (course != null) {
-                System.out.println("Course found: " + course.getTitle());
-            } else {
-                System.out.println("Course not found");
-            }
 
-            // Process file resources
             for (Lesson lesson : lessons) {
                 for (FileResource file : lesson.getFiles()) {
                     String fileName = file.getFileName().toLowerCase();
                     if (fileName.endsWith(".pdf")) {
                         file.setFileType("pdf");
-                    } else if (fileName.endsWith(".txt")) {
-                        file.setFileType("text");
-                        try {
-                            String content = courseService.getFileContent(file.getId());
-                            file.setContent(content);
-                        } catch (IOException e) {
-                            System.err.println("Error reading text file content: " + e.getMessage());
-                            // Set a default message or leave content null
-                            file.setContent("Error loading file content.");
-                        }
+                    } else if (fileName.endsWith(".mp4")) {
+                        file.setFileType("video");
+                    } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") || fileName.endsWith(".gif")) {
+                        file.setFileType("image");
                     } else {
                         file.setFileType("other");
                     }
@@ -143,7 +129,6 @@ public class RedirectionController {
             model.addAttribute("course", course);
             return "Course/sectionpage";
         } else {
-            System.out.println("Section not found");
             return "redirect:/error";
         }
     }
