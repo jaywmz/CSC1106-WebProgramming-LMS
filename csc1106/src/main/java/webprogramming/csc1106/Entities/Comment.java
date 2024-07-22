@@ -18,12 +18,12 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Comment> replies;
+    // @OneToMany(mappedBy = "parent")
+    // private List<Comment> replies;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Comment parent;
+    // @ManyToOne
+    // @JoinColumn(name = "parent_id")
+    // private Comment parent;
 
     @Column(name = "commenter_name", nullable = false)
     private String commenterName; // name of user that posted the thread
@@ -67,21 +67,21 @@ public class Comment {
         this.content = content;
     }
 
-    public List<Comment> getReplies() {
-        return replies;
-    }
+    // public List<Comment> getReplies() {
+    //     return replies;
+    // }
 
-    public void setReplies(List<Comment> replies) {
-        this.replies = replies;
-    }
+    // public void setReplies(List<Comment> replies) {
+    //     this.replies = replies;
+    // }
 
-    public Comment getParent() {
-        return parent;
-    }
+    // public Comment getParent() {
+    //     return parent;
+    // }
 
-    public void setParent(Comment parent) {
-        this.parent = parent;
-    }
+    // public void setParent(Comment parent) {
+    //     this.parent = parent;
+    // }
 
     public long getId() {
         return id;
