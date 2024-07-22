@@ -36,6 +36,7 @@ public class CommunityController {
     @Autowired
     private CategoryRepo categoryRepo;
     
+    // Mapping for community home page
     @GetMapping("/community/home")
     public String getCommunityHome(Model model, @CookieValue(value="lrnznth_User_ID", required = false) String userID) {
         // check if cookie contains userID
@@ -72,11 +73,13 @@ public class CommunityController {
         return "Community/community-home";
     }
 
+    // Mapping for community loading page before home page
     @GetMapping("/community")
     public String getCommunityLoading() {
         return "Community/community-loading";
     }
     
+    // Mapping for community search page
     @GetMapping("/community/search")
     public String getSearchResults(@RequestParam("key") String key, @RequestParam(defaultValue = "1") int page, Model model, @CookieValue(value="lrnznth_User_ID", required = false) String userID) {
         // check if cookie contains userID
@@ -92,16 +95,19 @@ public class CommunityController {
         return "Community/community-search";
     }
 
+    // Mapping for unauthorized page
     @GetMapping("/community/unauthorised")
     public String getUnauthorisedPage() {
         return "Community/community-unauthorised";
     }
 
+    // API for getting posts by category in home page
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
     public ResponseEntity<List> getPostsCount(){
         try{
 
+            // queries category counts from repo
             List<Object[]> categoryCounts = postRepo.findCategoryCounts();
             
             Long totalAnnouncements = 0L;
@@ -112,6 +118,7 @@ public class CommunityController {
             Long totalIntroductions = 0L;
             Long totalCareers = 0L;
             
+            // loop through category counts and assign to respective variables
             for (int i = 0; i < categoryCounts.size(); i++) 
             {
                 if("announcements".equals(categoryCounts.get(i)[1])) {
@@ -131,6 +138,7 @@ public class CommunityController {
                 } 
             }
             
+            // get last post of each category
             Object lastOffTopic = 0;
             if(totalOffTopic > 0){
                 lastOffTopic = categoryCounts.get(2)[4];
@@ -167,14 +175,17 @@ public class CommunityController {
         }
     }
 
+    // API for getting posts by category in students page
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count-students")
     public ResponseEntity<List> getPostsCountStudents(){
         try{
 
+            // queries category counts from repo
             List<Object[]> categoryCounts = postRepo.findCategoryCountsStudents();
             Dictionary<Long, Long> countsDict = new Hashtable<>(); 
 
+            // loop through category counts and assign to dictionary
             for(int i = 0; i < categoryCounts.size(); i++){
                 countsDict.put( (Long) categoryCounts.get(i)[0], (Long) categoryCounts.get(i)[2] );
             }
@@ -188,13 +199,16 @@ public class CommunityController {
         }
     }
 
+    // API for getting posts by category in instructors page
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count-instructors")
     public ResponseEntity<List> getPostsCountinstructors(){
         try{
 
+            // queries category counts from repo
             List<Object[]> categoryCounts = postRepo.findCategoryCountsInstructors();
             
+            // assign category counts to respective variables
             Long totalCourseHelp = (Long) categoryCounts.get(0)[2];
             Long totalTeaching = (Long) categoryCounts.get(1)[2];
             
@@ -208,6 +222,7 @@ public class CommunityController {
         }
     }
 
+    // API for getting user role
     @PostMapping("/community-get-user-role")
     @ResponseBody
     public int getUserRole(@CookieValue("lrnznth_User_ID") String userID) {

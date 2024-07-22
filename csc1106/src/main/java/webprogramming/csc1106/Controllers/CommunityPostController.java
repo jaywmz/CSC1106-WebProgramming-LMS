@@ -33,6 +33,7 @@ public class CommunityPostController {
     // @Autowired 
     // private AttachmentsRepo attachmentsRepo;
 
+    // Mapping for specific post page
     @GetMapping("/community/{user_group}/{category_id}/{post_id}")
     public String getPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue(value="lrnznth_User_ID", required=false) String userID, Model model) {
         if(userID == null) {
@@ -76,6 +77,7 @@ public class CommunityPostController {
         return "Community/post";
     }
 
+    // Mapping for adding a comment to a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/add-comment")
     public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username, RedirectAttributes redirectAttributes) {
         java.util.Date date = new java.util.Date();
@@ -96,6 +98,7 @@ public class CommunityPostController {
         return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
     
+    // Mapping for liking a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/like")
     public ResponseEntity<String> likePost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
@@ -121,6 +124,7 @@ public class CommunityPostController {
         }
     }
     
+    // Mapping for unliking a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/unlike")
     public ResponseEntity<String> unlikePost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
@@ -145,6 +149,7 @@ public class CommunityPostController {
         }
     }
 
+    // Mapping for subscribing to a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/subscribe")
     public ResponseEntity<String> subPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
@@ -171,6 +176,7 @@ public class CommunityPostController {
         }
     }
 
+    // Mapping for unsubscribing to a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/unsubscribe")
     public ResponseEntity<String> unsubPost(@PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_ID") String userID) {
         try{
@@ -196,6 +202,7 @@ public class CommunityPostController {
         }
     }
 
+    // Mapping for editing a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/update-post")
     public String updatePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, RedirectAttributes redirectAttributes) {
         Post originalPost = postRepo.findByPostID(Long.parseLong(post_id));
@@ -207,6 +214,7 @@ public class CommunityPostController {
         return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
 
+    // Mapping for deleting a post
     @PostMapping("/community/{user_group}/{category_id}/delete-post")
     public String deletePost(@PathVariable String user_group, @PathVariable String category_id, @RequestParam("postId") Long postId, RedirectAttributes redirectAttributes) {
 

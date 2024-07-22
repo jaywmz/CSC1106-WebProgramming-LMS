@@ -40,6 +40,7 @@ public class CommunityNewPostController {
     @Autowired
     private AzureBlobService azureBlobService;
 
+    // Mapping for new post form
     @GetMapping("/community/{user_group}/new-post")
     public String getNewPostForm(@PathVariable String user_group, @Param("category_id") String category_id, Model model) {
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
@@ -51,6 +52,7 @@ public class CommunityNewPostController {
         return "Community/new-post"; 
     }
 
+    // Mapping for posting new post
     @PostMapping("/community/new-post")
     public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_ID") String userID, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
         // set post timestamp

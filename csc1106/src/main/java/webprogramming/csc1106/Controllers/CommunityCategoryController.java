@@ -51,6 +51,7 @@ public class CommunityCategoryController {
         return "Community/community-category";
     }
 
+    // Mapping for announcements page
     @GetMapping("/community/announcements")
     public String getAnnouncements(Model model) {
         List<Integer> categoryIds = Arrays.asList(1, 2);
@@ -60,6 +61,7 @@ public class CommunityCategoryController {
         return "Community/community-announce";
     }
 
+    // Mapping for students page
     @GetMapping("/community/students")
     public String getStudents(Model model) {
         // get all the categories under student group
@@ -72,6 +74,7 @@ public class CommunityCategoryController {
         return "Community/community-students";
     }
 
+    // Mapping for instructors page
     @GetMapping("/community/instructors")
     public String getInstructors(Model model, @CookieValue(value="lrnznth_User_ID", required=false) String userID) {
         // TO-DO: get recent posts from categories under instructor group and put in posts
@@ -83,6 +86,7 @@ public class CommunityCategoryController {
         return "Community/community-instructors";
     }
     
+    // Mapping to redirect to community home page from general path
     @GetMapping("/community/general")
     public String getGeneral(Model model) {
         return "redirect:/community";
