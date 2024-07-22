@@ -67,9 +67,6 @@ public class CommunityCategoryController {
         // get all the categories under student group
         List<CommunityCategory> categories = categoryRepo.findByGroup("students");
 
-        // TO-DO: get recent posts from categories under student group and put in posts
-
-        // model.addAttribute("posts", post);
         model.addAttribute("categories", categories);
         return "Community/community-students";
     }
@@ -77,16 +74,15 @@ public class CommunityCategoryController {
     // Mapping for instructors page
     @GetMapping("/community/instructors")
     public String getInstructors(Model model, @CookieValue(value="lrnznth_User_ID", required=false) String userID) {
-        // TO-DO: get recent posts from categories under instructor group and put in posts
         if(userID == null) {
             return "redirect:/login";
         }
         
-        // model.addAttribute("posts", posts);
         return "Community/community-instructors";
     }
     
     // Mapping to redirect to community home page from general path
+    // so when users clicks "General" breadcrumb link, returns to community homepage
     @GetMapping("/community/general")
     public String getGeneral(Model model) {
         return "redirect:/community";

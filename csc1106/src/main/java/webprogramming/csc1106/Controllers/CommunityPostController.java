@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import webprogramming.csc1106.Entities.*;
-import webprogramming.csc1106.Models.LikesID;
-import webprogramming.csc1106.Models.SubscribeID;
 import webprogramming.csc1106.Repositories.*;
 
 @Controller
@@ -30,8 +28,6 @@ public class CommunityPostController {
     private LikesRepo likesRepo;
     @Autowired
     private SubscriptionsRepo subsRepo;
-    // @Autowired 
-    // private AttachmentsRepo attachmentsRepo;
 
     // Mapping for specific post page
     @GetMapping("/community/{user_group}/{category_id}/{post_id}")
@@ -80,20 +76,20 @@ public class CommunityPostController {
     // Mapping for adding a comment to a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/add-comment")
     public String postComment(@ModelAttribute Comment newComment, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, @CookieValue("lrnznth_User_Name") String username, RedirectAttributes redirectAttributes) {
+        // set comment's timestmap
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newComment.setTimestamp(timestamp);
         newComment.setCommenterName(username);
 
+        // retrieve the post entity that this new comment is under
         Post post = postRepo.findByPostID(Long.parseLong(post_id));
-        // post.getComments().add(newComment);
         newComment.setPost(post);
 
-        // postRepo.save(post);
+        // save new comment to repo
         commentRepo.save(newComment);
         
         redirectAttributes.addFlashAttribute("successMessage", "Comment added successfully!");
-
 
         return "redirect:/community/{user_group}/{category_id}/{post_id}";
     }
@@ -205,8 +201,13 @@ public class CommunityPostController {
     // Mapping for editing a post
     @PostMapping("/community/{user_group}/{category_id}/{post_id}/update-post")
     public String updatePost(@ModelAttribute Post post, @PathVariable String user_group, @PathVariable String category_id, @PathVariable String post_id, RedirectAttributes redirectAttributes) {
+        // retrieve post entity by post id from path variable
         Post originalPost = postRepo.findByPostID(Long.parseLong(post_id));
+
+        // set post's content to the content in the post entity set in the View, the content is user-input.
         originalPost.setContent(post.getContent());
+
+        // save modified post to repo
         postRepo.save(originalPost);
 
         redirectAttributes.addFlashAttribute("successMessage", "Post edited successfully!");

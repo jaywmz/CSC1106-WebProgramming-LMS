@@ -43,24 +43,26 @@ public class CommunityNewPostController {
     // Mapping for new post form
     @GetMapping("/community/{user_group}/new-post")
     public String getNewPostForm(@PathVariable String user_group, @Param("category_id") String category_id, Model model) {
-        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); // retrieve category object from db by name
+        // retrieve category entities from db by id
+        CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id)); 
 
         model.addAttribute("user_group", user_group);
         model.addAttribute("category_name", category.getName());
         model.addAttribute("category_id", category_id);
         model.addAttribute("newPost", new Post());
+
         return "Community/new-post"; 
     }
 
     // Mapping for posting new post
     @PostMapping("/community/new-post")
     public String postNewPost(@RequestParam("category_id") String category_id, @RequestParam("postAttachment") MultipartFile attachment, @CookieValue("lrnznth_User_ID") String userID, @ModelAttribute Post newPost, RedirectAttributes redirectAttributes) {
-        // set post timestamp
+        // set post's timestamp
         java.util.Date date = new java.util.Date();
         Timestamp timestamp = new Timestamp(date.getTime());
         newPost.setTimestamp(timestamp);
 
-        // retrieve user by user object and set post's User link and username attribute
+        // retrieve user entity by user id and set postee and username attribute
         Optional<User> user = userRepo.findById(Integer.parseInt(userID));
         if (user.isPresent()) {
             newPost.setUser(user.get());
@@ -70,7 +72,7 @@ public class CommunityNewPostController {
             throw new Error("Cannot find user from user id in cookie");
         }
 
-        // set post category
+        // set post's category
         CommunityCategory category = categoryRepo.findById(Integer.parseInt(category_id));
         newPost.setCategory(category);
 
@@ -97,6 +99,7 @@ public class CommunityNewPostController {
         
         redirectAttributes.addFlashAttribute("successMessage", "Post created successfully!");
         
+        // redirect to the category page corresponding to the category that this new post is under
         String catGroup = category.getGroup();
         if("announcements".equals(catGroup)){
             return "redirect:/community/announcements";

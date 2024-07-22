@@ -47,13 +47,13 @@ public class CommunityController {
         // queries top 5 latest posts from repo
         List<Post> posts = postRepo.findTop5ByOrderByTimestampDesc();
 
-        // queries 'general' categories
+        // retrieves category entities under the "general" group from category repo
         List<CommunityCategory> categories = categoryRepo.findByGroup("general");
 
-        // identify user
+        // retrieves user entity given user id in cookie
         Optional<User> user = userRepo.findById(Integer.parseInt(userID));
             
-        // get list of subscribed posts from user 
+        // get list of posts that user has subscribed to
         if (user.isPresent()) {
             List<Subscription> allSubscriptions = subRepo.findAllByUser(user.get());
             List<Long> postIDs = new ArrayList<Long>();
@@ -67,6 +67,7 @@ public class CommunityController {
             model.addAttribute("subbedPosts", null);
         }
 
+        // add posts and cateogories to view's model
         model.addAttribute("posts", posts);
         model.addAttribute("categories", categories);
 
@@ -87,21 +88,24 @@ public class CommunityController {
             return "redirect:/login";
         }
 
+        // retrieves posts containing the search term specified by user, ordered by time posted descendingly
         Page<Post> queriedPosts = postRepo.findAllByTitleContainingOrContentContainingOrderByTimestampDesc(key, key, PageRequest.of(page - 1, 5));
+
         model.addAttribute("posts", queriedPosts.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("search_term", key);
         model.addAttribute("totalPage", queriedPosts.getTotalPages());
+
         return "Community/community-search";
     }
 
-    // Mapping for unauthorized page
+    // Mapping for unauthorized page, for when student tries to access instructor's section of community hub
     @GetMapping("/community/unauthorised")
     public String getUnauthorisedPage() {
         return "Community/community-unauthorised";
     }
 
-    // API for getting posts by category in home page
+    // API to find and return sum of posts grouped by their categories
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count")
     public ResponseEntity<List> getPostsCount(){
@@ -118,7 +122,7 @@ public class CommunityController {
             Long totalIntroductions = 0L;
             Long totalCareers = 0L;
             
-            // loop through category counts and assign to respective variables
+            // loop through category counts and assigns sums to their respestive local variables
             for (int i = 0; i < categoryCounts.size(); i++) 
             {
                 if("announcements".equals(categoryCounts.get(i)[1])) {
@@ -138,7 +142,7 @@ public class CommunityController {
                 } 
             }
             
-            // get last post of each category
+            // get time stamps of last posts of each category, assign to respective local variables
             Object lastOffTopic = 0;
             if(totalOffTopic > 0){
                 lastOffTopic = categoryCounts.get(2)[4];
@@ -175,7 +179,7 @@ public class CommunityController {
         }
     }
 
-    // API for getting posts by category in students page
+    // API for getting sum of posts by category in students page
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count-students")
     public ResponseEntity<List> getPostsCountStudents(){
@@ -199,7 +203,7 @@ public class CommunityController {
         }
     }
 
-    // API for getting posts by category in instructors page
+    // API for getting sum of posts by category in instructors page
     @SuppressWarnings({ "null", "rawtypes" })
     @PostMapping("/community-get-post-count-instructors")
     public ResponseEntity<List> getPostsCountinstructors(){
