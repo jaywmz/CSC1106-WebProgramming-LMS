@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+// Import necessary packages and classes
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -9,20 +10,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "upload_course")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Entity // Indicate that this class is an entity to be mapped to a database table
+@Table(name = "upload_course") // Specify the table name in the database
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Ignore specific properties during JSON serialization
 public class UploadCourse {
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Indicate that the ID should be generated automatically
+    @Column(name = "id") // Map the field to the "id" column in the table
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false) // Map the field to the "title" column and make it not nullable
     private String title;
 
     @Column(name = "description", nullable = false)
-    @Lob
+    @Lob // Indicate that this field should be treated as a large object (LOB)
     private String description;
 
     @Column(name = "lecturer", nullable = false)
@@ -34,19 +36,19 @@ public class UploadCourse {
     @Column(name = "cover_image_url", nullable = false)
     private String coverImageUrl;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true) // Establish a one-to-many relationship with Section
+    @JsonManagedReference // Handle bidirectional relationship during JSON serialization
     private List<Section> sections = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true) // Establish a one-to-many relationship with Rating
     @JsonManagedReference
     private List<Rating> ratings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true) // Establish a one-to-many relationship with CourseCategory
     @JsonManagedReference
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
-    @Transient
+    @Transient // Indicate that this field is not to be persisted in the database
     private double averageRating;
 
     @Transient
@@ -55,15 +57,15 @@ public class UploadCourse {
     @Column(name = "is_approved")
     private boolean isApproved;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY) // Establish a many-to-one relationship with User
+    @JoinColumn(name = "user_id", nullable = false) // Specify the join column for the relationship
+    @JsonIgnore // Ignore this field during JSON serialization
     private User user;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
-    @PrePersist
+    @PrePersist // Annotate a method to be executed before the entity is persisted
     protected void onCreate() {
         createdDate = LocalDateTime.now();
     }

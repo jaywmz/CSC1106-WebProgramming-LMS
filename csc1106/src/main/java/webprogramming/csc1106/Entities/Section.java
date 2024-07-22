@@ -1,36 +1,40 @@
 package webprogramming.csc1106.Entities;
 
+// Import necessary packages and classes
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
 
-@Entity
-@Table(name = "section")
+@Entity // Indicate that this class is an entity to be mapped to a database table
+@Table(name = "section") // Specify the table name in the database
 public class Section {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Indicate that the ID should be generated automatically
+    @Column(name = "id") // Map the field to the "id" column in the table
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false) // Map the field to the "title" column and make it not nullable
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false) // Map the field to the "description" column and make it not nullable
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id")
-    @JsonBackReference
+    @ManyToOne // Establish a many-to-one relationship with UploadCourse
+    @JoinColumn(name = "course_id") // Specify the join column for the relationship
+    @JsonBackReference // Handle bidirectional relationship during JSON serialization
     private UploadCourse course;
 
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true) // Establish a one-to-many relationship with Lesson
+    @JsonManagedReference // Handle bidirectional relationship during JSON serialization
     private List<Lesson> lessons = new ArrayList<>();
 
+    // Default constructor
     public Section() {}
 
+    // Parameterized constructor
     public Section(String title, String description, UploadCourse course) {
         this.title = title;
         this.description = description;

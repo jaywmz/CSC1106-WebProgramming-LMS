@@ -1,5 +1,6 @@
 package webprogramming.csc1106.Entities;
 
+// Import necessary packages and classes
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -7,31 +8,34 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.ArrayList;
 
-@Entity
-@Table(name = "lesson")
+@Entity // Indicate that this class is an entity to be mapped to a database table
+@Table(name = "lesson") // Specify the table name in the database
 public class Lesson {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Indicate that the ID should be generated automatically
+    @Column(name = "id") // Map the field to the "id" column in the table
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false) // Map the field to the "title" column and make it not nullable
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "section_id")
-    @JsonBackReference
+    @ManyToOne // Establish a many-to-one relationship with Section
+    @JoinColumn(name = "section_id") // Specify the join column for the relationship
+    @JsonBackReference // Handle bidirectional relationship during JSON serialization
     private Section section;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true) // Establish a one-to-many relationship with FileResource
+    @JsonManagedReference // Handle bidirectional relationship during JSON serialization
     private List<FileResource> files = new ArrayList<>();
 
-    @Transient
+    @Transient // Indicate that this field is not to be persisted in the database
     private MultipartFile file;
 
+    // Default constructor
     public Lesson() {}
 
+    // Parameterized constructor
     public Lesson(String title, Section section) {
         this.title = title;
         this.section = section;

@@ -1,36 +1,40 @@
 package webprogramming.csc1106.Entities;
 
+// Import necessary packages and classes
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
 
-@Entity
-@Table(name = "category_group")
+@Entity // Indicate that this class is an entity to be mapped to a database table
+@Table(name = "category_group") // Specify the table name in the database
 public class CategoryGroup {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Indicate that the ID should be generated automatically
+    @Column(name = "id") // Map the field to the "id" column in the table
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false) // Map the field to the "name" column and make it not nullable
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description") // Map the field to the "description" column
     private String description;
 
-    @Column(name = "cover_image_url")
+    @Column(name = "cover_image_url") // Map the field to the "cover_image_url" column
     private String coverImageUrl;
 
-    @OneToMany(mappedBy = "categoryGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "categoryGroup", cascade = CascadeType.ALL, orphanRemoval = true) // Establish a one-to-many relationship with CourseCategory
+    @JsonManagedReference // Handle bidirectional relationship during JSON serialization
     private List<CourseCategory> courseCategories = new ArrayList<>();
 
-    @Transient
+    @Transient // Indicate that this field is not to be persisted in the database
     private int courseCount;
 
+    // Default constructor
     public CategoryGroup() {}
 
+    // Parameterized constructor
     public CategoryGroup(String name, String description, String coverImageUrl) {
         this.name = name;
         this.description = description;
@@ -86,6 +90,7 @@ public class CategoryGroup {
         this.courseCount = courseCount;
     }
 
+    // Method to calculate the number of courses in the category
     public void calculateCourseCount() {
         this.courseCount = this.courseCategories.size();
     }
