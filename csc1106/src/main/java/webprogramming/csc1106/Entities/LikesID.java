@@ -1,17 +1,17 @@
-package webprogramming.csc1106.Models;
+package webprogramming.csc1106.Entities;
 
 import java.io.Serializable;
 
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class SubscribeID implements Serializable{
+public class LikesID implements Serializable{
     private Integer userID;
     private Long postID;
 
-    public SubscribeID() {}
+    public LikesID() {}
 
-    public SubscribeID(int userID, long postID) {
+    public LikesID(int userID, long postID) {
         this.userID = userID;
         this.postID = postID;
     }
@@ -45,7 +45,7 @@ public class SubscribeID implements Serializable{
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SubscribeID other = (SubscribeID) obj;
+        LikesID other = (LikesID) obj;
         return (userID != null && postID != null) && (userID.equals(other.getUserID()) && postID.equals(other.getPostID()));
     }
 
