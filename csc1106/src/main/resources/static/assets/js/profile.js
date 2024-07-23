@@ -17,6 +17,7 @@ let imageUploadButton = document.getElementById("uploadThisImageButton");
 let uploadWebcamButton = document.getElementById("uploadWebcamImageButton");
 let userProfileImage = document.getElementById("user-profile-image");
 let webcamButton = document.getElementById("webcam-btn");
+let warningRedLabel = document.getElementById("passwordTipsLabel");
 
 let webcamActive = false;
 let streamReference = null;
@@ -25,10 +26,12 @@ document.getElementById("togglePassword").addEventListener("click", function() {
     let passwordInput = document.getElementById("password");
     let passwordIcon = this.getElementsByTagName("i")[0];
     if (passwordInput.type === "password") {
+        warningRedLabel.style.display = "block";
         passwordInput.type = "text";
         passwordIcon.classList.remove("fa-eye");
         passwordIcon.classList.add("fa-eye-slash");
     } else {
+        warningRedLabel.style.display = "none";
         passwordInput.type = "password";
         passwordIcon.classList.remove("fa-eye-slash");
         passwordIcon.classList.add("fa-eye");
@@ -46,12 +49,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/login';
     }
 
+    saveButton.disabled = true;
+
     usernameInput.value = user.userName;
     emailInput.value = user.userEmail;
-    passwordInput.value = user.userPassword;
+    // passwordInput.value = user.userPassword;
+    passwordInput.value = "NotRealPassword";
     roleSpan.innerHTML = user.role.roleName;
     joinedSpan.innerHTML = user.joinedDate;
     balanceSpan.innerHTML = user.userBalance;
+
+    document.querySelectorAll("input").forEach(input => {
+        input.addEventListener('change', ()=>{
+            saveButton.disabled = false
+        })
+    });
 
     const signedUrl = await getSignedUserProfileImage(userID);
     if (signedUrl) {
@@ -68,8 +80,13 @@ saveButton.addEventListener("click", async function(event) {
     event.preventDefault();
     const userCookie = getCookie('lrnznth_User_Cookie');
     let user = await checkCookieProMax(userCookie);
+
+    if(!emailInput.value || emailInput.value === "") return alert("Email cannot be empty");
+    if(!passwordInput.value || passwordInput.value === "") return alert("Password cannot be empty");
+
     user.userEmail = emailInput.value;
     user.userPassword = passwordInput.value;
+
     try {
         const response = await fetch(`/updateuser`, {
             method: 'POST',
