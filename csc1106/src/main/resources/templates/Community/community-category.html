@@ -239,30 +239,27 @@
               </tbody>
             </table>
             <!-- End Table with hoverable rows -->
-
           </div>
+        </div>
 
-          <div class="card-body">
-            <!-- Disabled and active states -->
-            <!--
-            <nav aria-label="...">
-                <ul class="pagination justify-content-center">
-                    <li th:class="${currentPage == 1} ? 'disabled' : 'page-item'">
-                        <a class="page-link" th:href="@{'/forum?page=' + ${currentPage-1}}" tabindex="-1" aria-disabled="true">Previous</a>
-                    </li>
-                    <li class="page-item" 
-                      th:each="pageNum : ${#numbers.sequence(currentPage > 1 ? currentPage - 1 : currentPage, currentPage < totalPage ? currentPage + 1 : currentPage)}" 
-                      th:class="${pageNum == currentPage} ? 'active' : ''">
-                        <a class="page-link" th:href="@{'/forum?page=' + ${pageNum}}" th:text="${pageNum}"></a>
-                    </li>
-                    <li th:class="${currentPage == totalPage} ? 'disabled' : 'page-item'">
-                        <a class="page-link" th:href="@{'/forum?page=' + ${currentPage+1}}">Next</a>
-                    </li>
-                </ul>
-            </nav>
-            -->
-            <!-- End Disabled and active states -->
-          </div>
+        <div class="card-body" th:if="${not #lists.isEmpty(posts)}">
+          <!-- Disabled and active states -->
+          <nav aria-label="...">
+              <ul class="pagination justify-content-center">
+                  <li th:class="${currentNum == 1} ? 'disabled' : 'page-item'">
+                      <a class="page-link" th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '?page=' + ${currentNum-1}}" tabindex="-1" aria-disabled="true">Previous</a>
+                  </li>
+                  <li class="page-item" 
+                    th:each="pageNum : ${#numbers.sequence(currentNum > 1 ? currentNum - 1 : currentNum, currentNum < totalPage ? currentNum + 1 : currentNum)}" 
+                    th:class="${pageNum == currentNum} ? 'active' : ''">
+                      <a class="page-link" th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '?page=' + ${pageNum}}" th:text="${pageNum}"></a>
+                  </li>
+                  <li th:class="${currentNum == totalPage || totalPage == 0} ? 'disabled' : 'page-item'">
+                      <a class="page-link" th:href="@{'/community/' + ${user_group} + '/' + ${category_id} + '?page=' + ${currentNum+1}}">Next</a>
+                  </li>
+              </ul>
+          </nav>
+          <!-- End Disabled and active states -->
         </div>
       </div>
     </section>

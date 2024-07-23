@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import org.springframework.data.domain.Page;
+
+import webprogramming.csc1106.Entities.CommunityCategory;
 import webprogramming.csc1106.Entities.Post;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostRepo extends JpaRepository<Post, Long>{
     // Query to find all posts by title or content and order by timestamp. Including pagination
     Page<Post> findAllByTitleContainingOrContentContainingOrderByTimestampDesc(String title, String content, Pageable pageable);
+
+    // Query to find posts by category and order by timestamp. Including pagination
+    Page<Post> findAllByCategoryOrderByTimestampDesc(CommunityCategory category, Pageable pageable);
 
     // Query to find last 5 and order by timestamp
     List<Post> findTop5ByOrderByTimestampDesc();
