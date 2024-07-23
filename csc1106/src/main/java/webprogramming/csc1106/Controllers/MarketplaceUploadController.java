@@ -121,10 +121,7 @@ public class MarketplaceUploadController {
     // Handle POST requests to /courses/{courseId}/reject URL to reject a specific course
     @PostMapping("/courses/{courseId}/reject")
     public String rejectCourse(@PathVariable Long courseId, RedirectAttributes redirectAttributes) {
-        UploadCourse course = courseService.getCourseById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        course.setApproved(false); // Set course as not approved
-        courseService.updateCourse(course); // Update the course
+        courseService.deleteCourse(courseId); // Delete the course
         redirectAttributes.addFlashAttribute("successMessage", "Course rejected successfully.");
         return "redirect:/pending-courses"; // Redirect to the pending courses page
     }
