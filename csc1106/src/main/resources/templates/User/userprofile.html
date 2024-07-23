@@ -242,6 +242,7 @@
                   </div>
                   <!-- Password -->
                   <div class="row mb-3">
+                    
                     <label for="password" class="col-md-4 col-lg-3 col-form-label">Password</label>
                     <div class="col-md-8 col-lg-9">
                       <div class="input-group">
@@ -252,11 +253,19 @@
                           </button>
                         </div>
                       </div>
+
+                      <!-- Password Tips Label -->
+                      <div id="passwordTipsLabel" style="display: none; color: red;">
+                        <strong>Friendly Reminder:</strong><br>
+                        1. The shown password is <strong>not your real password</strong>.<br>
+                        2. To change your password, <strong>clear the field</strong> and <strong>enter a new password</strong>.
+                      </div>
+
                     </div>
                   </div>
 
                   <div class="text-center">
-                    <button type="button" id="saveBtn" class="btn btn-primary">Save Changes</button>
+                    <button type="button" id="saveBtn" class="btn btn-primary" disabled>Save Changes</button>
                   </div>
                 </form><!-- End Profile Edit Form -->
 
