@@ -214,6 +214,7 @@ public class UserController {
 
             // Redirect to a success page or dashboard after successful registration
             logger.debug("Redirecting to /login after successful registration");
+            model.addAttribute("successMessage", "Account created! Please login to continue.");
             return "redirect:/login";
         } catch (Exception e) {
             logger.error("Error during registration: " + e.getMessage(), e);
