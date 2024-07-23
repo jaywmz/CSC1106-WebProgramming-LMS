@@ -5,26 +5,23 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.Random;
-import java.io.IOException; // Add this import statement
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import jakarta.mail.Multipart;
+
 import webprogramming.csc1106.Entities.User;
 import webprogramming.csc1106.Repositories.RoleRepository;
 import webprogramming.csc1106.Repositories.UserRepository;
-import webprogramming.csc1106.Services.AzureBlobService; // Add this import statement
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
-
     private final AzureBlobService azureBlobService;
 
     @Autowired
@@ -42,7 +39,7 @@ public class UserService {
     public void registerStaff(String username, String password, String email) {
         User user = new User();
         user.setUserName(username);
-        user.setUserPassword(hashPassword(password));
+        user.setUserPassword(hashPassword(password)); // Hash the password
         user.setUserEmail(email);
         user.setRole(roleRepository.findById(1).orElseThrow(() -> new RuntimeException("Role not found"))); // Role ID 1 for Staff
         user.setJoinedDate(new java.sql.Date(System.currentTimeMillis()));
@@ -91,7 +88,6 @@ public class UserService {
     }
 
     public String uploadProfilePicture(MultipartFile file, int userId) {
-
         // Remove the existing profile picture from Azure Blob Storage
         userRepository.findById(userId).ifPresent(user -> {
             String existingPictureUrl = user.getProfilePicture();
@@ -104,9 +100,7 @@ public class UserService {
         InputStream fileInputStream = null;
         try {
             fileInputStream = file.getInputStream();
-            // Rest of the code that uses fileInputStream
         } catch (IOException e) {
-            // Handle the exception or log the error
             e.printStackTrace();
         }
 
@@ -114,7 +108,6 @@ public class UserService {
         try {
             pictureUrl = azureBlobService.uploadToAzureBlob(fileInputStream, "profile-picture-" + userId + ".jpg");
         } catch (IOException e) {
-            // Handle the exception or log the error
             e.printStackTrace();
         }
 
