@@ -16,7 +16,7 @@ public class EmailService {
     public void sendApprovalEmail(String toEmail, String companyName, String username, String password) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("learnzenith71@outlook.com");
+            message.setFrom("learnzenith72@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Partnership Approval Notification");
             message.setText("Dear " + companyName + ",\n\n" +
@@ -39,7 +39,7 @@ public class EmailService {
     public void sendRejectionEmail(String toEmail, String companyName) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("learnzenith71@outlook.com");
+            message.setFrom("learnzenith72@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Partnership Rejection Notification");
             message.setText("Dear " + companyName + ",\n\n" +
@@ -62,7 +62,7 @@ public class EmailService {
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("learnzenith71@outlook.com");
+            message.setFrom("learnzenith72@outlook.com");
             message.setTo(toEmail);
             message.setSubject("Subscription Renewal Notification");
             message.setText("Dear " + companyName + ",\n\n" +
