@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -48,9 +47,7 @@ public class UserController {
     @Autowired
     public UserController(UserRepository userRepository, UserService userService, AzureBlobService azureBlobService) {
         this.userRepository = userRepository;
-
         this.userService = userService;
-
         this.azureBlobService = azureBlobService;
     }
 
@@ -69,8 +66,9 @@ public class UserController {
     public ModelAndView login(@RequestParam String email, @RequestParam String password, HttpServletResponse response, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
 
-        // Query the database for the user with the given email and password
-        User user = userRepository.findByUserEmailAndUserPassword(email, password);
+        // Hash the password before querying the database
+        String hashedPassword = userService.hashPassword(password);
+        User user = userRepository.findByUserEmailAndUserPassword(email, hashedPassword);
 
         if (user != null) {
             // Encode email address
@@ -97,7 +95,8 @@ public class UserController {
     @PostMapping("/logmein")
     public ResponseEntity<User> logMeIn(@RequestBody Map<String, String> loginData, HttpServletResponse response, HttpSession session) {
         try {
-            User user = userRepository.findByUserEmailAndUserPassword(loginData.get("email"), loginData.get("password"));
+            String hashedPassword = userService.hashPassword(loginData.get("password"));
+            User user = userRepository.findByUserEmailAndUserPassword(loginData.get("email"), hashedPassword);
 
             if (user == null) {
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -165,7 +164,7 @@ public class UserController {
             User userToUpdate = userRepository.findById(user.getUserID()).get();
             userToUpdate.setUserName(user.getUserName());
             userToUpdate.setUserEmail(user.getUserEmail());
-            userToUpdate.setUserPassword(user.getUserPassword());
+            userToUpdate.setUserPassword(userService.hashPassword(user.getUserPassword())); // Hash the password before saving
             userToUpdate.setRole(user.getRole());
             userToUpdate.setUserBalance(user.getUserBalance());
             userToUpdate.setLastLogin(user.getLastLogin());
@@ -200,6 +199,9 @@ public class UserController {
             // Set initial balance to 1000
             user.setUserBalance(new BigDecimal(1000));
 
+            // Hash the password before saving the user
+            user.setUserPassword(userService.hashPassword(user.getUserPassword()));
+
             // Save user data
             saveUser(user);
 
@@ -225,7 +227,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
 
     @GetMapping("/user/{userId}/role")
     public ResponseEntity<Map<String, String>> getUserRole(@PathVariable int userId) {
@@ -279,5 +280,4 @@ public class UserController {
         userRepository.save(user);
         logger.debug("User data saved to the database");
     }
-
 }

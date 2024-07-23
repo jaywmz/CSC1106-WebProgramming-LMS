@@ -1,6 +1,8 @@
 package webprogramming.csc1106.Services;
 
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.Random;
 import java.io.IOException; // Add this import statement
@@ -33,13 +35,14 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        user.setUserPassword(hashPassword(user.getUserPassword()));
         return userRepository.save(user);
     }
 
     public void registerStaff(String username, String password, String email) {
         User user = new User();
         user.setUserName(username);
-        user.setUserPassword(password);
+        user.setUserPassword(hashPassword(password));
         user.setUserEmail(email);
         user.setRole(roleRepository.findById(1).orElseThrow(() -> new RuntimeException("Role not found"))); // Role ID 1 for Staff
         user.setJoinedDate(new java.sql.Date(System.currentTimeMillis()));
@@ -47,6 +50,20 @@ public class UserService {
         user.setUserBalance(BigDecimal.ZERO); // Or any initial balance
         user.setLoginCookie(generateRandomCookie(200));
         userRepository.save(user);
+    }
+
+    public String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
     }
 
     private String generateRandomCookie(int length) {
