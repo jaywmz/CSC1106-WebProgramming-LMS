@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Partnership Listing</title>
+    <title>Partnership Listing - LearnZenith</title>
     <link href="assets/img/favicon.png" rel="icon">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
@@ -11,36 +11,48 @@
     <!-- Optional theme -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap-theme.min.css" rel="stylesheet">
 
+    <!-- Custom CSS -->
     <style>
         body {
-            background-color: #dbe9f5; /* Light blue to smoke */
+            background-color: #f8f9fa; /* Light grey background */
             font-family: 'Open Sans', sans-serif; /* Add Open Sans font */
         }
         h1 {
-            font-size: 2rem; /* Adjust the font size if needed */
+            font-size: 2.5rem; /* Adjust the font size */
             margin-bottom: 20px; /* Add some spacing */
-            font-family: 'Open Sans', sans-serif; /* Add Open Sans font */
-            color: #00008b; /* Use dark blue color */
+            color: #343a40; /* Use dark grey color */
             text-align: center; /* Align title to the center */
         }
         .container {
-            margin-top: 20px; /* Add margin space on top */
+            margin-top: 40px; /* Add margin space on top */
+            background-color: #fff; /* White background for the container */
+            padding: 20px; /* Padding for the container */
+            border-radius: 10px; /* Rounded corners for the container */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for the container */
         }
         table {
-            background-color: white;
             width: 100%;
             border-collapse: collapse;
         }
         th, td {
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #343a40;
+            color: white;
+        }
+        .btn-primary, .btn-danger {
+            width: 100px;
+            margin: 5px 0;
+        }
+        .btn-back {
+            margin-bottom: 20px;
         }
     </style>
     
+    <!-- JavaScript for handling partner approval and rejection -->
     <script>
         function approvePartner(partnerId) {
             fetch(`/partnership/approve/${partnerId}`, {
@@ -75,6 +87,7 @@
 </head>
 <body>
     <div class="container">
+        <a href="/admin" class="btn btn-secondary btn-back">Back to Admin Dashboard</a>
         <h1>Partnership Listing</h1>
         <table class="table table-striped">
             <thead>
@@ -107,6 +120,6 @@
 
     <!-- Bootstrap JS and jQuery (Optional) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
