@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link href="assets/css/custom-animations.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
         <h2>Add a New Category Group</h2>
-        <form th:action="@{/add-category}" th:object="${categoryGroup}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/add-category}" th:object="${categoryGroup}" method="post" enctype="multipart/form-data" class="fade-in-up">
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
             <div class="form-group">
                 <label for="name">Category Group Name</label>
@@ -22,8 +23,8 @@
                 <textarea id="description" th:field="*{description}" class="form-control" required></textarea>
             </div>
             <div class="form-group">
-                <label for="coverImageFile">Cover Image</label>
-                <input type="file" id="coverImageFile" name="coverImageFile" class="form-control">
+                <label for="coverImageFile">Upload Cover Image</label>
+                <input type="file" id="coverImageFile" name="coverImageFile" accept="image/*" class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Add Category Group</button>
         </form>

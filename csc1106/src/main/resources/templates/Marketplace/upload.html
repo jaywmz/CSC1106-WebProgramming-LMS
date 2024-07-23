@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link href="assets/css/custom-animations.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
         <h2>Upload a New Course</h2>
-        <form th:action="@{/upload}" th:object="${course}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <form th:action="@{/upload}" th:object="${course}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()" class="fade-in-up">
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
             <div class="form-group">
                 <label for="selectedCategory">Category</label>
@@ -64,7 +65,7 @@
             const uniqueSectionId = generateUniqueId();
             lessonCounts[uniqueSectionId] = 0;
             const sectionHtml = `
-                <div class="card mt-3" id="section-${uniqueSectionId}">
+                <div class="card mt-3 fade-in-up" id="section-${uniqueSectionId}">
                     <div class="card-body">
                         <h4>Section ${sectionCount}</h4>
                         <div class="form-group">
@@ -89,7 +90,7 @@
             const uniqueLessonId = generateUniqueId();
             const lessonIndex = lessonCounts[sectionId]++;
             const lessonHtml = `
-                <div class="form-group mt-2" id="lesson-${uniqueLessonId}">
+                <div class="form-group mt-2 fade-in-up" id="lesson-${uniqueLessonId}">
                     <label for="lesson-title-${uniqueLessonId}">Lesson Title</label>
                     <input type="text" id="lesson-title-${uniqueLessonId}" name="sections[${sectionIndex}].lessons[${lessonIndex}].title" class="form-control" required>
                     <label for="lesson-file-${uniqueLessonId}">Upload File</label>

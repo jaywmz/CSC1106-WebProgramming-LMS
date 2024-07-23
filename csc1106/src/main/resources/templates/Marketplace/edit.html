@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Course - LearnZenith</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="assets/css/custom-animations.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
         <h2>Edit Course</h2>
-        <form th:action="@{/courses/update}" th:object="${course}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/courses/update}" th:object="${course}" method="post" enctype="multipart/form-data" class="fade-in-up">
             <input type="hidden" th:field="*{id}"/>
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
@@ -43,7 +44,7 @@
             </div>
             <h3>Sections</h3>
             <div id="sections-container">
-                <div th:each="section, sectionStat : ${course.sections}" class="card mt-3" th:id="'section-' + ${section.id}">
+                <div th:each="section, sectionStat : ${course.sections}" class="card mt-3 fade-in-up" th:id="'section-' + ${section.id}">
                     <div class="card-body">
                         <h4>Section <span th:text="${sectionStat.index + 1}"></span></h4>
                         <div class="form-group">
@@ -100,7 +101,7 @@
             const uniqueSectionId = generateUniqueId();
             lessonCount[uniqueSectionId] = 0;
             const sectionHtml = `
-                <div class="card mt-3" id="section-${uniqueSectionId}">
+                <div class="card mt-3 fade-in-up" id="section-${uniqueSectionId}">
                     <div class="card-body">
                         <h4>Section ${sectionCount}</h4>
                         <div class="form-group">
@@ -125,7 +126,7 @@
             const uniqueLessonId = generateUniqueId();
             const lessonIndex = lessonCount[sectionId]++;
             const lessonHtml = `
-                <div class="form-group mt-2" id="lesson-${uniqueLessonId}">
+                <div class="form-group mt-2 fade-in-up" id="lesson-${uniqueLessonId}">
                     <label for="lesson-title-${uniqueLessonId}">Lesson Title</label>
                     <input type="text" id="lesson-title-${uniqueLessonId}" name="sections[${sectionIndex}].lessons[${lessonIndex}].title" class="form-control" required>
                     <label for="lesson-file-${uniqueLessonId}">Upload File</label>

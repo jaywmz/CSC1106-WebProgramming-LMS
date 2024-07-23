@@ -27,7 +27,6 @@ public class StaffController {
                                 @RequestParam String password,
                                 @RequestParam String email) {
         userService.registerStaff(username, password, email);
-      //  return "redirect:/staff/register?success";
         return "redirect:/login";
     }
 }
