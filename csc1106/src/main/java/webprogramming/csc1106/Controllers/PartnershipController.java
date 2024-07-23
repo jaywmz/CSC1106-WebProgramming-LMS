@@ -199,6 +199,7 @@ public class PartnershipController {
         return ResponseEntity.ok().build();
     }
 
+    //Partner can see all the courses uploaded by themselves
     @GetMapping("/partner/viewAllCourses")
     public String viewAllCourses(@RequestParam("userId") int userId, Model model) {
         User user = userRepository.findById(userId).get();
@@ -242,6 +243,7 @@ public class PartnershipController {
         return "Partnership/Courses"; 
     }
 
+    //Partner CRUD operation on sections associated with course [CREATE]
     @PostMapping("/partner/sections")
     public String createSection(@RequestParam("courseId") Long courseId, @RequestParam("sectionName") String sectionName, @RequestParam("sectionDesc") String sectionDesc) {
         Section section = new Section();
@@ -257,6 +259,7 @@ public class PartnershipController {
             return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
     }
 
+    //Partner CRUD operation on sections associated with course [UPDATE]
     @PostMapping("/partner/editsections")
     public String editSection(@RequestParam("editsectionId") Long sectionId, @RequestParam("editsectionName") String sectionName, @RequestParam("editsectionDesc") String sectionDesc, @RequestParam("editsectionCourseId") Long courseId) {
         Section section = sectionService.getSectionById(sectionId);
@@ -272,6 +275,7 @@ public class PartnershipController {
             return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
     }
 
+    //Partner CRUD operation on sections associated with course [DELETE]
     @PostMapping("/partner/deletesections")
     public String deleteSection(@RequestParam("deletesectionId") Long sectionId, @RequestParam("deletesectionCourseId") Long courseId) {
         Section section = sectionService.getSectionById(sectionId);
@@ -285,7 +289,7 @@ public class PartnershipController {
             return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
     }
 
-
+    //Partner CRUD operation on lessons associated with course [CREATE]
     @PostMapping("/partner/lessons")
 public String createLesson(
         @RequestParam("lessonCourseId") Long courseId,
@@ -327,7 +331,7 @@ public String createLesson(
     return "redirect:/partnership/partner/Courses?userId=" + user.getUserID(); 
 }
 
-
+//Partner CRUD operation on lessons associated with course [UPDATE]
 @PostMapping("/partner/editlessons")
 public String editLesson(
     @RequestParam("editlessonId") Long lessonId,
@@ -344,7 +348,7 @@ public String editLesson(
         return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
 }
 
-
+//Partner CRUD operation on lessons associated with course [DELETE]
 //post for /partner/deleteLessons
 @PostMapping("/partner/deletelessons")
 public String deleteLesson(@RequestParam("deletelessonId") Long lessonId, @RequestParam("deletelessonCourseId") Long courseId) {
@@ -357,7 +361,7 @@ public String deleteLesson(@RequestParam("deletelessonId") Long lessonId, @Reque
     return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
 }
 
-
+//Partner CRUD operation on lessons file resource associated with course [CREATE] - ADD MORE FILE 
 //post for /partner/addmorefiles
 @PostMapping("/partner/addmorefiles")
 public String addMoreFiles(@RequestParam("addmorefilelessonId") Long lessonId, @RequestParam("addmorefilelessonFile") MultipartFile lessonFile, @RequestParam("addmorefilelessonCourseId") Long courseId) {
@@ -389,7 +393,8 @@ public String addMoreFiles(@RequestParam("addmorefilelessonId") Long lessonId, @
     User user = partner.getUser();
     return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
 }
-
+     
+//Partner CRUD operation on lessons file resource associated with course [DELETE]
 //post for /partner/deletefiles
 @PostMapping("/partner/deletefiles")
 public String deleteFile(@RequestParam("deletefileId") Long fileId, @RequestParam("deletefilelessonId") Long lessonId, @RequestParam("deletefilelessonCourseId") Long courseId) {
@@ -402,6 +407,8 @@ public String deleteFile(@RequestParam("deletefileId") Long fileId, @RequestPara
     return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
 }
 
+     
+//Partner CRUD operation on lessons file resource associated with course [UPDATE]
 //post for /partner/editfiles
 @PostMapping("/partner/editfiles")
 public String editFile(@RequestParam("editfileId") Long fileId, @RequestParam("editfilelessonId") Long lessonId, @RequestParam("editfilelessonCourseId") Long courseId,
@@ -431,7 +438,7 @@ public String editFile(@RequestParam("editfileId") Long fileId, @RequestParam("e
     return "redirect:/partnership/partner/Courses?userId=" + user.getUserID();
 }
 
-    
+// View all courses subscribed by partner from marketplace
     @GetMapping("/partner/viewCourseSubscriptions")
 public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model model) {
     User user = userRepository.findById(userId).get();
@@ -452,7 +459,7 @@ public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model 
 }
 
 
-
+//Handle partner application form
     @PostMapping("/submit")
     @ResponseBody
     public String submitPartnershipApplication(
@@ -472,6 +479,7 @@ public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model 
         return "{\"message\":\"Your application has been submitted successfully!\"}";
     }
 
+//For admin to view all the partners
     @GetMapping("/list")
     public String listPartners(Model model) {
         List<Partner> partners = partnerService.getAllPartners();
@@ -479,6 +487,7 @@ public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model 
         return "Partnership/partnershiplisting";
     }
 
+//For admin to approve new partner
     @PostMapping("/approve/{partnerId}")
     @ResponseBody
     public ResponseEntity<String> approvePartner(@PathVariable Integer partnerId) {
@@ -494,6 +503,7 @@ public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model 
         }
     }
 
+//For admin to reject new partner
     @PostMapping("/reject/{partnerId}")
     @ResponseBody
     public ResponseEntity<String> rejectPartner(@PathVariable Integer partnerId) {
@@ -509,6 +519,7 @@ public String viewCourseSubscriptions(@RequestParam("userId") int userId, Model 
         }
     }
 
+//For partner CRUD operation on course - [CREATE]
     @GetMapping("/partner/uploadCourse")
     public String getUploadCoursePage(Model model) {
         model.addAttribute("course", new UploadCourse());
@@ -579,6 +590,7 @@ public String uploadCourse(@ModelAttribute UploadCourse course,
     }
 }
 
+//For partner to be able to view and download uploaded certificate associating wih each course
 @GetMapping("/serveCertificate")
 public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certificateId") Integer certificateId) throws IOException {
     PartnerCertificate certificate = partnerCertificateRepository.findById(certificateId)
@@ -596,7 +608,7 @@ public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certi
 }
 
 
-
+//For partner CRUD operation on course - [UPDATE]
 @GetMapping("/partner/editCourse/{id}")
     public String editCourse(@PathVariable("id") Long id, Model model) {
         Optional<UploadCourse> optionalCourse = uploadCourseService.getCourseById(id);
@@ -640,6 +652,8 @@ public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certi
         
     }
 
+
+     //For partner CRUD operation on course - [DELETE]
     @GetMapping("/partner/deleteCourse/{id}")
     public String deleteCourse(@PathVariable("id") Long id) {
 
@@ -679,7 +693,7 @@ public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certi
             return courses.get();
         }
 
-
+//For partner to subscribe to a course in Marketplace
          // Subscribe to a course
     @PostMapping("/partner/subscribe/{courseId}")
     @ResponseBody
@@ -693,8 +707,8 @@ public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certi
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-//
-    // Unsubscribe from a course
+
+//For partner to unsubscribe from a course in Marketplace
     @PostMapping("/partner/unsubscribe/{courseId}")
     @ResponseBody
     public ResponseEntity<?> unsubscribeFromCourse(@PathVariable Long courseId, @RequestParam("userId") int userId) {
@@ -708,8 +722,8 @@ public ResponseEntity<InputStreamResource> serveCertificate(@RequestParam("certi
         }
     }
 
-    
-    
+
+//For partner to view all subscription   
     @GetMapping("/partner/partnerSubscriptions")
 public String partnerSubscriptions(@RequestParam("userId") int userId, Model model) {
     List<UploadCourse> courses = courseSubscriptionService.getCoursesByUserId(userId);
