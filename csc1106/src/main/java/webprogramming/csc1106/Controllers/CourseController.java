@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-public class CourseRestController {
+public class CourseController {
     private final UserRepository userRepository;
     private final CourseSubscriptionRepo courseSubscriptionRepo;
     private final CourseCategoryRepository courseCategoryRepository;
@@ -33,7 +33,7 @@ public class CourseRestController {
     
 
     @Autowired
-    public CourseRestController(UserRepository userRepository, CourseSubscriptionRepo courseSubscriptionRepo, 
+    public CourseController(UserRepository userRepository, CourseSubscriptionRepo courseSubscriptionRepo, 
                                 CourseCategoryRepository courseCategoryRepository, CartItemsRepo cartItemsRepo, 
                                 UploadCourseRepository uploadCourseRepository, RatingRepository ratingRepository) {
         this.courseSubscriptionRepo = courseSubscriptionRepo;
