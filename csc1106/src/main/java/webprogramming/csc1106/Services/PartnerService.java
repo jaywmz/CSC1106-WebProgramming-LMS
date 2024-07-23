@@ -7,6 +7,14 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Random;
 
+import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
+import java.util.Random;
+import java.io.IOException;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +92,7 @@ public class PartnerService {
             User user = new User();
             user.setRole(roleRepository.findById(4).orElseThrow(() -> new RuntimeException("Role not found"))); // Set role to 4
             user.setUserName(username);
-            user.setUserPassword(password); // Ideally, password should be hashed before saving
+            user.setUserPassword(hashPassword(password));
             user.setUserEmail(partner.getPartnerEmail());
             user.setJoinedDate(new Date(System.currentTimeMillis()));
             user.setJoinedTime(new Time(System.currentTimeMillis()));
@@ -106,6 +114,20 @@ public class PartnerService {
         }
         logger.warn("Failed to approve partner with ID {}. Either partner not found or status is not Pending.", partnerId);
         return false;
+    }
+
+     public String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
     }
 
     // Reject a partner and send a rejection email
