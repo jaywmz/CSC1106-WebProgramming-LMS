@@ -4,17 +4,58 @@
     <meta charset="UTF-8">
     <title>Pending Courses</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom CSS for additional styling -->
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding-top: 50px;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+        }
+
+        .table {
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .btn-success, .btn-danger {
+            margin: 0 5px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-back {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Pending Courses</h2>
-        <table class="table">
-            <thead>
+    <div class="container">
+        <a href="/admin" class="btn btn-secondary btn-back">Back to Dashboard</a>
+        <h2 class="text-center">Pending Courses</h2>
+        <table class="table table-hover">
+            <thead class="thead-dark">
                 <tr>
-                    <th>Course Name</th>
-                    <th>Instructor</th>
-                    <th>Price</th>
-                    <th>Actions</th>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,11 +63,11 @@
                     <td th:text="${course.title}"></td>
                     <td th:text="${course.lecturer}"></td>
                     <td th:text="${course.price}"></td>
-                    <td>
-                        <form th:action="@{/courses/{courseId}/approve(courseId=${course.id})}" method="post">
+                    <td class="btn-group">
+                        <form th:action="@{/courses/{courseId}/approve(courseId=${course.id})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-success">Approve</button>
                         </form>
-                        <form th:action="@{/courses/{courseId}/reject(courseId=${course.id})}" method="post">
+                        <form th:action="@{/courses/{courseId}/reject(courseId=${course.id})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-danger">Reject</button>
                         </form>
                     </td>
@@ -34,5 +75,18 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Option 2: jQuery, Popper.js, and Bootstrap JS -->
+    <!--
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    -->
 </body>
 </html>
