@@ -46,10 +46,42 @@
       margin: 10px 0;
       padding: 15px;
       font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-custom i {
+      margin-right: 10px;
     }
 
     .breadcrumb-item + .breadcrumb-item::before {
       content: '>';
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease-in-out both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        transform: translate3d(0, 40px, 0);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+      }
     }
   </style>
 
@@ -157,16 +189,16 @@
     <section class="section dashboard">
       <div class="row">
         <div class="col-lg-6 mb-3">
-          <a href="pending-courses" class="btn btn-primary btn-custom">Pending Courses</a>
+          <a href="pending-courses" class="btn btn-primary btn-custom"><i class="bi bi-list-check"></i>Pending Courses</a>
         </div>
         <div class="col-lg-6 mb-3">
-          <a href="partnership/list" class="btn btn-secondary btn-custom">Partnership Listing</a>
+          <a href="partnership/list" class="btn btn-secondary btn-custom"><i class="bi bi-people-fill"></i>Partnership Listing</a>
         </div>
         <div class="col-lg-6 mb-3">
-          <a href="partnership/approvalExpiredSubscription" class="btn btn-secondary btn-custom">Approval Expired Subscription</a>
+          <a href="partnership/approvalExpiredSubscription" class="btn btn-secondary btn-custom"><i class="bi bi-check-circle"></i>Approval Expired Subscription</a>
         </div>
         <div class="col-lg-6 mb-3">
-          <a href="/categories" class="btn btn-success btn-custom">View Categories</a>
+          <a href="/categories" class="btn btn-success btn-custom"><i class="bi bi-folder-fill"></i>View Categories</a>
         </div>
       </div>
     </section>
