@@ -20,7 +20,7 @@ spring:
   mail:
     host: smtp.office365.com
     port: 587
-    username: learnzenith71@outlook.com
+    username: learnzenith72@outlook.com
     password: thisisthepa$$w0rd
     protocol: smtp
     properties:
