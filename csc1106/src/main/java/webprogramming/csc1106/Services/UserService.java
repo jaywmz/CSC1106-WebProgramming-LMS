@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.Random;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,11 +33,18 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        if (!isPasswordComplex(user.getUserPassword())) {
+            throw new IllegalArgumentException("Password does not meet complexity requirements.");
+        }
         user.setUserPassword(hashPassword(user.getUserPassword()));
         return userRepository.save(user);
     }
 
     public void registerStaff(String username, String password, String email) {
+        if (!isPasswordComplex(password)) {
+            throw new IllegalArgumentException("Password does not meet complexity requirements.");
+        }
+
         User user = new User();
         user.setUserName(username);
         user.setUserPassword(hashPassword(password)); // Hash the password
@@ -61,6 +69,15 @@ public class UserService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error hashing password", e);
         }
+    }
+
+    private boolean isPasswordComplex(String password) {
+        if (password.length() < 8) {
+            return false;
+        }
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        Pattern p = Pattern.compile(regex);
+        return p.matcher(password).matches();
     }
 
     private String generateRandomCookie(int length) {

@@ -64,7 +64,7 @@
                     <p class="text-center small">Enter your personal details to create account</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" action="/register" method="post" novalidate>
+                  <form class="row g-3 needs-validation" action="/register" method="post" novalidate onsubmit="return validateForm()">
 
                     <!-- Remove User ID Field -->
                     <!--
@@ -102,6 +102,9 @@
                     <div class="col-12">
                       <label for="yourPassword" class="form-label">Password</label>
                       <input type="password" name="userPassword" class="form-control" id="yourPassword" required>
+                      <small id="passwordHelpBlock" class="form-text text-muted">
+                        Your password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.
+                      </small>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
 
@@ -154,6 +157,20 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/dashboard-main.js"></script>
+
+  <!-- Custom JavaScript for Password Validation -->
+  <script>
+    function validateForm() {
+      const password = document.getElementById('yourPassword').value;
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+      if (!regex.test(password)) {
+        alert('Password does not meet complexity requirements.');
+        return false;
+      }
+      return true;
+    }
+  </script>
 
 </body>
 
