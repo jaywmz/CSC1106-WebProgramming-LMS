@@ -1,68 +1,124 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>All Courses</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link href="assets/css/custom-animations.css" rel="stylesheet">
+    <title>All Courses - LearnZenith</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" th:href="@{/assets/img/favicon.png}">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" th:href="@{/assets/img/apple-touch-icon.png}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}">
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.snow.css}">
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" th:href="@{/assets/vendor/quill/quill.bubble.css}">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" th:href="@{/assets/vendor/remixicon/remixicon.css}">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet" th:href="@{/assets/vendor/simple-datatables/style.css}">
+    <link href="assets/css/dashboard-style.css" rel="stylesheet" th:href="@{/assets/css/dashboard-style.css}">
+    <!-- Custom CSS for animations and styles -->
+    <style>
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-custom {
+            width: auto;
+            margin: 10px 0;
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .btn-sm-custom {
+            font-size: 0.875rem;
+            padding: 5px 10px;
+            margin: 5px 0;
+        }
+
+        .card {
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1>All Courses</h1>
-        <div class="mb-3">
-            <a href="/upload" class="btn btn-primary">Create New Course</a>
-            <a href="http://localhost:8080/market" class="btn btn-success">Go to Market</a>
+        <h1 class="fade-in-up">All Courses</h1>
+        <div class="mb-3 fade-in-up">
+            <a href="/upload" class="btn btn-primary btn-custom">Create New Course</a>
+            <a href="http://localhost:8080/market" class="btn btn-success btn-custom">Go to Market</a>
         </div>
-        <table class="table table-bordered fade-in-up">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Lecturer</th>
-                    <th>Price</th>
-                    <th>Cover Image</th>
-                    <th>Files</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="course : ${courses}">
-                    <td th:text="${course.title}"></td>
-                    <td th:text="${course.description}"></td>
-                    <td th:text="${course.lecturer}"></td>
-                    <td th:text="${course.price}"></td>
-                    <td>
-                        <img th:src="${course.coverImageUrl}" alt="Cover Image" style="width: 100px; height: auto;">
-                    </td>
-                    <td>
-                        <ul>
-                            <li th:each="section : ${course.sections}">
-                                <a data-toggle="collapse" th:href="'#section-' + ${section.id}" th:text="${section.title}"></a>
-                                <ul id="section" th:id="'section-' + ${section.id}" class="collapse">
-                                    <li th:each="lesson : ${section.lessons}">
-                                        <a data-toggle="collapse" th:href="'#lesson-' + ${lesson.id}" th:text="${lesson.title}"></a>
-                                        <ul id="lesson" th:id="'lesson-' + ${lesson.id}" class="collapse">
-                                            <li th:each="file : ${lesson.files}">
-                                                <a th:href="@{/serveFile(fileId=${file.id}, disposition='inline')}" th:text="${file.fileName}"></a>
+        <div class="card fade-in-up">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Lecturer</th>
+                            <th>Price</th>
+                            <th>Cover Image</th>
+                            <th>Files</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="course : ${courses}">
+                            <td th:text="${course.title}"></td>
+                            <td th:text="${course.description}"></td>
+                            <td th:text="${course.lecturer}"></td>
+                            <td th:text="${course.price}"></td>
+                            <td>
+                                <img th:src="${course.coverImageUrl}" alt="Cover Image" style="width: 100px; height: auto;">
+                            </td>
+                            <td>
+                                <ul>
+                                    <li th:each="section : ${course.sections}">
+                                        <a data-toggle="collapse" th:href="'#section-' + ${section.id}" th:text="${section.title}"></a>
+                                        <ul id="section" th:id="'section-' + ${section.id}" class="collapse">
+                                            <li th:each="lesson : ${section.lessons}">
+                                                <a data-toggle="collapse" th:href="'#lesson-' + ${lesson.id}" th:text="${lesson.title}"></a>
+                                                <ul id="lesson" th:id="'lesson-' + ${lesson.id}" class="collapse">
+                                                    <li th:each="file : ${lesson.files}">
+                                                        <a th:href="@{/serveFile(fileId=${file.id}, disposition='inline')}" th:text="${file.fileName}"></a>
+                                                    </li>
+                                                </ul>
                                             </li>
                                         </ul>
                                     </li>
                                 </ul>
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <a th:href="@{/courses/edit(courseId=${course.id})}" class="btn btn-warning btn-sm">Edit</a>
-                        <form th:action="@{/courses/delete}" method="post" style="display:inline;">
-                            <input type="hidden" name="courseId" th:value="${course.id}" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            </td>
+                            <td>
+                                <a th:href="@{/courses/edit(courseId=${course.id})}" class="btn btn-warning btn-sm btn-sm-custom">Edit</a>
+                                <form th:action="@{/courses/delete}" method="post" style="display:inline;">
+                                    <input type="hidden" name="courseId" th:value="${course.id}" />
+                                    <button type="submit" class="btn btn-danger btn-sm btn-sm-custom">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
 </html>
