@@ -53,6 +53,16 @@
       background-color: white;
       z-index: 999998;
     }
+
+    .table {
+      table-layout: fixed;
+    }
+
+    #threadTitle {
+      text-overflow: ellipsis; 
+      overflow: hidden; 
+      white-space: nowrap;
+    }
   </style>
 
   <!-- =======================================================
@@ -227,7 +237,7 @@
               <table class="table table-hover" id="allPosts">
                 <thead>
                   <tr>
-                    <th scope="col" style="width:50%">Title</th>
+                    <th scope="col" style="width:50%;overflow:hidden;">Title</th>
                     <th scope="col">Category</th>
                     <th scope="col">Poster</th>
                     <th scope="col">Posted on</th>
@@ -251,17 +261,17 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Subscribed Posts</h5>
-              <table class="table table-hover">
+              <table class="table table-hover datatable">
                 <thead>
                   <tr>
-                    <th scope="col" style="width:50%">Title</th>
+                    <th scope="col" style="width:50%;overflow:hidden;">Title</th>
                     <th scope="col">Category</th>
                     <th scope="col">Poster</th>
                     <th scope="col">Posted on</th>
                   </tr>
                 </thead>
-                <tbody th:each="post: ${subbedPosts}">
-                  <tr>
+                <tbody>
+                  <tr th:each="post: ${subbedPosts}">
                     <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.title}" id="threadTitle"></a></td>
                     <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.getCategory().getName()}"></a></td>
                     <td style="padding: 0px;"><a th:href="@{'/community/' + ${post.getCategory().getGroup()} + '/' + ${post.getCategory().getId()} + '/' + ${post.postID}}" th:text="${post.posterName}"></a></td>
