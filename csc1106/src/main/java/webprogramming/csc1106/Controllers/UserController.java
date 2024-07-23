@@ -192,6 +192,13 @@ public class UserController {
         logger.debug("Joined Time: {}", user.getJoinedTime());
 
         try {
+            // Check if the user already exists
+            if (userRepository.findByUserEmail(user.getUserEmail()) != null || userRepository.findByUserName(user.getUserName()) != null) {
+                logger.debug("User already exists");
+                model.addAttribute("errorMessage", "User already exists");
+                return "User/pages-register";
+            }
+
             // Set joinedDate and joinedTime
             user.setJoinedDate(new Date(System.currentTimeMillis()));
             user.setJoinedTime(new Time(System.currentTimeMillis()));
