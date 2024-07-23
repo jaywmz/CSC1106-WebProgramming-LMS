@@ -26,6 +26,66 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Braintree JS SDK -->
     <script src="https://js.braintreegateway.com/web/dropin/1.30.0/js/dropin.min.js"></script>
+
+    <style>
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #courses-list .course-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        #courses-list .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link-custom {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-link-custom:hover {
+            background-color: #0056b3;
+            color: #ffffff;
+        }
+
+        .card-title {
+            color: #0056b3;
+            font-weight: bold;
+        }
+
+        .filters select {
+            margin-bottom: 10px;
+        }
+
+        .btn-custom {
+            width: 100%;
+            margin: 10px 0;
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+        }
+    </style>
 </head>
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -61,9 +121,10 @@
 
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
+            <!-- Sidebar items can be added here -->
         </ul>
     </aside>
-    
+
     <main id="main" class="main">
         <div class="pagetitle">
             <h1>Market Place</h1>
@@ -124,81 +185,81 @@
     <script src="assets/js/category-page.js" th:src="@{/assets/js/category-page.js}"></script>
     <script src="assets/js/dashboard-checker.js" th:src="@{/assets/js/dashboard-checker.js}"></script>
 
- <!-- Modal for Top Up -->
-<div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Custom Braintree Form -->
-                <form id="checkout-form" th:action="@{/braintree/checkout}" method="post">
-                    <div class="form-group">
-                        <label for="topUpAmount">Enter Amount:</label>
-                        <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
-                    </div>
-                    <div id="dropin-container"></div>
-                    <p>Current Balance: <span id="currentBalance">$0.00</span></p>
-                    <button id="submit-button" class="btn btn-primary btn-block">Pay</button>
-                    <input type="hidden" name="paymentMethodNonce" id="payment-method-nonce" />
-                    <input type="hidden" name="amount" id="amount" />
-                    <input type="hidden" name="userId" id="userId" />
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <!-- Modal for Access Denied -->
-<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Access Denied</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="modalMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Review Modal -->
-<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="reviewModalLabel">Submit a Review</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="reviewForm">
-                    <input type="hidden" id="reviewCourseId" name="courseId">
-                    <div class="mb-3">
-                        <label for="reviewRating" class="form-label">Rating</label>
-                        <input type="number" class="form-control" id="reviewRating" name="rating" min="1" max="5" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="reviewComment" class="form-label">Comment</label>
-                        <textarea class="form-control" id="reviewComment" name="comment" rows="3" required></textarea>
-                    </div>
-                    <div id="reviewFormMessage" class="text-danger mb-3"></div>
-                    <button type="submit" class="btn btn-primary" id="submitReviewButton">Submit Review</button>
-                </form>
-                <hr>
-                <div id="reviewsContainer" class="reviews-scroll">
-                    <!-- Reviews will be appended here -->
+    <!-- Modal for Top Up -->
+    <div class="modal fade" id="topUpModal" tabindex="-1" role="dialog" aria-labelledby="topUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Custom Braintree Form -->
+                    <form id="checkout-form" th:action="@{/braintree/checkout}" method="post">
+                        <div class="form-group">
+                            <label for="topUpAmount">Enter Amount:</label>
+                            <input type="number" id="topUpAmount" class="form-control" placeholder="Enter amount" step="0.01" required>
+                        </div>
+                        <div id="dropin-container"></div>
+                        <p>Current Balance: <span id="currentBalance">$0.00</span></p>
+                        <button id="submit-button" class="btn btn-primary btn-block">Pay</button>
+                        <input type="hidden" name="paymentMethodNonce" id="payment-method-nonce" />
+                        <input type="hidden" name="amount" id="amount" />
+                        <input type="hidden" name="userId" id="userId" />
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal for Access Denied -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Access Denied</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">Submit a Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <input type="hidden" id="reviewCourseId" name="courseId">
+                        <div class="mb-3">
+                            <label for="reviewRating" class="form-label">Rating</label>
+                            <input type="number" class="form-control" id="reviewRating" name="rating" min="1" max="5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewComment" class="form-label">Comment</label>
+                            <textarea class="form-control" id="reviewComment" name="comment" rows="3" required></textarea>
+                        </div>
+                        <div id="reviewFormMessage" class="text-danger mb-3"></div>
+                        <button type="submit" class="btn btn-primary" id="submitReviewButton">Submit Review</button>
+                    </form>
+                    <hr>
+                    <div id="reviewsContainer" class="reviews-scroll">
+                        <!-- Reviews will be appended here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
