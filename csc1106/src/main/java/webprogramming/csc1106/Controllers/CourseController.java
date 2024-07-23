@@ -105,6 +105,7 @@ public class CourseController {
     @Autowired
     private UploadCourseService uploadCourseService;
 
+    // Get section details by section id
     @GetMapping("/api/section/{sectionId}")
     public ResponseEntity<Section> getSectionDetails(@PathVariable Long sectionId) {
         Section section = uploadCourseService.getSectionById(sectionId);
@@ -114,6 +115,7 @@ public class CourseController {
         return ResponseEntity.ok(section);
     }
 
+    // Get lessons by section id
     @GetMapping("/api/section/{sectionId}/lessons")
     public ResponseEntity<List<Lesson>> getSectionLessons(@PathVariable Long sectionId) {
         List<Lesson> lessons = uploadCourseService.getLessonsBySectionId(sectionId);
