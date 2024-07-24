@@ -25,8 +25,15 @@ LearnZenith is a Learning Management System (LMS) built using Java and the Sprin
 2. Open a Terminal
 3. 	Navigate to the unzipped folder
 	- 	Your working directory should be in the same folder as `pom.xml`
+	- 	Example working directory (Windows): C:/g07_d02_product/csc1106/
 5. Run `mvn install` to install and build our application dependencies
 	-	You can also do `mvn clean install` to build from a clean slate
 6.  Run `mvn spring-boot:run` to start running the application
-	-	Alternatively, you can run `java -jar target/csc1106-0.0.1-SNAPSHOT.jar` to run the application using the jar file generated in the previous step
+	-	Alternatively, you can run `java -jar target/csc1106-0.0.1-SNAPSHOT.jar` to run the application using the jar file generated at the /target/ folder in the previous step
 7. Once there is the “Application Started” message, open your web browser and go to `localhost:8080`
+
+Alternatively, you can also use these existing example accounts to log in:
+1)	Student -> student@student.com : student
+2)	Instructor -> ins@ins.com : instructor
+3)	Admin -> admin@admin.com : admin
+4)	Partner -> partner@partner.com : partner
