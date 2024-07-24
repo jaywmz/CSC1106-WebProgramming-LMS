@@ -3,6 +3,7 @@ package webprogramming.csc1106.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 
 import webprogramming.csc1106.Entities.CommunityCategory;
@@ -24,7 +25,7 @@ public interface PostRepo extends JpaRepository<Post, Long>{
     List<Post> findTop5ByOrderByLikesDesc();
 
     // Query to find all by post id
-    Post findByPostID(long id);
+    Optional<Post> findByPostID(long id);
 
     // Query to find last 5 by category id and order by timestamp
     List<Post> findTop5ByCategoryIdInOrderByTimestampDesc(List<Integer> categoryIds);
