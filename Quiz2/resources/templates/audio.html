@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Audio with Transcript</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        div {
+            margin: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tt-transcript {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #0e0e0e;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            scrollbar-width: thin;
+            scrollbar-color: #1db954 #202020;
+        }
+    
+        .tt-transcript::-webkit-scrollbar {
+            width: 8px;
+        }
+    
+        .tt-transcript::-webkit-scrollbar-track {
+            background: #202020;
+        }
+    
+        .tt-transcript::-webkit-scrollbar-thumb {
+            background-color: #1db954;
+            border-radius: 20px;
+            border: 3px solid #202020;
+        }
+    
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .tt-current-word { 
+            font-weight: bold;
+            color: #1db954; 
+        }
+
+        .media-container {
+            display: flex; /* Enable Flexbox */
+            align-items: center; /* Center items vertically */
+            justify-content: space-between; /* Space between the image and the audio player */
+            gap: 20px; /* Gap between flex items */
+        }
+
+        .media-container img{
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 100px;
+            width: 100px;
+            cursor: pointer;
+        }
+        
+        .album-cover {
+            flex: none; /* Allow the image to grow */
+            max-width: 40%; /* Limit image width, adjust as needed */
+        }
+        
+        audio {
+            flex: 2; /* Allow the audio player to take more space */
+        }
+      
+    </style>
+  </head>
+  <body>
+    <div style="display: flex; justify-content: center; align-items: center; box-shadow: unset;">
+        <h1>Audio with Transcript</h1>
+    </div>
+    
+    <div class="media-container">
+        <img id="imagecover" src="media/big_enough.jpg" alt="Album Cover" class="album-cover" title="Song: Big Enough, Artist: Kirin J Callinan">
+        <audio preload="metadata" src="media/big_enough.mp3" controls>
+            <track kind="metadata" src="media/big_enough.vtt">
+        </audio>
+    </div>
+    
+    <div class="tt-transcript" data-tt-media-urls="media/big_enough.mp3">
+        <p data-tt-start="22.170" data-tt-end="25.500">I've lived in lonely cities</p>
+        <p data-tt-start="25.500" data-tt-end="29.060">I've crossed deserts on camel back</p>
+        <p data-tt-start="29.470" data-tt-end="33.500">And I've filled the halls of folklore</p>
+        <p data-tt-start="33.500" data-tt-end="36.900">With things I'd rather we forget</p>
+        <p data-tt-start="37.475" data-tt-end="43.740">I could sweep you off the street so saying this is goddamn tough</p>
+        <p data-tt-start="44.075" data-tt-end="48.640">But this town might be big enough</p>
+        <p data-tt-start="49.840" data-tt-end="53.660">See, I reckon what you're saying</p>
+        <p data-tt-start="54.090" data-tt-end="57.150">But this dog's run every course</p>
+        <p data-tt-start="57.860" data-tt-end="61.350">I roam without my boots on</p>
+        <p data-tt-start="61.750" data-tt-end="64.790">I raced without my horse</p>
+        <p data-tt-start="65.550" data-tt-end="72.633">And then I ate my horse's meat straight from my horse's bones</p>
+        <p data-tt-start="73.275" data-tt-end="74.785">'Cause this dog</p>
+        <p data-tt-start="77.840" data-tt-end="79.680">Must roam alone</p>
+        <p data-tt-start="96.960" data-tt-end="101.025">You could shoot me in the mountains</p>
+        <p data-tt-start="101.025" data-tt-end="104.110">In the cold fat rain</p>
+        <p data-tt-start="104.410" data-tt-end="107.675">We could do it in the countryside</p>
+        <p data-tt-start="107.675" data-tt-end="109.000">As we</p>
+        <p data-tt-start="109.000" data-tt-end="111.250">walk the plain</p>
+        <p data-tt-start="111.250" data-tt-end="115.160">It wouldn't give us any closure</p>
+        <p data-tt-start="115.300" data-tt-end="118.425">All cowboys need to trust</p>
+        <p data-tt-start="118.425" data-tt-end="123.320">That this town might be big enough</p>
+        <p data-tt-start="126.010" data-tt-end="127.880">For both of us</p>
+        <p data-tt-start="142.550" data-tt-end="146.130">AAAAAAAAAAAAAAAAAA</p>
+        <p data-tt-start="146.400" data-tt-end="150.100">AAAAAAAAAAAAAAAAAAAA</p>
+        <p data-tt-start="150.460" data-tt-end="154.220">AAAAAAAAAAAAAAAAAAAA</p>
+        <p data-tt-start="154.220" data-tt-end="157.780">AAAAAYIYAAAAYIYAAAAA</p>
+        <p data-tt-start="158.050" data-tt-end="161.050">RRAAAAA</p>
+        <p data-tt-start="161.050" data-tt-end="162.710">HOOOO</p>
+        <p data-tt-start="162.710" data-tt-end="166.375">OOOOOOOOOOOOOOOOO</p>
+        <p data-tt-start="167.340" data-tt-end="169.070">OOOOOOOOO</p>
+        <p data-tt-start="169.070" data-tt-end="173.700">OOOOOOOOOOOOOOOOOOOOOO</p>
+        <p data-tt-start="176.625" data-tt-end="180.160">Well, I'd be a doggamn liar</p>
+        <p data-tt-start="180.290" data-tt-end="183.600">If I said this ain't a lonely</p>
+        <p data-tt-start="183.600" data-tt-end="184.490">town</p>
+        <p data-tt-start="184.810" data-tt-end="189.075">And what I wouldn't give</p>
+        <p data-tt-start="189.075" data-tt-end="191.690">To have a friend around</p>
+        <p data-tt-start="192.025" data-tt-end="196.466">We could trade in all our silver bullets</p>
+        <p data-tt-start="196.466" data-tt-end="199.385">And buy a patch of dust</p>
+        <p data-tt-start="199.930" data-tt-end="203.400">This town might just be big enough</p>
+        <p data-tt-start="208.475" data-tt-end="210.605">For all of us</p>
+        <p data-tt-start="211.540" data-tt-end="218.725">AAAAAAAAAAAAAAAAAAAAAAAAAA</p>
+        <p data-tt-start="218.725" data-tt-end="220.050">Everybody!</p>
+        <p data-tt-start="220.730" data-tt-end="222.050">This town!</p>
+        <p data-tt-start="222.050" data-tt-end="223.350">This world!</p>
+        <p data-tt-start="223.350" data-tt-end="224.375">Are you</p>
+        <p data-tt-start="224.375" data-tt-end="225.570">Big enough?</p>
+        <p data-tt-start="227.460" data-tt-end="230.120">From Australia</p>
+        <p data-tt-start="231.325" data-tt-end="233.500">To America</p>
+        <p data-tt-start="233.500" data-tt-end="234.995">And Russia</p>
+        <p data-tt-start="235.330" data-tt-end="237.025">And China</p>
+        <p data-tt-start="237.025" data-tt-end="239.540">All of Asia</p>
+        <p data-tt-start="239.540" data-tt-end="241.210">Let me out</p>
+        <p data-tt-start="241.320" data-tt-end="243.670">Europe and Great Britain</p>
+        <p data-tt-start="243.670" data-tt-end="245.150">Oh Canada</p>
+        <p data-tt-start="245.150" data-tt-end="246.540">In Croatia</p>
+        <p data-tt-start="246.970" data-tt-end="248.325">And Serbia</p>
+        <p data-tt-start="248.325" data-tt-end="249.050">Kenya</p>
+        <p data-tt-start="249.050" data-tt-end="250.202">Get it India</p>
+        <p data-tt-start="250.202" data-tt-end="251.075">It's serious</p>
+        <p data-tt-start="251.075" data-tt-end="252.099">In Syria</p>
+        <p data-tt-start="252.099" data-tt-end="253.125">Believe in us</p>
+        <p data-tt-start="253.125" data-tt-end="254.050">Bolivia</p>
+        <p data-tt-start="254.050" data-tt-end="255.825">We're gonna be big enough</p>
+        <p data-tt-start="255.825" data-tt-end="257.650">For Africa, South Africa</p>
+        <p data-tt-start="257.770" data-tt-end="259.125">South Korea,</p>
+        <p data-tt-start="259.125" data-tt-end="259.875">North Korea</p>
+        <p data-tt-start="259.875" data-tt-end="260.500">Algeria</p>
+        <p data-tt-start="260.500" data-tt-end="261.600">Nigeria</p>
+        <p data-tt-start="261.600" data-tt-end="262.496">Antarctica</p>
+        <p data-tt-start="262.496" data-tt-end="264.640">around the Equator</p>
+        <p data-tt-start="264.640" data-tt-end="265.510">Cuba</p>
+        <p data-tt-start="265.510" data-tt-end="267.296">Indonesia</p>
+        <p data-tt-start="267.296" data-tt-end="268.250">Jamaica</p>
+        <p data-tt-start="268.250" data-tt-end="269.400">we'll take ya</p>
+        <p data-tt-start="269.400" data-tt-end="272.050">To Florida and catch you later</p>
+        <p data-tt-start="273.875" data-tt-end="276.400">I'll catch you later</p>
+        <p data-tt-start="279.220" data-tt-end="280.650">Christianity</p>
+        <p data-tt-start="280.650" data-tt-end="282.100">Islam</p>
+        <p data-tt-start="282.100" data-tt-end="285.875">Judaism</p>
+        <p data-tt-start="285.875" data-tt-end="287.670">Let me out</p>
+        <p data-tt-start="287.670" data-tt-end="289.430"></p>
+    </div>
+    
+    <script src="js/transcript-tracer.js"></script>
+    <script>
+        loadTranscriptTracer();
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.querySelector('audio');
+            const transcript = document.querySelector('.tt-transcript');
+        
+            audio.addEventListener('timeupdate', function() {
+                let currentTime = audio.currentTime;
+                let paragraphs = transcript.querySelectorAll('p');
+                
+                // Find the current paragraph
+                let currentParagraph = Array.from(paragraphs).find(p => {
+                    let start = parseFloat(p.getAttribute('data-tt-start'));
+                    let end = parseFloat(p.getAttribute('data-tt-end'));
+                    return currentTime >= start && currentTime <= end;
+                });
+        
+                if (currentParagraph) {
+                    // Scroll the transcript container to the current paragraph
+                    transcript.scrollTop = currentParagraph.offsetTop - transcript.offsetTop - 20; // Adjust 20 for better positioning
+                    // Optionally, add a class to highlight the current paragraph
+                    paragraphs.forEach(p => p.classList.remove('highlight'));
+                    currentParagraph.classList.add('highlight');
+                }
+            });
+        }); 
+        document.getElementById('imagecover').addEventListener('click', function() {
+            // Open new tab 
+            window.open('https://www.youtube.com/watch?v=rvrZJ5C_Nwg', '_blank');
+        }); 
+    </script>
+  </body>
+</html>

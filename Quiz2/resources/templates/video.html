@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Video Player</title>
+        <style>
+            body {
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                background-color: #f0f0f0;
+                font-family: Arial, sans-serif;
+            }
+        
+            video {
+                max-width: 100%;
+                height: auto;
+            }
+        
+            .control-buttons {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 20px;
+            }
+        
+            .control-buttons button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                margin: 5px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
+            }
+        
+            .control-buttons button:hover {
+                background-color: #0056b3;
+            }
+        
+            .control-buttons button:focus {
+                outline: none;
+            }
+        
+            @media (max-width: 600px) {
+                .control-buttons button {
+                    padding: 5px 10px;
+                    font-size: 14px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+        <div style="display: flex; justify-content: center; align-items: center; box-shadow: unset;">
+            <h1>Video Player</h1><br>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; box-shadow: unset;">
+            <video id="videoPlayer" controls width="720">
+                <track src="media/big_enough.srt" kind="subtitles" srclang="en" label="English">
+                <source src="media/big_enough.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <div style="display: flex; justify-content: center; align-items: center; box-shadow: unset;">
+            <div class="control-buttons">
+                <button onclick="togglePlayPause()">Play/Pause</button>
+                <button onclick="toggleMute()">Mute/Unmute</button>
+                <button onclick="setPlaybackRate(0.5)">0.5x</button>
+                <button onclick="setPlaybackRate(1)">1x</button>
+                <button onclick="setPlaybackRate(1.5)">1.5x</button>
+                <button onclick="setPlaybackRate(2)">2x</button>
+                <button onclick="toggleFullScreen()">Full Screen</button>
+            </div>
+        </div>
+
+        <script>
+            const videoPlayer = document.getElementById('videoPlayer');
+
+            function setPlaybackRate(rate) {
+                videoPlayer.playbackRate = rate;
+            }
+
+            function toggleFullScreen() {
+                if (!document.fullscreenElement) {
+                    videoPlayer.requestFullscreen().catch(err => {
+                        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            function toggleMute() {
+                videoPlayer.muted = !videoPlayer.muted;
+            }
+
+            function togglePlayPause() {
+                if (videoPlayer.paused || videoPlayer.ended) {
+                    videoPlayer.play();
+                } else {
+                    videoPlayer.pause();
+                }
+            }
+        </script>
+
+    </body>
+</html>

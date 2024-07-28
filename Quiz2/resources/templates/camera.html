@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Webcam Capture and Upload</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/share.css">
+</head>
+<body>
+
+    <!-- Video Camera -->
+    <h2 class="text-center">Take a Photo</h2>
+    <div id="video-container">
+        <video id="camera-stream" width="400" height="300" autoplay></video>
+        <br>
+        <button id="capture-btn" class="btn btn-primary">Capture</button>
+    </div>
+    
+
+    <!-- Capture Modal -->
+    <dialog class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultModalLabel">Captured Photo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="captured-image" src="" alt="Captured" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button id="upload-btn" class="btn btn-success">Upload</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Gallery Modal -->
+    <dialog class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galleryModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="gallery-image" src="" alt="Captured" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-btn" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Hidden canvas element to draw the captured image -->
+    <canvas id="canvas" style="display:none;"></canvas>
+    <br>
+    <h2 class="text-center">Gallery</h2>
+    <!-- Image Container -->
+    <div id="images-container"></div>
+
+    <script>
+        const video = document.getElementById('camera-stream');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const uploadBtn = document.getElementById('upload-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const context = canvas.getContext('2d');
+        const capturedImage = document.getElementById('captured-image');
+        const galleryImage = document.getElementById('gallery-image');
+        const galleryLabel = document.getElementById('galleryModalLabel');
+
+        // Access the camera and stream the video to the video element
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                // Set the video source to the camera stream
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                // Log an error if the user denies camera access
+                console.error("Error accessing the camera", err);
+            });
+
+        // Capture a photo by drawing the video to the canvas
+        captureBtn.addEventListener('click', function() {
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw the video frame to the canvas
+            context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            
+            // Set the captured image source to the canvas data
+            capturedImage.src = canvas.toDataURL('image/jpeg');
+            
+            // Show the modal with the captured image
+            $('#resultModal').modal('show');
+        });
+
+        // Upload the captured image to the server
+        uploadBtn.addEventListener('click', async function() {
+            
+            // Convert the canvas to a blob and append it to a FormData object
+            canvas.toBlob(async function(blob) {
+
+                // Create a FormData object
+                const formData = new FormData();
+
+                // Get Current Timestamp
+                const timestamp = new Date().getTime().toString();
+                
+                // Append the blob to the FormData object with the name 'file'
+                formData.append('file', blob, `capture_${timestamp}.jpg`);
+
+                try{
+                    // Send the image to the server using fetch
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    // Get the server response
+                    const data = await response.text();
+                    
+                    // Show an alert with the server response
+                    alert(`Image uploaded successfully\nServer Response: ${data}`);
+                    fetchImages();
+                    $('#resultModal').modal('hide');
+                }catch(e){
+                    console.error('Error:', e);
+                }
+
+            }, 'image/jpeg');
+        });
+
+        // Delete the image from the server
+        deleteBtn.addEventListener('click', async function() {
+            const imageName = galleryLabel.innerText;
+
+            try{
+                // Send the image name to the server using fetch
+                const response = await fetch(`/images/${imageName}`, { method: 'DELETE' });
+                const data = await response.text();
+                alert(`Image deleted successfully\nServer Response: ${data}`);
+                fetchImages();
+                $('#galleryModal').modal('hide');
+            }catch(e){
+                console.error('Error:', e);
+            }
+        });
+
+        async function fetchImages(){
+            // Fetch the images from the server
+            const response = await fetch('/images');
+            const images = await response.json();
+
+            // Get the images container
+            const imagesContainer = document.getElementById('images-container');
+
+            // Clear the images container
+            imagesContainer.innerHTML = '';
+
+            // Append the images to the images container
+            images.forEach(image => {
+
+                // Skip if the image is not a capture image
+                if(!image.startsWith('capture_')) return;
+
+                const img = document.createElement('img');
+                img.src = "uploads/" + image;
+                img.alt = 'Image';
+                img.className = 'img-fluid';
+                img.style.cursor = 'pointer';
+                
+                img.addEventListener('click', function(){
+                    galleryImage.src = img.src;
+                    galleryLabel.innerText = image;
+                    $('#galleryModal').modal('show');
+                });
+
+                imagesContainer.appendChild(img);
+            });
+        }
+
+        fetchImages();
+    </script>
+</body>
+</html>

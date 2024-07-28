@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Integration Demo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    
+        #product-container {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+        }
+    
+        h2 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+        }
+    
+        p {
+            color: #666;
+            font-size: 18px;
+        }
+    
+        #pay-button-div {
+            margin-top: 20px;
+        }
+    
+        /* Google Pay button specific styles */
+        .gpay-button {
+            --gpay-button-width: 100%;
+            --gpay-button-height: 40px;
+            --gpay-button-background-color: black;
+            --gpay-button-text-color: white;
+        }
+        #product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="product-container">
+        <h2>Awesome Product</h2>
+        <img id="product-image" src="https://play-lh.googleusercontent.com/JFsWuM7yWlTxhoddyAA5eLAaS92hjJz5-hAa-82o8hMr2Kbeg8yDzIounvNSNCTYNg=w240-h480-rw" alt="Product">
+        <p>$10.00</p>
+        <!-- Container for Google Pay Button -->
+        <div id="gpay-button"></div>
+    </div>
+    
+
+    <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+
+    <script src="js/payment.js"></script>
+</body>
+</html>
